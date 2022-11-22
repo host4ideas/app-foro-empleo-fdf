@@ -1,4 +1,13 @@
-# Getting Started with Create React App
+# Structure
+
+src
+├── /assets
+├── /components
+├── /layouts
+├── /pages
+└── /services
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
