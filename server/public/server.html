@@ -1,74 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-	<meta charset="UTF-8">
-	<title>Servidor de Streaming</title>
-</head>
-<body>
-	<h1>Servidor de Streaming</h1>
-	<p>
-		Esta página transmite en tiempo real el streaming de la cámara web
-	</p>
-	<video id="video"></video>
-	<canvas id="canvas" width="1280" height="720"></canvas>
-	<script src="/socket.io/socket.io.js"></script>
-	<script>
-		(function (d, w, n, io){
-			'use strict'
+    <head>
+        <meta charset="UTF-8" />
+        <title>Servidor de Streaming</title>
+    </head>
+    <body>
+        <h1>Servidor de Streaming</h1>
 
-			var io = io(),
-				startCamera = false,
-				video = d.querySelector('#video'),
-				canvas = d.querySelector('#canvas'),
-				context = canvas.getContext('2d')
+        <label for="tiempoInicial"
+            >Introduce el tiempo inicial del temporizador</label
+        >
+        <input type="text" name="tiempoInicial" id="tiempoInicial" />
 
-			n.streaming = (
-				n.getUserMedia ||
-				n.webkitGetUserMedia ||
-				n.mozGetUserMedia ||
-				n.msGetUserMedia
-			)
+        <button id="inicializador">Empezar streaming</button>
 
-			n.streaming({
-				video : true,
-				audio : false
-			}, function (stream){
-				startCamera = true
-				// video.src = w.URL.createObjectURL(stream)
-				video.srcObject = stream;
-			}, function (err){
-				alert('error al acceder a la camara web: ' + err)
-			})
+        <h2 id="timer"></h2>
 
-			w.playVideo = (function (cb){
-				return w.requestAnimationFrame ||
-					w.webkitRequestAnimationFrame ||
-					w.mozRequestAnimationFrame ||
-					w.msRequestAnimationFrame ||
-					function (cb) {
-						w.setTimeout(cb, 1000/100)
-					}
-			})()
+        <button id="stopTimer">Stop</button>
+        <button id="startTimer">Start</button>
 
-			function streamVideo(context, canvas, video)
-			{
-				var outputStream = canvas.toDataURL('image/jpeg', .2)
-				context.drawImage(video, 0, 0)
+        <script src="/socket.io/socket.io.js"></script>
+    </body>
+    <script>
+        const tiempoInicial = document.querySelector("#tiempoInicial"),
+            botonIniciar = document.querySelector("#inicializador"),
+            timerActual = document.querySelector("#timer"),
+            startBtn = document.querySelector("#startTimer"),
+            stopBtn = document.querySelector("#stopTimer");
 
-				if(startCamera)
-					io.emit('streaming', outputStream)
+        let interval = 0,
+            timer = 0;
 
-				playVideo(function (){
-					streamVideo(context, canvas, video)
-				})
-			}
+        var io = io();
 
-			w.addEventListener('load', function (){
-				video.autoplay = true
-				video.style.display = 'none'
-				streamVideo(context, canvas, video)
-			})
-		})(document, window, navigator, io)
-	</script>
-</body>
+        function stopTimer() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/stop");
+            xhttp.send();
+        }
+
+        function startTimer() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/streaming");
+            xhttp.send();
+        }
+
+        botonIniciar.addEventListener("click", function () {
+            io.emit("initial time", timer);
+            startTimer();
+        });
+
+        startBtn.addEventListener("click", function () {
+            startTimer();
+        });
+
+        stopBtn.addEventListener("click", function () {
+            stopTimer();
+        });
+
+        tiempoInicial.addEventListener("change", (ev) => {
+            timer = ev.target.value;
+            timerActual.innerHTML = ev.target.value;
+        });
+
+        io.on("play timer", function (timer) {
+            document.querySelector("#timer").innerHTML = timer;
+        });
+    </script>
 </html>
