@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Servidor de Streaming</title>
+    </head>
+    <body>
+        <h1>Servidor de Streaming</h1>
+
+        <label for="tiempoInicial"
+            >Introduce el tiempo inicial del temporizador</label
+        >
+        <input type="text" name="tiempoInicial" id="tiempoInicial" />
+
+        <button id="inicializador">Empezar streaming</button>
+
+        <h2 id="timer"></h2>
+
+        <button id="stopTimer">Stop</button>
+        <button id="startTimer">Start</button>
+
+        <script src="/socket.io/socket.io.js"></script>
+    </body>
+    <script>
+        const tiempoInicial = document.querySelector("#tiempoInicial"),
+            botonIniciar = document.querySelector("#inicializador"),
+            timerActual = document.querySelector("#timer"),
+            startBtn = document.querySelector("#startTimer"),
+            stopBtn = document.querySelector("#stopTimer");
+
+        let interval = 0,
+            timer = 0;
+
+        var io = io();
+
+        function stopTimer() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/stop");
+            xhttp.send();
+        }
+
+        function startTimer() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/streaming");
+            xhttp.send();
+        }
+
+        botonIniciar.addEventListener("click", function () {
+            io.emit("initial time", timer);
+            startTimer();
+        });
+
+        startBtn.addEventListener("click", function () {
+            startTimer();
+        });
+
+        stopBtn.addEventListener("click", function () {
+            stopTimer();
+        });
+
+        tiempoInicial.addEventListener("change", (ev) => {
+            timer = ev.target.value;
+            timerActual.innerHTML = ev.target.value;
+        });
+
+        io.on("play timer", function (timer) {
+            document.querySelector("#timer").innerHTML = timer;
+        });
+    </script>
+</html>
