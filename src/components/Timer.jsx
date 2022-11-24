@@ -24,7 +24,7 @@ export default function Timer() {
 
     return (
         <div>
-            <h2>Timer: {timer}</h2>
+            <h2>Timer: {timer}<h3>Hola</h3></h2>
         </div>
     );
 }
