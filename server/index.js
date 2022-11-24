@@ -14,6 +14,9 @@ const io = socketIo(http, {
     },
 });
 
+const nsp1 = io.of("/nsp1"); // the "nsp1" namespace
+const nsp2 = io.of("/nsp2"); // the "nsp2" namespace
+
 http.listen(port, () => {
     console.log("Iniciando Express y Socket.IO en localhost:%d", port);
 });
@@ -23,6 +26,8 @@ function playTimer() {
         if (timer > 0) {
             timer--;
             io.emit("play timer", timer);
+            nsp1.emit("play timer", timer + 1);
+            nsp2.emit("play timer", timer - 1);
         } else {
             clearInterval(interval);
         }
@@ -35,7 +40,7 @@ app.get("/server", (req, res) => {
     .get("/client", (req, res) => {
         res.sendFile(`${publicDir}/client.html`);
     })
-    .post("/streaming", (req, res) => {
+    .post("/streaming/", (req, res) => {
         if (!interval) {
             playTimer();
         } else {
@@ -52,11 +57,27 @@ app.get("/server", (req, res) => {
         clearInterval(interval);
         timer = 0;
         io.emit("play timer", timer);
+        nsp1.emit("play timer", timer);
+        nsp2.emit("play timer", timer);
     });
 
 io.on("connection", (socket) => {
     socket.on("initial time", (initialTime) => {
         timer = initialTime;
         io.emit("play timer", timer);
+    });
+});
+
+nsp1.on("connection", (socket) => {
+    socket.on("initial time", (initialTime) => {
+        timer = parseInt(initialTime);
+        nsp1.emit("play timer", timer + 1);
+    });
+});
+
+nsp2.on("connection", (socket) => {
+    socket.on("initial time", (initialTime) => {
+        timer = parseInt(initialTime);
+        nsp2.emit("play timer", timer - 1);
     });
 });

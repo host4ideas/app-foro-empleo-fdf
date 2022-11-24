@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>Servidor de Streaming</title>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
         <h1>Servidor de Streaming</h1>
@@ -14,24 +15,27 @@
 
         <button id="inicializador">Empezar streaming</button>
 
-        <h2 id="timer"></h2>
+        <h2>Timer: <span id="timer1"></span></h2>
+        <h2>Timer + 1: <span id="timer2"></span></h2>
+        <h2>Timer - 1: <span id="timer3"></span></h2>
 
         <button id="stopTimer">Stop</button>
         <button id="startTimer">Start</button>
-
-        <script src="/socket.io/socket.io.js"></script>
+        <button id="resetTimer">Reset</button>
     </body>
     <script>
         const tiempoInicial = document.querySelector("#tiempoInicial"),
             botonIniciar = document.querySelector("#inicializador"),
-            timerActual = document.querySelector("#timer"),
+            resetBtn = document.querySelector("#resetTimer"),
             startBtn = document.querySelector("#startTimer"),
             stopBtn = document.querySelector("#stopTimer");
 
         let interval = 0,
             timer = 0;
 
-        var io = io();
+        const mainNsp = io();
+        const nsp1 = io("/nsp1"); // the "nsp1" namespace
+        const nsp2 = io("/nsp2"); // the "nsp2" namespace
 
         function stopTimer() {
             const xhttp = new XMLHttpRequest();
@@ -45,8 +49,16 @@
             xhttp.send();
         }
 
+        function resetTimer() {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/reset");
+            xhttp.send();
+        }
+
         botonIniciar.addEventListener("click", function () {
-            io.emit("initial time", timer);
+            mainNsp.emit("initial time", timer);
+            nsp1.emit("initial time", timer);
+            nsp2.emit("initial time", timer);
             startTimer();
         });
 
@@ -58,13 +70,27 @@
             stopTimer();
         });
 
-        tiempoInicial.addEventListener("change", (ev) => {
-            timer = ev.target.value;
-            timerActual.innerHTML = ev.target.value;
+        resetBtn.addEventListener("click", function () {
+            resetTimer();
         });
 
-        io.on("play timer", function (timer) {
-            document.querySelector("#timer").innerHTML = timer;
+        tiempoInicial.addEventListener("change", (ev) => {
+            timer = ev.target.value;
+            document.querySelector("#timer1").innerHTML = timer;
+            document.querySelector("#timer2").innerHTML = timer;
+            document.querySelector("#timer3").innerHTML = timer;
+        });
+
+        mainNsp.on("play timer", function (timer) {
+            document.querySelector("#timer1").innerHTML = timer;
+        });
+
+        nsp1.on("play timer", function (timer) {
+            document.querySelector("#timer2").innerHTML = timer;
+        });
+
+        nsp2.on("play timer", function (timer) {
+            document.querySelector("#timer3").innerHTML = timer;
         });
     </script>
 </html>

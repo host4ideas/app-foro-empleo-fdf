@@ -10,19 +10,27 @@
             Esta página recibe en tiempo real el streaming de la cámara web del
             usuario que genera la transmisión
         </p>
-        <h2 id="timer"></h2>
+        <h2>Timer: <span id="timer1"></span></h2>
+        <h2>Timer + 1: <span id="timer2"></span></h2>
+        <h2>Timer - 1: <span id="timer3"></span></h2>
         <img id="streaming" />
         <script src="/socket.io/socket.io.js"></script>
         <script>
-            (function (d, io) {
-                "use strict";
+            const mainNsp = io();
+            const nsp1 = io("/nsp1"); // the "nsp1" namespace
+            const nsp2 = io("/nsp2"); // the "nsp2" namespace
 
-                var io = io();
+            mainNsp.on("play timer", function (timer) {
+                document.querySelector("#timer1").innerHTML = timer;
+            });
 
-                io.on("play timer", function (timer) {
-                    d.querySelector("#timer").innerHTML = timer;
-                });
-            })(document, io);
+            nsp1.on("play timer", function (timer) {
+                document.querySelector("#timer2").innerHTML = timer;
+            });
+
+            nsp2.on("play timer", function (timer) {
+                document.querySelector("#timer3").innerHTML = timer;
+            });
         </script>
     </body>
 </html>
