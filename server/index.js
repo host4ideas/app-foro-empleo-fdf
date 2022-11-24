@@ -4,80 +4,116 @@ const app = require("express")(),
     port = process.env.PORT || 3001,
     publicDir = `${__dirname}/public`;
 
-let interval,
-    timer = 0;
+const cluster = require("cluster");
+const numCPUs = require("os").cpus().length;
+const { setupMaster, setupWorker } = require("@socket.io/sticky");
+const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
 
-// Accept connections from another URL
-const io = socketIo(http, {
-    cors: {
-        origin: "http://localhost:3000",
-    },
-});
+if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
 
-const nsp1 = io.of("/nsp1"); // the "nsp1" namespace
-const nsp2 = io.of("/nsp2"); // the "nsp2" namespace
+    // setup sticky sessions
+    setupMaster(http, {
+        loadBalancingMethod: "least-connection",
+    });
 
-http.listen(port, () => {
-    console.log("Iniciando Express y Socket.IO en localhost:%d", port);
-});
+    // setup connections between the workers
+    setupPrimary();
 
-function playTimer() {
-    interval = setInterval(() => {
-        if (timer > 0) {
-            timer--;
-            io.emit("play timer", timer);
-            nsp1.emit("play timer", timer + 1);
-            nsp2.emit("play timer", timer - 1);
-        } else {
-            clearInterval(interval);
-        }
-    }, 1000);
-}
+    http.listen(3000);
 
-app.get("/server", (req, res) => {
-    res.sendFile(`${publicDir}/server.html`);
-})
-    .get("/client", (req, res) => {
-        res.sendFile(`${publicDir}/client.html`);
-    })
-    .post("/streaming/", (req, res) => {
-        if (!interval) {
-            playTimer();
-        } else {
-            clearInterval(interval);
-            playTimer();
-        }
-        res.send().status(200);
-    })
-    .post("/stop", (req, res) => {
-        clearInterval(interval);
-        res.send().status(200);
-    })
-    .post("/reset", (req, res) => {
-        clearInterval(interval);
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on("exit", (worker) => {
+        console.log(`Worker ${worker.process.pid} died`);
+        cluster.fork();
+    });
+} else {
+    console.log(`Worker ${process.pid} started`);
+
+    // Accept connections from another URL
+    const io = socketIo(http, {
+        cors: {
+            origin: "http://localhost:3000",
+        },
+    });
+
+    // use the cluster adapter
+    io.adapter(createAdapter());
+
+    // setup connection with the primary process
+    setupWorker(io);
+
+    let interval,
         timer = 0;
-        io.emit("play timer", timer);
-        nsp1.emit("play timer", timer);
-        nsp2.emit("play timer", timer);
+
+    const nsp1 = io.of("/nsp1"); // the "nsp1" namespace
+    const nsp2 = io.of("/nsp2"); // the "nsp2" namespace
+
+    http.listen(port, () => {
+        console.log("Iniciando Express y Socket.IO en localhost:%d", port);
     });
 
-io.on("connection", (socket) => {
-    socket.on("initial time", (initialTime) => {
-        timer = initialTime;
-        io.emit("play timer", timer);
-    });
-});
+    function playTimer() {
+        interval = setInterval(() => {
+            if (timer > 0) {
+                timer--;
+                io.emit("play timer", timer);
+                nsp1.emit("play timer", timer + 1);
+                nsp2.emit("play timer", timer - 1);
+            } else {
+                clearInterval(interval);
+            }
+        }, 1000);
+    }
 
-nsp1.on("connection", (socket) => {
-    socket.on("initial time", (initialTime) => {
-        timer = parseInt(initialTime);
-        nsp1.emit("play timer", timer + 1);
-    });
-});
+    app.get("/server", (req, res) => {
+        res.sendFile(`${publicDir}/server.html`);
+    })
+        .get("/client", (req, res) => {
+            res.sendFile(`${publicDir}/client.html`);
+        })
+        .post("/streaming/", (req, res) => {
+            if (!interval) {
+                playTimer();
+            } else {
+                clearInterval(interval);
+                playTimer();
+            }
+            res.send().status(200);
+        })
+        .post("/stop", (req, res) => {
+            clearInterval(interval);
+            res.send().status(200);
+        })
+        .post("/reset", (req, res) => {
+            clearInterval(interval);
+            timer = 0;
+            io.emit("play timer", timer);
+            nsp1.emit("play timer", timer);
+            nsp2.emit("play timer", timer);
+        });
 
-nsp2.on("connection", (socket) => {
-    socket.on("initial time", (initialTime) => {
-        timer = parseInt(initialTime);
-        nsp2.emit("play timer", timer - 1);
+    io.on("connection", (socket) => {
+        socket.on("initial time", (initialTime) => {
+            timer = initialTime;
+            io.emit("play timer", timer);
+        });
     });
-});
+
+    nsp1.on("connection", (socket) => {
+        socket.on("initial time", (initialTime) => {
+            timer = parseInt(initialTime);
+            nsp1.emit("play timer", timer + 1);
+        });
+    });
+
+    nsp2.on("connection", (socket) => {
+        socket.on("initial time", (initialTime) => {
+            timer = parseInt(initialTime);
+            nsp2.emit("play timer", timer - 1);
+        });
+    });
+}
