@@ -1,6 +1,6 @@
 const app = require("express")(),
-    http = require("http").createServer(app),
-    socketIo = require("socket.io"),
+    http = require("http"),
+    { Server } = require("socket.io"),
     port = process.env.PORT || 3001,
     publicDir = `${__dirname}/public`;
 
@@ -12,15 +12,19 @@ const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
 
+    const httpServer = http.createServer(app);
+
     // setup sticky sessions
-    setupMaster(http, {
+    setupMaster(httpServer, {
         loadBalancingMethod: "least-connection",
     });
 
     // setup connections between the workers
     setupPrimary();
 
-    http.listen(3000);
+    httpServer.listen(port, () => {
+        console.log("Iniciando Express y Socket.IO en localhost:%d", port);
+    });
 
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
@@ -33,8 +37,10 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} started`);
 
+    const httpServer = http.createServer(app);
+
     // Accept connections from another URL
-    const io = socketIo(http, {
+    const io = new Server(httpServer, {
         cors: {
             origin: "http://localhost:3000",
         },
@@ -51,10 +57,6 @@ if (cluster.isMaster) {
 
     const nsp1 = io.of("/nsp1"); // the "nsp1" namespace
     const nsp2 = io.of("/nsp2"); // the "nsp2" namespace
-
-    http.listen(port, () => {
-        console.log("Iniciando Express y Socket.IO en localhost:%d", port);
-    });
 
     function playTimer() {
         interval = setInterval(() => {
