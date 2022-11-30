@@ -19,59 +19,57 @@
         <h2>Timer + 1: <span id="timer2"></span></h2>
         <h2>Timer - 1: <span id="timer3"></span></h2>
 
-        <button id="stopTimer">Stop</button>
+        <button id="pauseTimer">Pause</button>
         <button id="startTimer">Start</button>
-        <button id="resetTimer">Reset</button>
+        <button id="resetTimer">Stop</button>
+        <br />
+        <br />
+        <form action="/logout" method="post">
+            <div>
+                <input type="submit" value="Log out" />
+            </div>
+        </form>
     </body>
     <script>
         const tiempoInicial = document.querySelector("#tiempoInicial"),
             botonIniciar = document.querySelector("#inicializador"),
             resetBtn = document.querySelector("#resetTimer"),
             startBtn = document.querySelector("#startTimer"),
-            stopBtn = document.querySelector("#stopTimer");
+            pauseBtn = document.querySelector("#pauseTimer");
 
         let interval = 0,
             timer = 0;
 
-        const mainNsp = io();
+        const mainNsp = io("/main"); // the "main" namespace
         const nsp1 = io("/nsp1"); // the "nsp1" namespace
         const nsp2 = io("/nsp2"); // the "nsp2" namespace
-
-        function stopTimer() {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "http://localhost:3001/stop");
-            xhttp.send();
-        }
-
-        function startTimer() {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "http://localhost:3001/streaming");
-            xhttp.send();
-        }
-
-        function resetTimer() {
-            const xhttp = new XMLHttpRequest();
-            xhttp.open("POST", "http://localhost:3001/reset");
-            xhttp.send();
-        }
 
         botonIniciar.addEventListener("click", function () {
             mainNsp.emit("initial time", timer);
             nsp1.emit("initial time", timer);
             nsp2.emit("initial time", timer);
-            startTimer();
+
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/start-streaming");
+            xhttp.send();
         });
 
         startBtn.addEventListener("click", function () {
-            startTimer();
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/resume");
+            xhttp.send();
         });
 
-        stopBtn.addEventListener("click", function () {
-            stopTimer();
+        pauseBtn.addEventListener("click", function () {
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/pause");
+            xhttp.send();
         });
 
         resetBtn.addEventListener("click", function () {
-            resetTimer();
+            const xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "http://localhost:3001/stop");
+            xhttp.send();
         });
 
         tiempoInicial.addEventListener("change", (ev) => {
