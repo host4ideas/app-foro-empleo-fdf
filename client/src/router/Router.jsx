@@ -32,9 +32,8 @@ import {
     INSSALAS,
     INSEVENTO,
     INSTIMER,
-    INSTIEMPOEMPRESASALA
+    INSTIEMPOEMPRESASALA,
 } from "../utils/paths";
-
 
 export default function Router() {
     return (
@@ -59,7 +58,10 @@ export default function Router() {
                         <Route path={INSSALAS} element={<InsSala />} />
                         <Route path={INSEVENTO} element={<InsEvento />} />
                         <Route path={INSTIMER} element={<InsTimer />} />
-                        <Route path={INSTIEMPOEMPRESASALA} element={<InsTiempoEmpresaSala />} />
+                        <Route
+                            path={INSTIEMPOEMPRESASALA}
+                            element={<InsTiempoEmpresaSala />}
+                        />
                         <Route path={LOGOUT} element={<Logout />} />
                     </Route>
                     <Route path="*" element={<NoMatch />} />
