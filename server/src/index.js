@@ -4,8 +4,9 @@ const port = process.env.PORT || 3001;
 const publicDir = `${__dirname}/public`;
 const compression = require("compression");
 const { Server } = require("socket.io");
-const { Timer } = require("./tiny-timer");
+const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
+require("dotenv").config();
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -45,6 +46,11 @@ if (cluster.isMaster) {
     });
 } else {
     console.log(`Worker ${process.pid} started`);
+
+    const API_URL =
+        process.env.NODE_ENV === "production"
+            ? process.env.API_TIMERS_PROD
+            : process.env.API_TIMERS_DEV;
 
     let initialTime = 0;
     const timer = new Timer();
@@ -87,6 +93,7 @@ if (cluster.isMaster) {
         secret: "changeit",
         resave: false,
         saveUninitialized: false,
+        maxAge: 24 * 60 * 60 * 1000, // 24hrs
     };
 
     // If in production, serve cookies over HTTPS
@@ -246,7 +253,6 @@ if (cluster.isMaster) {
         nsp2.emit("play timer", parseInt(timer.time) - 1);
 
         socket.on("initial time", (time) => {
-            console.log("238: " + time);
             initialTime = parseInt(time) * 1000;
             mainNsp.emit("play timer", parseInt(time));
             nsp1.emit("play timer", parseInt(time) + 1);
