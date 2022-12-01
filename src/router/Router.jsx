@@ -12,6 +12,12 @@ import DetallesSala from "../pages/DetallesSala";
 import Logout from "../pages/Logout";
 import Login from "../pages/Login";
 import Salas from "../pages/Salas";
+import InsEmpresa from "../pages/InsEmpresa";
+import InsCategoria from "../pages/InsCategoria";
+import InsSala from "../pages/InsSala";
+import InsEvento from "../pages/InsEvento";
+import InsTiempoEmpresaSala from "../pages/InsTiempoEmpresaSala";
+import InsTimer from "../pages/InsTimer";
 
 // Paths
 import {
@@ -21,7 +27,14 @@ import {
     LOGOUT,
     PUBLIC,
     PRIVATE,
+    INSEMPRESA,
+    INSCATEGORIA,
+    INSSALAS,
+    INSEVENTO,
+    INSTIMER,
+    INSTIEMPOEMPRESASALA
 } from "../utils/paths";
+
 
 export default function Router() {
     return (
@@ -41,6 +54,12 @@ export default function Router() {
                             element={<DetallesSala />}
                         />
                         <Route path={SALAS} element={<Salas />} />
+                        <Route path={INSEMPRESA} element={<InsEmpresa />} />
+                        <Route path={INSCATEGORIA} element={<InsCategoria />} />
+                        <Route path={INSSALAS} element={<InsSala />} />
+                        <Route path={INSEVENTO} element={<InsEvento />} />
+                        <Route path={INSTIMER} element={<InsTimer />} />
+                        <Route path={INSTIEMPOEMPRESASALA} element={<InsTiempoEmpresaSala />} />
                         <Route path={LOGOUT} element={<Logout />} />
                     </Route>
                     <Route path="*" element={<NoMatch />} />
