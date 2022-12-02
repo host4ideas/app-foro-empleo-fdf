@@ -7,7 +7,7 @@ import {
 } from "react";
 import PropTypes from "prop-types";
 
-const MY_AUTH_APP = "MY_AUTH_APP";
+const MY_AUTH_APP = "ACCESS";
 
 export const AuthContext = createContext();
 
@@ -18,6 +18,7 @@ export default function AuthContextProvider({ children }) {
 
     const login = useCallback(function () {
         window.localStorage.setItem(MY_AUTH_APP, true);
+        window.localStorage.removeItem("ok");
         setIsAuthenticated(true);
     }, []);
 

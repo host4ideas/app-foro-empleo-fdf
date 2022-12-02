@@ -1,19 +1,25 @@
 import { useState } from "react";
-import { PASS } from "../utils/password";
 import { useAuthContext } from "../contexts/authContext";
+import authService from "../services/auth.service";
 
 function Login() {
     const { login } = useAuthContext();
+    const [validate] = useState(localStorage.getItem("ok"));
+    const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
 
-    function handleInputChange(event) {
+    function handleInputUserChange(event) {
+        setUser(event.target.value);
+    }
+
+    function handleInputPassChange(event) {
         setPassword(event.target.value);
     }
 
     function handleSubmit(event) {
         event.preventDefault();
-        // Iniciar sesion con un servicio externo
-        if (password === PASS) {
+        authService(user, password);
+        if (validate) {
             login();
         }
     }
@@ -23,8 +29,13 @@ function Login() {
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
+                    value={user}
+                    onChange={handleInputUserChange}
+                />
+                <input
+                    type="text"
                     value={password}
-                    onChange={handleInputChange}
+                    onChange={handleInputPassChange}
                 />
                 <button type="submit">Iniciar sesión</button>
             </form>
