@@ -1,9 +1,9 @@
 import React from "react";
 
-export default function NoMatch() {
+export default function DetallesEvento() {
     return (
         <div>
-            <h1>Error 404</h1>
+            <p>Detalles evento</p>
         </div>
     );
 }
