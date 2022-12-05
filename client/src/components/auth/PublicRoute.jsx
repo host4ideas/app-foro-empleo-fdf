@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { HOME } from "../../utils/paths";
+import { DETALLES_EVENTO } from "../../utils/paths";
 import { useAuthContext } from "../../contexts/authContext";
 
 export default function PublicRoute() {
     const { isAuthenticated } = useAuthContext();
 
     if (isAuthenticated) {
-        return <Navigate to={HOME} />;
+        return <Navigate to={DETALLES_EVENTO} />;
     }
 
     return (

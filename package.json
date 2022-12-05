@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start server": "cd server && npm run start",
-    "start client": "cd client && npm run server"
+    "server": "cd server && npm run server",
+    "client": "cd client && npm run start"
   },
   "keywords": [
     "Express",

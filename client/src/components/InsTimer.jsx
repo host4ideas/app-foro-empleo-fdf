@@ -26,17 +26,7 @@ function InsTimer() {
     }
 
     useEffect(() => {
-
-        //DENTRO DE CADA IF, HAY QUE HACER UN SETIDTIM CON EL PRIMER ID
-        //Con axios es mas facil, el idloquesea response[0].idLoquesea, y luego el array con todo loquesea = response
-        
-        if (window.localStorage.getItem("categorias") != null) {
-            setCategorias(JSON.parse(window.localStorage.getItem("categorias")))
-        }else{
-            setCategorias([{"categoria":"Sin opciones","idCategoria":-1}]);
-            setIdcat(-1)
-        }
-
+        setCategorias(JSON.parse(window.localStorage.getItem("categorias")))
     }, []);
 
     function handleSubmit(e) {
@@ -49,28 +39,17 @@ function InsTimer() {
         var arrayTimers = [];
         var fechaIni = new Date(fechaI).setHours(horaI,minutoI)/1000;
 
-        console.log(idcat)
-
-        if (idcat != -1){
-
-            if (window.localStorage.getItem("timers") == null){
-                arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})
-            }else{
-                arrayTimers = JSON.parse(window.localStorage.getItem("timers"));
-                arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})   
-            }
-    
-            window.localStorage.setItem("timers",JSON.stringify(arrayTimers));
-            console.log(JSON.parse(window.localStorage.getItem("timers")))
-    
-            /* localStorage.removeItem("timers"); */
-
+        if (window.localStorage.getItem("timers") == null){
+            arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})
         }else{
-
-            alert("Debes introducir una categoria. Para crearla dirigite a InsCategoria")
-
+            arrayTimers = JSON.parse(window.localStorage.getItem("timers"));
+            arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})   
         }
-        
+
+        window.localStorage.setItem("timers",JSON.stringify(arrayTimers));
+        console.log(JSON.parse(window.localStorage.getItem("timers")))
+
+        /* localStorage.removeItem("timers"); */
 
     }
 

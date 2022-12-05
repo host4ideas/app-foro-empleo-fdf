@@ -65,17 +65,11 @@ if (cluster.isMaster) {
         },
     });
 
-    const DUMMY_USER = {
-        id: 1,
-        username: "john",
-    };
-
     /**
      * NAMESPACES
      */
-    const mainNsp = io.of("/main"); // the "nsp1" namespace
-    const nsp1 = io.of("/nsp1"); // the "nsp1" namespace
-    const nsp2 = io.of("/nsp2"); // the "nsp2" namespace
+    const adminNsp = io.of("/admin"); // the "client" namespace
+    const client = io.of("/client"); // the "client" namespace
 
     /**
      * CLUSTER CONFIG
@@ -90,50 +84,81 @@ if (cluster.isMaster) {
      * AUTH SERVER CONFIG
      */
     const sessionOptions = {
-        secret: "changeit",
+        secret: process.env.SESSION_SECRET,
+        cookie: { maxAge: 1 * 24 * 60 * 60 * 1000 }, // 1 day
         resave: false,
         saveUninitialized: false,
-        maxAge: 24 * 60 * 60 * 1000, // 24hrs
     };
 
-    // If in production, serve cookies over HTTPS
     if (app.get("env") === "production") {
+        // Serve secure cookies, requires HTTPS
         sessionOptions.cookie.secure = true;
     }
 
     const sessionMiddleware = session(sessionOptions);
-    app.use(sessionMiddleware);
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(sessionMiddleware);
     app.use(passport.initialize());
     app.use(passport.session());
 
+    async function postData(url = "", data = {}) {
+        // Default options are marked with *
+        const response = await fetch(url, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, *cors, same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: "follow", // manual, *follow, error
+            referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+    }
+
+    function getApiToken(username, password) {
+        return new Promise((res, rej) => {
+            postData(
+                "https://apitimersforoempleofdf.azurewebsites.net/Auth/Login",
+                { userName: username, password: password }
+            ).then((data) => {
+                res(data); // JSON data parsed by `data.json()` call
+            });
+        });
+    }
+
     passport.use(
-        new LocalStrategy((username, password, done) => {
-            if (username === "john" && password === "doe") {
-                console.log("authentication OK");
-                return done(null, DUMMY_USER);
-            } else {
-                console.log("wrong credentials");
-                return done(null, false);
+        new LocalStrategy(
+            { usernameField: "username", passwordField: "password" },
+            (username, password, done) => {
+                if (username != "" && password != "") {
+                    try {
+                        const USER = {
+                            id: uuidv4(),
+                            username: username,
+                        };
+                        // Aquí metemos el service auth
+                        getApiToken(username, password).then((token) => {
+                            console.log(token);
+                            USER.token = token;
+                            USER.role = "admin";
+                            return done(null, USER);
+                        });
+                    } catch (error) {
+                        console.log("wrong credentials");
+                        return done(null, false);
+                    }
+                } else {
+                    console.log("invalid credentials");
+                    return done(null, false);
+                }
             }
-        })
+        )
     );
 
-    /**
-     * Secure routes. If the user is not logged in, it will be redirected to /.
-     */
-    const secured = (req, res, next) => {
-        const isAuthenticated = !!req.user;
-        if (isAuthenticated) {
-            return next();
-        }
-        req.session.returnTo = req.originalUrl;
-        res.redirect("/");
-    };
-
-    /**
-     * AUTH ENDPOINTS
-     */
     app.get("/", (req, res) => {
         const isAuthenticated = !!req.user;
         if (isAuthenticated) {
@@ -141,38 +166,42 @@ if (cluster.isMaster) {
         } else {
             console.log("unknown user");
         }
-        res.sendFile(isAuthenticated ? "index.html" : "login.html", {
-            root: publicDir,
-        });
-    })
-        .post(
-            "/login",
-            passport.authenticate("local", {
-                successRedirect: "/",
-                failureRedirect: "/login",
-            })
-        )
-        .post("/logout", (req, res) => {
-            console.log(`logout ${req.session.id}`);
-            const socketId = req.session.socketId;
-            if (socketId && io.of("/").sockets.get(socketId)) {
-                console.log(`forcefully closing socket ${socketId}`);
-                io.of("/").sockets.get(socketId).disconnect(true);
+        res.send(isAuthenticated ? true : false);
+    });
+
+    app.post(
+        "/login",
+        passport.authenticate("local"),
+        function (req, res, next) {
+            if (req.user) {
+                res.json(req.user); // Mandamos al user su info
+            } else {
+                // handle errors here, decide what you want to send back to your front end
+                // so that it knows the user wasn't found
+                res.statusCode = 503;
+                res.send({ message: "forbidden" });
             }
-            req.logout((err) => {
-                console.error(err);
-            });
-            res.cookie("connect.sid", "", { expires: new Date() });
-            res.redirect("/");
-        });
+        }
+    );
+
+    app.post("/logout", (req, res) => {
+        console.log(`logout ${req.session.id}`);
+        const socketId = req.session.socketId;
+        if (socketId && io.of("/").sockets.get(socketId)) {
+            console.log(`forcefully closing socket ${socketId}`);
+            io.of("/").sockets.get(socketId).disconnect(true);
+        }
+        req.logout();
+        res.cookie("connect.sid", "", { expires: new Date() });
+        res.redirect("/");
+    });
 
     /**
      * TIMER FUNCTIONALITY
      */
     timer.on("tick", (ms) => {
-        mainNsp.emit("play timer", msToSeconds(timer.time));
-        nsp1.emit("play timer", msToSeconds(timer.time) + 1);
-        nsp2.emit("play timer", msToSeconds(timer.time) - 1);
+        adminNsp.emit("play timer", msToSeconds(timer.time));
+        client.emit("play timer", msToSeconds(timer.time) + 1);
     });
 
     function playTimer({ resume = false, start = false, duration = 0 } = {}) {
@@ -185,34 +214,22 @@ if (cluster.isMaster) {
     }
 
     /**
-     * TIMER ENDPOINTS
+     * TESTING ENDPOINTS
+     *
+     * TODO: PASAR A SOCKET IO CONNECTIONS
      */
-    // Admin
-    app.get("/server", secured, (req, res) => {
-        res.sendFile(`${publicDir}/server.html`);
-    })
-        .post("/start-streaming", secured, (req, res) => {
-            playTimer({ start: true, duration: initialTime });
-            res.send().status(200);
-        })
-        .post("/stop", secured, (req, res) => {
-            timer.stop();
-            nsp1.emit("play timer", 0);
-            nsp2.emit("play timer", 0);
-            mainNsp.emit("play timer", 0);
-            res.send().status(200);
-        })
-        .post("/resume", secured, (req, res) => {
-            timer.resume();
-            res.send().status(200);
-        })
-        .post("/pause", secured, (req, res) => {
-            timer.pause();
-            res.send().status(200);
-        });
-    // User
+    // Only for testing
     app.get("/client", (req, res) => {
         res.sendFile(`${publicDir}/client.html`);
+    });
+    app.get("/", (req, res) => {
+        const isAuthenticated = !!req.user;
+        if (isAuthenticated) {
+            console.log(`user is authenticated, session is ${req.session.id}`);
+        } else {
+            console.log("unknown user");
+        }
+        res.send(isAuthenticated ? true : false);
     });
 
     /**
@@ -220,23 +237,24 @@ if (cluster.isMaster) {
      */
     passport.serializeUser((user, cb) => {
         console.log(`serializeUser ${user.id}`);
-        cb(null, user.id);
+        cb(null, user);
     });
 
-    passport.deserializeUser((id, cb) => {
-        console.log(`deserializeUser ${id}`);
-        cb(null, DUMMY_USER);
+    passport.deserializeUser((user, cb) => {
+        console.log(`deserializeUser ${user.id}`);
+        cb(null, user);
     });
 
     // convert a connect middleware to a Socket.IO middleware
     const wrap = (middleware) => (socket, next) =>
         middleware(socket.request, {}, next);
 
-    io.use(wrap(sessionMiddleware));
-    io.use(wrap(passport.initialize()));
-    io.use(wrap(passport.session()));
+    adminNsp.use(wrap(sessionMiddleware));
+    adminNsp.use(wrap(passport.initialize()));
+    adminNsp.use(wrap(passport.session()));
 
-    io.use((socket, next) => {
+    adminNsp.use((socket, next) => {
+        console.log(socket.request.user);
         if (socket.request.user) {
             next();
         } else {
@@ -247,20 +265,38 @@ if (cluster.isMaster) {
     /**
      * SOCKET IO EVENTS
      */
-    mainNsp.on("connection", (socket) => {
-        mainNsp.emit("play timer", parseInt(timer.time));
-        nsp1.emit("play timer", parseInt(timer.time) + 1);
-        nsp2.emit("play timer", parseInt(timer.time) - 1);
+    // Admin users
+    adminNsp.on("connection", (socket) => {
+        adminNsp.emit("play timer", parseInt(timer.time));
+        client.emit("play timer", parseInt(timer.time) + 1);
 
         socket.on("initial time", (time) => {
             initialTime = parseInt(time) * 1000;
-            mainNsp.emit("play timer", parseInt(time));
-            nsp1.emit("play timer", parseInt(time) + 1);
-            nsp2.emit("play timer", parseInt(time) - 1);
+            adminNsp.emit("play timer", parseInt(time));
+            client.emit("play timer", parseInt(time) + 1);
+        });
+
+        socket.on("start timer", () => {
+            playTimer({ start: true, duration: initialTime });
+        });
+
+        socket.on("stop timer", () => {
+            timer.stop();
+            client.emit("play timer", 0);
+            adminNsp.emit("play timer", 0);
+        });
+
+        socket.on("resume timer", () => {
+            timer.resume();
+        });
+
+        socket.on("pause timer", () => {
+            timer.pause();
         });
     });
 
-    io.on("connect", (socket) => {
+    // All users
+    io.on("connection", (socket) => {
         socket.on("whoami", (cb) => {
             cb(socket.request.user ? socket.request.user.username : "");
         });
