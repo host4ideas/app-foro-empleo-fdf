@@ -215,8 +215,6 @@ if (cluster.isMaster) {
 
     /**
      * TESTING ENDPOINTS
-     *
-     * TODO: PASAR A SOCKET IO CONNECTIONS
      */
     // Only for testing
     app.get("/client", (req, res) => {
