@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useShouldShowPrompt from "app/shared/hooks/useShouldShowPrompt";
+import useShouldShowPrompt from "./useShouldShowPrompt";
 
 const webInstallPromptedAt = "webInstallPromptedAt";
 
