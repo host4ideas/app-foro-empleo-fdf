@@ -14,6 +14,7 @@ export default function InstallPWA() {
     if (!iosInstallPrompt && !webInstallPrompt) {
         return null;
     }
+
     return (
         <Modal isOpen centered>
             <Card>
