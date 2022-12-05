@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+<<<<<<< HEAD
     "server": "cd server && npm run server",
     "client": "cd client && npm run start"
+=======
+    "start server": "cd server && npm run start",
+    "start client": "cd client && npm run server"
+>>>>>>> master
   },
   "keywords": [
     "Express",

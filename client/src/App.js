@@ -1,5 +1,9 @@
 // React
+<<<<<<< HEAD
 import React from "react";
+=======
+import React, { Suspense } from "react";
+>>>>>>> master
 // Auth context
 import AuthContextProvider from "./contexts/authContext";
 // Router
@@ -8,6 +12,7 @@ import Router from "./router/Router";
 import "./App.css";
 
 export default function App() {
+<<<<<<< HEAD
   return (
     <div className="App">
       <h1>Basic Example</h1>
@@ -17,4 +22,15 @@ export default function App() {
       </AuthContextProvider>
     </div>
   );
+=======
+    return (
+        <div className="App">
+            <AuthContextProvider>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <Router />
+                </Suspense>
+            </AuthContextProvider>
+        </div>
+    );
+>>>>>>> master
 }
