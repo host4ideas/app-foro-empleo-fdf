@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useShouldShowPrompt from "app/shared/hooks/useShouldShowPrompt";
+import useShouldShowPrompt from "./useShouldShowPrompt";
 
 const webInstallPromptedAt = "webInstallPromptedAt";
 
@@ -17,16 +17,17 @@ const useWebInstallPrompt = () => {
                 // store the event for later use
                 setInstallPromptEvent(event);
             }
+
+            return () =>
+                window.removeEventListener(
+                    "beforeinstallprompt",
+                    beforeInstallPromptHandler
+                );
         };
         window.addEventListener(
             "beforeinstallprompt",
             beforeInstallPromptHandler
         );
-        return () =>
-            window.removeEventListener(
-                "beforeinstallprompt",
-                beforeInstallPromptHandler
-            );
     }, [userShouldBePromptedToInstall]);
 
     const handleInstallDeclined = () => {

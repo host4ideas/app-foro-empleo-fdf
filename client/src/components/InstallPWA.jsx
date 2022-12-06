@@ -1,9 +1,9 @@
 import React from "react";
 import { Button, Modal, Card, CardText, CardBody, CardTitle } from "reactstrap";
-import useIosInstallPrompt from "../utils/hooks";
+import useIosInstallPrompt from "../utils/hooks/useIosInstallPrompt";
 import useWebInstallPrompt from "../utils/hooks/useWebInstallPrompt";
 
-export const InstallPWA = () => {
+export default function InstallPWA() {
     const [iosInstallPrompt, handleIOSInstallDeclined] = useIosInstallPrompt();
     const [
         webInstallPrompt,
@@ -14,6 +14,7 @@ export const InstallPWA = () => {
     if (!iosInstallPrompt && !webInstallPrompt) {
         return null;
     }
+
     return (
         <Modal isOpen centered>
             <Card>
@@ -70,4 +71,4 @@ export const InstallPWA = () => {
             </Card>
         </Modal>
     );
-};
+}

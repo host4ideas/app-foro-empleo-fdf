@@ -4,17 +4,23 @@ import React from "react";
 import AuthContextProvider from "./contexts/authContext";
 // Router
 import Router from "./router/Router";
+// Components
+import InstallPWA from "./components/InstallPWA";
+import { ToastContainer, toast } from "react-toastify";
 // Estilos
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
-  return (
-    <div className="App">
-      <h1>Basic Example</h1>
-      <h2>David</h2>
-      <AuthContextProvider>
-        <Router />
-      </AuthContextProvider>
-    </div>
-  );
+    const notify = () => toast("Wow so easy!");
+    return (
+        <div className="App">
+            <button onClick={notify}>Notify!</button>
+            <ToastContainer />
+            <InstallPWA />
+            <AuthContextProvider>
+                <Router />
+            </AuthContextProvider>
+        </div>
+    );
 }
