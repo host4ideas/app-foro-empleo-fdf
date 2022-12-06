@@ -17,16 +17,17 @@ const useWebInstallPrompt = () => {
                 // store the event for later use
                 setInstallPromptEvent(event);
             }
+
+            return () =>
+                window.removeEventListener(
+                    "beforeinstallprompt",
+                    beforeInstallPromptHandler
+                );
         };
         window.addEventListener(
             "beforeinstallprompt",
             beforeInstallPromptHandler
         );
-        return () =>
-            window.removeEventListener(
-                "beforeinstallprompt",
-                beforeInstallPromptHandler
-            );
     }, [userShouldBePromptedToInstall]);
 
     const handleInstallDeclined = () => {
