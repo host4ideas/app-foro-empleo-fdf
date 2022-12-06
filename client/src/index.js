@@ -5,7 +5,14 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    // Previene a la mini barra de información que aparezca en smartphones
+    e.preventDefault();
+    // De manera opcional, envía el evento de analíticos para saber si se mostró la promoción a a instalación del PWA
+    console.log(`'beforeinstallprompt' event was fired.`);
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
