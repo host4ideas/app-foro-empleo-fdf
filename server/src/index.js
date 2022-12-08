@@ -15,6 +15,9 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const { networkRequest } = require("./services/network_request.service.js");
+const axios = require("axios");
+
 // Cluster
 const cluster = require("cluster");
 const http = require("http");
@@ -115,7 +118,8 @@ if (cluster.isMaster) {
      * AUTH SERVER CONFIG
      */
     const sessionOptions = {
-        secret: process.env.SESSION_SECRET,
+        // process.env.SESSION_SECRET
+        secret: "somevalue",
         cookie: { maxAge: 1 * 24 * 60 * 60 * 1000 }, // 1 day
         resave: false,
         saveUninitialized: false,
@@ -151,17 +155,6 @@ if (cluster.isMaster) {
         return response.json(); // parses JSON response into native JavaScript objects
     }
 
-    function getApiToken(username, password) {
-        return new Promise((res, rej) => {
-            postData(
-                "https://apitimersforoempleofdf.azurewebsites.net/Auth/Login",
-                { userName: username, password: password }
-            ).then((data) => {
-                res(data.response); // JSON data parsed by `data.json()` call
-            });
-        });
-    }
-
     passport.use(
         new LocalStrategy(
             { usernameField: "username", passwordField: "password" },
@@ -173,12 +166,24 @@ if (cluster.isMaster) {
                             id: uuidv4(),
                             username: username,
                         };
+
                         // Aquí metemos el service auth
-                        getApiToken(username, password).then((token) => {
-                            USER.token = token;
-                            USER.role = "admin";
-                            return done(null, USER);
-                        });
+                        var data = {
+                            userName: username,
+                            password: password,
+                        };
+                        networkRequest("post", "auth/login", data).then(
+                            (response) => {
+                                const token = response.data.response;
+                                axios.default.headers.common = {
+                                    Authorization: "Bearer " + token,
+                                };
+                                console.log(token);
+                                USER.token = token;
+                                USER.role = "admin";
+                                return done(null, USER);
+                            }
+                        );
                     } catch (error) {
                         console.log(error);
                         return done(null, false);
@@ -250,6 +255,7 @@ if (cluster.isMaster) {
     app.get("/client", (req, res) => {
         res.sendFile(`${publicDir}/client.html`);
     });
+
     app.get("/", (req, res) => {
         const isAuthenticated = !!req.user;
         if (isAuthenticated) {
