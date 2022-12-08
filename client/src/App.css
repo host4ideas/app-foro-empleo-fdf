@@ -1,3 +1,7 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
 .App {
     height: 100vh;
     background-color: whitesmoke;
@@ -17,8 +21,8 @@
 }
 
 .icon {
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border: none;
     border-radius: 50%;
     color: white;

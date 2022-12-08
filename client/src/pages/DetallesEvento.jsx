@@ -1,5 +1,6 @@
 import React from "react";
 import Timer from "../components/Timer";
+import { FaRegEdit, FaSignOutAlt } from "react-icons/fa";
 
 export default function DetallesEvento() {
     return (
@@ -7,11 +8,15 @@ export default function DetallesEvento() {
             <div className="row justify-content-between">
                 <div className="col-4">
                     {/* ICON LOGOUT */}
-                    <button className="icon red">O</button>
+                    <button className="icon red">
+                        <FaSignOutAlt />
+                    </button>
                 </div>
                 <div className="col-4">
                     {/* ICON EDIT */}
-                    <button className="icon blue">E</button>
+                    <button className="icon blue">
+                        <FaRegEdit />
+                    </button>
                 </div>
             </div>
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./timer.css";
-
+import { FaPause, FaPlay } from "react-icons/fa";
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
 
 export default function Timer() {
     const [timer, setTimer] = useState(0);
     const [actualTime, setActualTime] = useState("");
+    const [play, setPlay] = useState(false);
 
     socket.on("play timer", function (timer) {
         setTimer(timer);
@@ -24,6 +25,7 @@ export default function Timer() {
         socket.on("disconnect", () => console.warn("Server disconnected"));
     }, []);
 
+    //INICIO DE LA HORA ACTUAL (cada 1s se actualiza)
     useEffect(() => {
         const timer = window.setInterval(() => {
             showTime();
@@ -33,6 +35,13 @@ export default function Timer() {
             window.clearInterval(timer);
         };
     }, []);
+
+    const startTimer = () => {
+        setPlay(true);
+    };
+    const pauseTimer = () => {
+        setPlay(false);
+    };
 
     const showTime = () => {
         var myDate = new Date();
@@ -47,8 +56,18 @@ export default function Timer() {
 
     return (
         <div className="row mt-4">
-            <div className="timer">
-                <div className="icon timer-icon">start</div>
+            <div
+                className={`timer
+                    ${play ? "working" : "stop"}
+                    `}
+            >
+                <div className="timer-icon icon red">
+                    {play ? (
+                        <FaPause onClick={pauseTimer} />
+                    ) : (
+                        <FaPlay onClick={startTimer} />
+                    )}
+                </div>
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">

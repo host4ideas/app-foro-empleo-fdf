@@ -7,11 +7,16 @@
     padding: 6px 0px;
 }
 .timer-icon {
-    color: black !important;
     position: absolute;
     right: 70px;
     top: 100px;
 }
 .timer-title {
     font-weight: bold;
+}
+.working {
+    background-color: #adff6e;
+}
+.stop {
+    background-color: #726eff;
 }
