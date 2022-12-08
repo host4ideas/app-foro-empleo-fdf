@@ -7,6 +7,9 @@ const { Server } = require("socket.io");
 const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
 require("dotenv").config();
+const { v4: uuidv4 } = require("uuid");
+const fetch = (...args) =>
+    import("node-fetch").then(({ default: fetch }) => fetch(...args));
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -18,6 +21,8 @@ const http = require("http");
 const numCPUs = require("os").cpus().length;
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
 const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
+// Push notifications
+const webPush = require("web-push");
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
@@ -47,6 +52,13 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} started`);
 
+    // Push notifications
+    webPush.setVapidDetails(
+        "http://localhost:3000",
+        process.env.VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+    );
+
     const API_URL =
         process.env.NODE_ENV === "production"
             ? process.env.API_TIMERS_PROD
@@ -57,6 +69,25 @@ if (cluster.isMaster) {
 
     const httpServer = http.createServer(app);
     app.use(compression());
+    app.use(function (req, res, next) {
+        const allowedDomains = [
+            "http://localhost:3001",
+            "https://app-foro-empleo.azurewebsites.net",
+        ];
+        const origin = req.headers.origin;
+        if (allowedDomains.indexOf(origin) > -1) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "X-Requested-With,content-type, Accept"
+        );
+        res.setHeader("Access-Control-Allow-Credentials", true);
+
+        next();
+    });
 
     // Accept connections from another URL
     const io = new Server(httpServer, {
@@ -96,6 +127,7 @@ if (cluster.isMaster) {
     }
 
     const sessionMiddleware = session(sessionOptions);
+    // app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(sessionMiddleware);
     app.use(passport.initialize());
@@ -125,7 +157,7 @@ if (cluster.isMaster) {
                 "https://apitimersforoempleofdf.azurewebsites.net/Auth/Login",
                 { userName: username, password: password }
             ).then((data) => {
-                res(data); // JSON data parsed by `data.json()` call
+                res(data.response); // JSON data parsed by `data.json()` call
             });
         });
     }
@@ -134,6 +166,7 @@ if (cluster.isMaster) {
         new LocalStrategy(
             { usernameField: "username", passwordField: "password" },
             (username, password, done) => {
+                console.log(username, password);
                 if (username != "" && password != "") {
                     try {
                         const USER = {
@@ -142,17 +175,16 @@ if (cluster.isMaster) {
                         };
                         // Aquí metemos el service auth
                         getApiToken(username, password).then((token) => {
-                            console.log(token);
                             USER.token = token;
                             USER.role = "admin";
                             return done(null, USER);
                         });
                     } catch (error) {
-                        console.log("wrong credentials");
+                        console.log(error);
                         return done(null, false);
                     }
                 } else {
-                    console.log("invalid credentials");
+                    console.log(error);
                     return done(null, false);
                 }
             }
@@ -163,10 +195,11 @@ if (cluster.isMaster) {
         const isAuthenticated = !!req.user;
         if (isAuthenticated) {
             console.log(`user is authenticated, session is ${req.session.id}`);
+            res.status(200).send(true);
         } else {
             console.log("unknown user");
+            res.status(401).send(false);
         }
-        res.send(isAuthenticated ? true : false);
     });
 
     app.post(
@@ -174,12 +207,9 @@ if (cluster.isMaster) {
         passport.authenticate("local"),
         function (req, res, next) {
             if (req.user) {
-                res.json(req.user); // Mandamos al user su info
+                res.status(201).json(req.user); // Mandamos al user su info
             } else {
-                // handle errors here, decide what you want to send back to your front end
-                // so that it knows the user wasn't found
-                res.statusCode = 503;
-                res.send({ message: "forbidden" });
+                res.status(401).send({ message: "forbidden" });
             }
         }
     );
@@ -263,8 +293,21 @@ if (cluster.isMaster) {
     /**
      * SOCKET IO EVENTS
      */
-    // Admin users
+    // Admin conneciton events
     adminNsp.on("connection", (socket) => {
+        // Saving the session if the user has authenticated
+        const session = socket.request.session;
+        if (session) {
+            session.socketId = socket.id;
+            session.save();
+            console.table({
+                "Socket ID": socket.id,
+                Namespace: socket.nsp.name,
+                "Session ID": session.id,
+                "Total Clients": io.sockets.sockets.size,
+            });
+        }
+
         adminNsp.emit("play timer", parseInt(timer.time));
         client.emit("play timer", parseInt(timer.time) + 1);
 
@@ -298,15 +341,51 @@ if (cluster.isMaster) {
         socket.on("whoami", (cb) => {
             cb(socket.request.user ? socket.request.user.username : "");
         });
+    });
 
-        const session = socket.request.session;
-        session.socketId = socket.id;
-        session.save();
-        console.table({
-            "Socket ID": socket.id,
-            Namespace: socket.nsp.name,
-            "Session ID": session.id,
-            "Total Clients": io.sockets.sockets.size,
+    /**
+     * PUSH NOTIFICATIONS
+     */
+    app.get(`/vapidPublicKey`, (req, res) => {
+        console.log(process.env.VAPID_PUBLIC_KEY);
+        res.send(process.env.VAPID_PUBLIC_KEY);
+    });
+
+    app.post(`/sendNotification`, (req, res) => {
+        const subscription = req.body.subscription;
+        const payload = req.body.payload;
+        const options = {
+            TTL: req.body.ttl,
+        };
+
+        setTimeout(() => {
+            webPush
+                .sendNotification(subscription, payload, options)
+                .then(() => {
+                    res.sendStatus(201);
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.sendStatus(500);
+                });
+        }, req.body.delay * 1000);
+    });
+
+    app.post("/notifications/subscribe", (req, res) => {
+        const subscription = req.body;
+
+        console.log(subscription);
+
+        const payload = JSON.stringify({
+            title: "Hello!",
+            body: "It works.",
         });
+
+        webPush
+            .sendNotification(subscription, payload)
+            .then((result) => console.log(result))
+            .catch((e) => console.log(e.stack));
+
+        res.status(200).json({ success: true });
     });
 }
