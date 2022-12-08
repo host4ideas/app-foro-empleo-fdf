@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./timer.css";
-import { FaPause, FaPlay } from "react-icons/fa";
+import { FaPause, FaPlay, FaRedoAlt, FaTimes, FaCog } from "react-icons/fa";
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
 
@@ -27,12 +27,12 @@ export default function Timer() {
 
     //INICIO DE LA HORA ACTUAL (cada 1s se actualiza)
     useEffect(() => {
-        const timer = window.setInterval(() => {
+        const timeActual = window.setInterval(() => {
             showTime();
         }, 1000);
         return () => {
             // Return callback to run on unmount.
-            window.clearInterval(timer);
+            window.clearInterval(timeActual);
         };
     }, []);
 
@@ -41,6 +41,9 @@ export default function Timer() {
     };
     const pauseTimer = () => {
         setPlay(false);
+    };
+    const reloadTimer = () => {
+        setTimer(0);
     };
 
     const showTime = () => {
@@ -56,17 +59,33 @@ export default function Timer() {
 
     return (
         <div className="row mt-4">
-            <div
-                className={`timer
-                    ${play ? "working" : "stop"}
-                    `}
-            >
-                <div className="timer-icon icon red">
-                    {play ? (
-                        <FaPause onClick={pauseTimer} />
-                    ) : (
-                        <FaPlay onClick={startTimer} />
-                    )}
+            <div className={`timer ${play ? "working" : "stop"}`}>
+                <div className="timer-menu">
+                    <input type="checkbox" id="toggle" />
+                    <label id="show-menu" htmlFor="toggle">
+                        <div className="btn-menu">
+                            <FaCog className="menuBtn animation" />
+                            <FaTimes className="closeBtn" />
+                        </div>
+                        <div className="btn-menu">
+                            <FaPlay
+                                onClick={startTimer}
+                                className="icon-menu"
+                            />
+                        </div>
+                        <div className="btn-menu">
+                            <FaPause
+                                onClick={pauseTimer}
+                                className="icon-menu"
+                            />
+                        </div>
+                        <div className="btn-menu">
+                            <FaRedoAlt
+                                onClick={reloadTimer}
+                                className="icon-menu"
+                            />
+                        </div>
+                    </label>
                 </div>
                 <h1 className="timer-title">{timer}</h1>
             </div>
