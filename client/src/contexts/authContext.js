@@ -18,7 +18,6 @@ export default function AuthContextProvider({ children }) {
 
     const login = useCallback(function () {
         window.localStorage.setItem(MY_AUTH_APP, true);
-        window.localStorage.removeItem("ok");
         setIsAuthenticated(true);
     }, []);
 

@@ -1,7 +1,7 @@
-import axios from "axios";
-import { API_URL_AZURE_DAVID } from "../utils/global";
+const axios = require("axios");
+
 //VARIABLE PARA CAMBIAR EL USO DE LA API
-const baseUrl = API_URL_AZURE_DAVID;
+const baseUrl = "https://apitimersforoempleofdf.azurewebsites.net/";
 
 //  Simple axios pre-configuration
 // Method should be a string such as "get" or "post". Others have not been tested and are recommended to find an alternative to this method or even axios
@@ -9,7 +9,7 @@ const baseUrl = API_URL_AZURE_DAVID;
 // Data is the payload included in the message, so far we've only used json objects such as {variableName: variableValue, variable2: variable2Value}
 // Params are optional additional information sent through the url such as ?variableName=variableValue. DO NOT HARDCODE INTO THE URL (axios doesn't like it and is most likely not going to work), put them in a JSON object like data. Additionally, don't put sensitive information in params as it can be read by potential attackers
 
-export default async function networkRequest(method, endPoint, data, params) {
+const networkRequest = async (method, endPoint, data, params) => {
     const url = baseUrl + endPoint;
     //Authentication token is set globaly for all axios calls in LoginScreen and RegisterScreen after succesfuly retrieving a token
     const headers = {
@@ -46,4 +46,6 @@ export default async function networkRequest(method, endPoint, data, params) {
         }
         throw error;
     }
-}
+};
+
+module.exports = { networkRequest };

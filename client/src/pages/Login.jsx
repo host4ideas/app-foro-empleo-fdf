@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
-import authService from "../services/auth.service";
 
 function Login() {
     const { login } = useAuthContext();
-    const [validate] = useState(localStorage.getItem("ok"));
+
     const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
 
@@ -18,10 +17,8 @@ function Login() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        authService(user, password);
-        if (validate) {
-            login();
-        }
+
+        login();
     }
 
     return (
