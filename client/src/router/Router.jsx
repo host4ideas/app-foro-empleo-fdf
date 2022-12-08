@@ -10,6 +10,8 @@ import Login from "../pages/Login";
 import InsEmpresa from "../pages/InsEmpresa";
 import InsSala from "../pages/InsSala";
 import InsEvento from "../pages/InsEvento";
+//Layout
+import GlobalLayout from "../layouts/GlobalLayout";
 
 // Paths
 import {
