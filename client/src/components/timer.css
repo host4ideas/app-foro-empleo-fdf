@@ -94,11 +94,6 @@ input {
     -webkit-transition-delay: 0.1s;
     transition-delay: 0.1s;
 }
-.btn-menu:nth-child(4) {
-    top: 0px;
-    -webkit-transition-delay: 0.2s;
-    transition-delay: 0.2s;
-}
 
 input#toggle:checked ~ #show-menu .btn-menu:nth-child(2) {
     top: 70px;
@@ -108,12 +103,6 @@ input#toggle:checked ~ #show-menu .btn-menu:nth-child(2) {
 
 input#toggle:checked ~ #show-menu .btn-menu:nth-child(3) {
     top: 115px;
-    opacity: 1;
-    z-index: 2;
-}
-
-input#toggle:checked ~ #show-menu .btn-menu:nth-child(4) {
-    top: 160px;
     opacity: 1;
     z-index: 2;
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import "./timer.css";
-import { FaPause, FaPlay, FaRedoAlt, FaTimes, FaCog } from "react-icons/fa";
+import { FaPause, FaPlay, FaTimes, FaCog } from "react-icons/fa";
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
 
@@ -42,9 +42,6 @@ export default function Timer() {
     const pauseTimer = () => {
         setPlay(false);
     };
-    const reloadTimer = () => {
-        setTimer(0);
-    };
 
     const showTime = () => {
         var myDate = new Date();
@@ -76,12 +73,6 @@ export default function Timer() {
                         <div className="btn-menu">
                             <FaPause
                                 onClick={pauseTimer}
-                                className="icon-menu"
-                            />
-                        </div>
-                        <div className="btn-menu">
-                            <FaRedoAlt
-                                onClick={reloadTimer}
                                 className="icon-menu"
                             />
                         </div>
