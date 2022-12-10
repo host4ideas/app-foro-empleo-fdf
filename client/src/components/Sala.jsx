@@ -1,5 +1,5 @@
 import React from "react";
-import { DETALLES_SALA, PRIVATE } from "../utils/paths";
+import { DETALLES_SALA } from "../utils/paths";
 import { Link } from "react-router-dom";
 import "./sala.css";
 
@@ -8,7 +8,7 @@ export default function Salas(props) {
         <div className="container-sala">
             <Link
                 className="link-sala"
-                to={`/${PRIVATE + "/" + DETALLES_SALA}/${props.numeroSala}`}
+                to={`/${DETALLES_SALA}/${props.numeroSala}`}
             >
                 {props.nombre}
             </Link>

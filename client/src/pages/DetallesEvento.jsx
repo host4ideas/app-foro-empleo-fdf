@@ -74,7 +74,7 @@ export default function DetallesEvento() {
                 </div>
             </div>
 
-            <div className="salas-container ">
+            <div className="salas-container mt-4">
                 {localSalas.map((ele, index) => {
                     return <Sala nombre={ele} numeroSala={index} />;
                 })}

@@ -29,16 +29,16 @@ export default function Router() {
         <BrowserRouter>
             <Routes>
                 <Route index element={<DetallesEvento />} />
+                <Route
+                    path={`${DETALLES_SALA}/:idSala`}
+                    element={<DetallesSala />}
+                />
                 {/* If users are logged will be redirected to a private route */}
                 <Route path={PUBLIC} element={<PublicRoute />}>
                     <Route path={LOGIN} element={<Login />} />
                 </Route>
                 {/* Only for logged users, if not redirected to login */}
                 <Route path={PRIVATE} element={<PrivateRoute />}>
-                    <Route
-                        path={`${DETALLES_SALA}/:idSala`}
-                        element={<DetallesSala />}
-                    />
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
 
                     <Route path={INSSALAS} element={<InsSala />} />
