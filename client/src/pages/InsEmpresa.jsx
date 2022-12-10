@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { MdCancel } from "react-icons/md"
+import { AiFillPlusCircle } from "react-icons/ai"
+import './InsEmpresa.css'
 
 function InsEmpresa() {
 
@@ -37,8 +40,35 @@ function InsEmpresa() {
     }
 
     return (
-        <div style={{"marginTop":"25px"}}>
-            <form onSubmit={handleSubmit}>
+        <div className="div-company">
+
+            <div className="button-zone">
+                <div className="cancel-button">
+                    <button><MdCancel/></button>
+                </div>
+                <div className="add-button">
+                    <button><AiFillPlusCircle/></button>
+                </div>
+            </div>
+
+            <div className="add-room-zone">
+                <h6>NOMBRE DE LA EMPRESA</h6>
+                <div className="inputs-zone">
+                    <div className="name-room">
+                        <input
+                            type="text"
+                            required
+                        />
+                    </div>
+                    <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
+                        <input
+                            type="checkbox"
+                            required
+                        />
+                    </div>
+                </div>
+            </div>
+            {/* <form onSubmit={handleSubmit}>
                 <label>Introduzca nombre de la empresa:</label>
                 <input
                     type="text"
@@ -54,7 +84,7 @@ function InsEmpresa() {
                     style={{"margin":"15px"}} 
                 />
                 <button style={{"margin":"15px"}} type="submit">Insertar empresa</button>
-            </form>
+            </form> */}
         </div>
     );
 }

@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { MdCancel } from "react-icons/md"
+import { AiFillPlusCircle } from "react-icons/ai"
+import './InsSala.css'
 
 function InsSala() {
 
@@ -32,8 +35,36 @@ function InsSala() {
     }
 
     return (
-        <div style={{"marginTop":"25px"}}>
-            <form onSubmit={handleSubmit}>
+        <div className="div-rooms">
+
+            <div className="button-zone">
+                <div className="cancel-button">
+                    <button><MdCancel/></button>
+                </div>
+                <div className="add-button">
+                    <button><AiFillPlusCircle/></button>
+                </div>
+            </div>
+
+            <div className="add-room-zone">
+                <h6>NOMBRE DE LA SALA</h6>
+                <div className="inputs-zone">
+                    <div className="name-room">
+                        <input
+                            type="text"
+                            required
+                        />
+                    </div>
+                    <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
+                        <input
+                            type="checkbox"
+                            required
+                        />
+                    </div>
+                </div>
+            </div>
+            
+            {/* <form onSubmit={handleSubmit}>
                 <label>Introduzca nombre de la sala:</label>
                 <input
                     type="text"
@@ -42,7 +73,7 @@ function InsSala() {
                     style={{"margin":"15px"}} 
                 />
                 <button style={{"margin":"15px"}} type="submit">Insertar sala</button>
-            </form>
+            </form> */}
         </div>
     );
 }

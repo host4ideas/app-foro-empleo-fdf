@@ -1,0 +1,35 @@
+.tabla-tes thead tr {
+    background-color:#7753FF;
+    color:white;
+    border:1px solid #cccccc
+}
+
+.tabla-tes thead th, .tabla-tes tbody td select {
+    padding: 5px;
+}
+
+.tabla-tes tbody tr {
+    padding:20px;
+    font-weight:bold;
+    border:1px solid #cccccc
+}
+
+.tabla-tes tbody td.hora {
+    padding: 10px
+}
+
+.tabla-tes tbody tr td select {
+    padding:5px;
+    background-color:#EEEEEE;
+    outline:none;
+    border:none
+}
+
+button.extra-tes {
+    border-radius:100%;
+    color:white;
+    background-color:#7753FF;
+    border:none;
+    position:relative;
+    bottom:4px
+}

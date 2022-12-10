@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { AiOutlinePlus } from "react-icons/ai"
+import './InsTiempoEmpresaSala.css'
 
 function InsTiempoEmpresaSala() {
 
@@ -29,10 +31,7 @@ function InsTiempoEmpresaSala() {
     }
 
     useEffect(() => {
-        setTimers(JSON.parse(window.localStorage.getItem("timers")))
-        setEmpresas(JSON.parse(window.localStorage.getItem("empresas")))
-        setSalas(JSON.parse(window.localStorage.getItem("salas")))
-        setEventos(JSON.parse(window.localStorage.getItem("eventos")))
+        
     }, []);
 
     function handleSubmit(e) {
@@ -59,50 +58,44 @@ function InsTiempoEmpresaSala() {
     }
 
     return (
-        <div style={{"marginTop":"25px"}}>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Selecciona una Sala:</label>
-                    <select onChange={handleInputChangeS} required style={{"margin":"15px"}}>
-                        {
-                            salas.map((sala,index)=>{
-                                return(<option key={index} value={sala.idSala}>{sala.nombre}</option>)
-                            })
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label>Selecciona un Timer:</label>
-                    <select onChange={handleInputChangeT} required style={{"margin":"15px"}}>
-                        {
-                            timers.map((timer,index)=>{
-                                return(<option key={index} value={timer.idTemporizador}>{new Date(timer.inicio*1000).toLocaleString()}</option>)
-                            })
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label>Selecciona una Empresa:</label>
-                    <select onChange={handleInputChangeEM} required style={{"margin":"15px"}}>
-                        {
-                            empresas.map((empresa,index)=>{
-                                return(<option key={index} value={empresa.idEmpresa}>{empresa.nombreEmpresa}</option>)
-                            })
-                        }
-                    </select>
-                </div>
-                <div>
-                    <label>Selecciona un Evento:</label>
-                    <select onChange={handleInputChangeEV} required style={{"margin":"15px"}}>
-                        {
-                            eventos.map((evento,index)=>{
-                                return(<option key={index} value={evento.idEvento}>{evento.nombreEvento}</option>)
-                            })
-                        }
-                    </select>
-                </div>
-                <button style={{"margin":"15px"}} type="submit">Insertar Tiempo de Empresa para Sala</button>
-            </form>
+        <div style={{"marginTop":"10px"}}>
+            <table className="tabla-tes" width="100%">
+                <thead>
+                    <tr>
+                        <th>INICIO</th>
+                        <th>CATEGORIA</th>
+                        <th>SALA</th>
+                        <th>EMPRESA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td className="hora">9:00</td>
+                        <td>
+                            <select>
+                                <option>PAUSA</option>
+                                <option>DESCANSO</option>
+                                <option>SESION</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select>
+                                <option>SALA 1</option>
+                                <option>SALA 2</option>
+                                <option>SALA 3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select>
+                                <option>EMPRESA 1</option>
+                                <option>EMPRESA 2</option>
+                                <option>EMPRESA 3</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button className="extra-tes" type="submit"><AiOutlinePlus/></button>
         </div>
     );
 }

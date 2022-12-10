@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai"
+import './InsCategoria.css'
+
 
 function InsCategoria() {
 
@@ -42,29 +45,30 @@ function InsCategoria() {
     }
 
     return (
-        <div style={{"marginTop":"25px"}}>
+        <div className="div-category">
+            <h6>CATEGORIAS TEMPORIZADORES</h6>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Duracion en minutos</label>
-                    <input
-                        type="number"
-                        value={tiempo}
-                        onChange={handleInputChangeD}
-                        style={{"margin":"15px"}}
-                        required
-                    />
+                <div className="inputs-zone">
+                    <div className="name-input" style={{"width":"40%"}}>
+                        <label>Nombre:</label>
+                        <input
+                            type="text"
+                            value={nombre}
+                            onChange={handleInputChangeT}
+                            required
+                        />
+                    </div>
+                    <div className="minute-input">
+                        <label>Duracion (Minutos)</label>
+                        <input
+                            type="number"
+                            value={tiempo}
+                            onChange={handleInputChangeD}
+                            required
+                        />
+                    </div>
                 </div>
-                <div>
-                    <label>Introduzca nombre del evento:</label>
-                    <input
-                        type="text"
-                        value={nombre}
-                        onChange={handleInputChangeT}
-                        style={{"margin":"15px"}}
-                        required
-                    />
-                </div>
-                <button style={{"margin":"15px"}} type="submit">Insertar tiempo</button>
+                <button type="submit"><AiOutlinePlus/></button>
             </form>
         </div>
     );

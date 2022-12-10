@@ -7,6 +7,7 @@ const { Server } = require("socket.io");
 const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
 require("dotenv").config();
+const cors = require("cors");
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -57,6 +58,7 @@ if (cluster.isMaster) {
 
     const httpServer = http.createServer(app);
     app.use(compression());
+    app.use(cors());
 
     // Accept connections from another URL
     const io = new Server(httpServer, {

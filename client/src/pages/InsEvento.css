@@ -1,0 +1,146 @@
+.div-events {
+    background-color: #EEEEEE;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.div-events div.hour-zone {
+    font-size: 9px;
+    box-shadow: 10px 5px 5px #AAAAAA;
+    margin: 10px 5% 20px 5%;
+    background-color: white;
+    display: flex;
+    padding: 5%;
+}
+
+.div-events div.hour-zone div.start-hour,
+.div-events div.hour-zone div.end-hour  {
+    color: white;
+    background-color: #7753FF;
+    width: 40%;
+}
+
+.div-events div.hour-zone div.start-hour h6,
+.div-events div.hour-zone div.end-hour h6 {
+    font-size: 9px;
+    margin-top: 5px;
+}
+
+.div-events div.hour-zone div.start-hour input,
+.div-events div.hour-zone div.end-hour input {
+    margin-bottom: 5px;
+    width: 90%;
+}
+
+.div-events div.hour-zone div.calculated-hour {
+    background-color: #EEEEEE;
+    width: 20%;
+}
+
+.div-events div.hour-zone div.calculated-hour h6 {
+    font-size: 9px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+.div-events div.event-name {
+    font-size:9px;
+    box-shadow:10px 5px 5px #AAAAAA;
+    margin-top:10px;
+    margin-bottom:20px;
+    margin-left:5%;
+    background-color:white;
+    margin-right:5%;
+    padding:10px;
+}
+
+.div-events div.event-name h6 {
+    text-align: start;
+    font-size: 10px;
+    margin-bottom: 5px;
+}
+
+.div-events div.event-name div {
+    width: 100%;
+}
+
+.div-events div.event-name div input {
+    width: 100%;
+    border: none;
+    padding: 5px;
+    outline: none;
+    border-bottom: 1px solid black;
+    background-color: #EEEEEE;
+    margin-top: 5px;
+}
+
+.div-events div.company-room-show {
+    display: flex;
+    font-size:9px;
+    margin: 10px 5% 20px 5%
+}
+
+.div-events div.company-room-show {
+    display: flex;
+    font-size:9px;
+    margin: 10px 5% 20px 5%
+}
+
+.div-events div.company-room-show div.room-show,
+.div-events div.company-room-show div.company-show {
+    background-color: white;
+    width: 40%;
+    padding: 10px;
+    box-shadow: 10px 5px 5px #AAAAAA;
+}
+
+.div-events div.company-room-show div.company-show {
+    margin-left: 20%;
+}
+
+.div-events div.company-room-show div.room-show a,
+.div-events div.company-room-show div.company-show a {
+    text-decoration: none;
+    color: black;
+    font-size: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.div-events div.company-room-show div.room-show a span,
+.div-events div.company-room-show div.company-show a span {
+    color: grey;
+}
+
+.div-events div.category-zone {
+    margin: 10px 5% 20px 5%;
+    background-color: white;
+}
+
+.div-events div.organization-zone {
+    margin: 10px 5% 20px 5%;
+    background-color: white;
+    padding: 10px;
+    font-size: 9px;
+    box-shadow: 10px 5px 5px #AAAAAA;
+}
+
+.div-events div.organization-zone h6 {
+    text-align: start;
+    font-size: 10px;
+    margin-bottom: 5px;
+}
+
+.div-events button.button-create {
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 100px;
+    margin: 20px;
+    padding: 10px;
+    width: 40%;
+    background-color: #7753FF;
+    border: none;
+    color: white;
+    box-shadow: 2px 4px 4px #AAAAAA;
+}
