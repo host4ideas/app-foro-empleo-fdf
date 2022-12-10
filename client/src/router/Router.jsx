@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import InsEmpresa from "../pages/InsEmpresa";
 import InsSala from "../pages/InsSala";
 import InsEvento from "../pages/InsEvento";
+
 import DemoPushNotification from "../pages/DemoPushNotification";
 
 // Paths
@@ -29,6 +30,10 @@ export default function Router() {
             <Routes>
                 <Route index element={<DetallesEvento />} />
                 <Route
+                    path={`${DETALLES_SALA}/:idSala`}
+                    element={<DetallesSala />}
+                />
+                <Route
                     path="notification-test"
                     element={<DemoPushNotification />}
                 />
@@ -38,10 +43,6 @@ export default function Router() {
                 </Route>
                 {/* Only for logged users, if not redirected to login */}
                 <Route path={PRIVATE} element={<PrivateRoute />}>
-                    <Route
-                        path={`${DETALLES_SALA}/:idSala`}
-                        element={<DetallesSala />}
-                    />
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
 
                     <Route path={INSSALAS} element={<InsSala />} />

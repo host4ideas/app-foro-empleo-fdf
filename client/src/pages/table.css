@@ -1,0 +1,39 @@
+.table-container {
+    width: 95%;
+    margin: auto;
+}
+
+.table-header {
+    background-color: #726eff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 40px;
+}
+.table-header h2 {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+}
+.table-body {
+    overflow-y: scroll;
+    height: 160px;
+}
+
+.table-row {
+    border: solid 1px #d2d2d2ed;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 6px;
+    height: 40px;
+}
+.table-row h3 {
+    font-size: 15px;
+    font-weight: bold;
+    width: 100%;
+}
+.working {
+    background-color: #adff6e;
+}
