@@ -9,7 +9,7 @@ import './Login.css'
 
 function Login() {
     const { login } = useAuthContext();
-    const [validate] = useState(localStorage.getItem("ok"));
+
     const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
 
