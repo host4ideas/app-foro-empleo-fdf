@@ -6,10 +6,10 @@ const compression = require("compression");
 const { Server } = require("socket.io");
 const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
-require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
+require("dotenv").config();
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -17,15 +17,12 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const { networkRequest } = require("./services/network_request.service.js");
 const axios = require("axios");
-
 // Cluster
 const cluster = require("cluster");
 const http = require("http");
 const numCPUs = require("os").cpus().length;
 const { setupMaster, setupWorker } = require("@socket.io/sticky");
 const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
-// Push notifications
-const webPush = require("web-push");
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
@@ -55,13 +52,6 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} started`);
 
-    // Push notifications
-    webPush.setVapidDetails(
-        "http://localhost:3000",
-        process.env.VAPID_PUBLIC_KEY,
-        process.env.VAPID_PRIVATE_KEY
-    );
-
     const API_URL =
         process.env.NODE_ENV === "production"
             ? process.env.API_TIMERS_PROD
@@ -72,6 +62,7 @@ if (cluster.isMaster) {
 
     const httpServer = http.createServer(app);
     app.use(compression());
+    // Cors
     app.use(function (req, res, next) {
         const allowedDomains = [
             "http://localhost:3001",
@@ -81,14 +72,12 @@ if (cluster.isMaster) {
         if (allowedDomains.indexOf(origin) > -1) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
-
         res.setHeader("Access-Control-Allow-Methods", "GET, POST");
         res.setHeader(
             "Access-Control-Allow-Headers",
             "X-Requested-With,content-type, Accept"
         );
         res.setHeader("Access-Control-Allow-Credentials", true);
-
         next();
     });
 
@@ -102,7 +91,7 @@ if (cluster.isMaster) {
     /**
      * NAMESPACES
      */
-    const adminNsp = io.of("/admin"); // the "client" namespace
+    const adminNsp = io.of("/admin"); // the "admin" namespace
     const client = io.of("/client"); // the "client" namespace
 
     /**
@@ -118,8 +107,7 @@ if (cluster.isMaster) {
      * AUTH SERVER CONFIG
      */
     const sessionOptions = {
-        // process.env.SESSION_SECRET
-        secret: "somevalue",
+        secret: process.env.SESSION_SECRET,
         cookie: { maxAge: 1 * 24 * 60 * 60 * 1000 }, // 1 day
         resave: false,
         saveUninitialized: false,
@@ -131,7 +119,6 @@ if (cluster.isMaster) {
     }
 
     const sessionMiddleware = session(sessionOptions);
-    // app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(sessionMiddleware);
     app.use(passport.initialize());
@@ -155,6 +142,17 @@ if (cluster.isMaster) {
         return response.json(); // parses JSON response into native JavaScript objects
     }
 
+    function getApiToken(username, password) {
+        return new Promise((res, rej) => {
+            postData(
+                "https://apitimersforoempleofdf.azurewebsites.net/Auth/Login",
+                { userName: username, password: password }
+            ).then((data) => {
+                res(data.response); // JSON data parsed by `data.json()` call
+            });
+        });
+    }
+
     passport.use(
         new LocalStrategy(
             { usernameField: "username", passwordField: "password" },
@@ -166,24 +164,11 @@ if (cluster.isMaster) {
                             id: uuidv4(),
                             username: username,
                         };
-
-                        // Aquí metemos el service auth
-                        var data = {
-                            userName: username,
-                            password: password,
-                        };
-                        networkRequest("post", "auth/login", data).then(
-                            (response) => {
-                                const token = response.data.response;
-                                axios.default.headers.common = {
-                                    Authorization: "Bearer " + token,
-                                };
-                                console.log(token);
-                                USER.token = token;
-                                USER.role = "admin";
-                                return done(null, USER);
-                            }
-                        );
+                        getApiToken(username, password).then((token) => {
+                            USER.token = token;
+                            USER.role = "admin";
+                            return done(null, USER);
+                        });
                     } catch (error) {
                         console.log(error);
                         return done(null, false);
@@ -202,7 +187,6 @@ if (cluster.isMaster) {
             console.log(`user is authenticated, session is ${req.session.id}`);
             res.status(200).send(true);
         } else {
-            console.log("unknown user");
             res.status(401).send(false);
         }
     });
@@ -212,9 +196,9 @@ if (cluster.isMaster) {
         passport.authenticate("local"),
         function (req, res, next) {
             if (req.user) {
-                res.status(201).json(req.user); // Mandamos al user su info
+                res.json(req.user); // Mandamos al user su info
             } else {
-                res.status(401).send({ message: "forbidden" });
+                res.status(401).send(false);
             }
         }
     );
@@ -299,20 +283,17 @@ if (cluster.isMaster) {
     /**
      * SOCKET IO EVENTS
      */
-    // Admin conneciton events
+    // Admin users
     adminNsp.on("connection", (socket) => {
-        // Saving the session if the user has authenticated
         const session = socket.request.session;
-        if (session) {
-            session.socketId = socket.id;
-            session.save();
-            console.table({
-                "Socket ID": socket.id,
-                Namespace: socket.nsp.name,
-                "Session ID": session.id,
-                "Total Clients": io.sockets.sockets.size,
-            });
-        }
+        session.socketId = socket.id;
+        session.save();
+        console.table({
+            "Socket ID": socket.id,
+            Namespace: socket.nsp.name,
+            "Session ID": session.id,
+            "Total Clients": io.sockets.sockets.size,
+        });
 
         adminNsp.emit("play timer", parseInt(timer.time));
         client.emit("play timer", parseInt(timer.time) + 1);
@@ -347,51 +328,5 @@ if (cluster.isMaster) {
         socket.on("whoami", (cb) => {
             cb(socket.request.user ? socket.request.user.username : "");
         });
-    });
-
-    /**
-     * PUSH NOTIFICATIONS
-     */
-    app.get(`/vapidPublicKey`, (req, res) => {
-        console.log(process.env.VAPID_PUBLIC_KEY);
-        res.send(process.env.VAPID_PUBLIC_KEY);
-    });
-
-    app.post(`/sendNotification`, (req, res) => {
-        const subscription = req.body.subscription;
-        const payload = req.body.payload;
-        const options = {
-            TTL: req.body.ttl,
-        };
-
-        setTimeout(() => {
-            webPush
-                .sendNotification(subscription, payload, options)
-                .then(() => {
-                    res.sendStatus(201);
-                })
-                .catch((error) => {
-                    console.log(error);
-                    res.sendStatus(500);
-                });
-        }, req.body.delay * 1000);
-    });
-
-    app.post("/notifications/subscribe", (req, res) => {
-        const subscription = req.body;
-
-        console.log(subscription);
-
-        const payload = JSON.stringify({
-            title: "Hello!",
-            body: "It works.",
-        });
-
-        webPush
-            .sendNotification(subscription, payload)
-            .then((result) => console.log(result))
-            .catch((e) => console.log(e.stack));
-
-        res.status(200).json({ success: true });
     });
 }
