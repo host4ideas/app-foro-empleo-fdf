@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import Timer from "../components/Timer";
 import Sala from "../components/Sala";
 import { FaRegEdit, FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { INSEVENTO } from "../utils/paths";
+import { INSEVENTO, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 import "./table.css";
 import "./detallesEvento.css";
+import io from "socket.io-client";
+// Where te Socket.io server is running
+const socket = io("http://localhost:3001");
 
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
+    const [salas, setSalas] = useState([]);
 
     const localSalas = [
         "Desarrollo",
@@ -20,6 +24,12 @@ export default function DetallesEvento() {
         "Desarrollo4",
         "Desarrollo5",
     ];
+
+    const mostrarSalas = (salas) => {
+        setSalas(salas);
+    };
+
+    socket.emit("get salas", mostrarSalas);
 
     return (
         <div className="container text-center">
@@ -35,7 +45,7 @@ export default function DetallesEvento() {
                 </div>
                 <div className="col-4">
                     {/* ICON EDIT */}
-                    <Link to={INSEVENTO}>
+                    <Link to={PRIVATE + "/" + INSEVENTO}>
                         <div className="icon-container blue">
                             <FaRegEdit className="icon" />
                         </div>

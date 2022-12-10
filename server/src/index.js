@@ -6,10 +6,10 @@ const compression = require("compression");
 const { Server } = require("socket.io");
 const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
-const { v4: uuidv4 } = require("uuid");
 const fetch = (...args) =>
     import("node-fetch").then(({ default: fetch }) => fetch(...args));
 require("dotenv").config();
+const cors = require("cors");
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
@@ -61,25 +61,10 @@ if (cluster.isMaster) {
     const timer = new Timer();
 
     const httpServer = http.createServer(app);
+    // GZip request compression
     app.use(compression());
     // Cors
-    app.use(function (req, res, next) {
-        const allowedDomains = [
-            "http://localhost:3001",
-            "https://app-foro-empleo.azurewebsites.net",
-        ];
-        const origin = req.headers.origin;
-        if (allowedDomains.indexOf(origin) > -1) {
-            res.setHeader("Access-Control-Allow-Origin", origin);
-        }
-        res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-        res.setHeader(
-            "Access-Control-Allow-Headers",
-            "X-Requested-With,content-type, Accept"
-        );
-        res.setHeader("Access-Control-Allow-Credentials", true);
-        next();
-    });
+    app.use(cors({ origin: "http://localhost:3000" }));
 
     // Accept connections from another URL
     const io = new Server(httpServer, {
@@ -161,7 +146,7 @@ if (cluster.isMaster) {
                 if (username != "" && password != "") {
                     try {
                         const USER = {
-                            id: uuidv4(),
+                            id: 1,
                             username: username,
                         };
                         getApiToken(username, password).then((token) => {
@@ -180,16 +165,6 @@ if (cluster.isMaster) {
             }
         )
     );
-
-    app.get("/", (req, res) => {
-        const isAuthenticated = !!req.user;
-        if (isAuthenticated) {
-            console.log(`user is authenticated, session is ${req.session.id}`);
-            res.status(200).send(true);
-        } else {
-            res.status(401).send(false);
-        }
-    });
 
     app.post(
         "/login",
@@ -210,9 +185,10 @@ if (cluster.isMaster) {
             console.log(`forcefully closing socket ${socketId}`);
             io.of("/").sockets.get(socketId).disconnect(true);
         }
-        req.logout();
-        res.cookie("connect.sid", "", { expires: new Date() });
-        res.redirect("/");
+        req.logout(() => {
+            res.cookie("connect.sid", "", { expires: new Date() });
+            res.status(200).send();
+        });
     });
 
     /**
@@ -321,7 +297,26 @@ if (cluster.isMaster) {
         socket.on("pause timer", () => {
             timer.pause();
         });
+
+        socket.on("get salas", (cb) => {
+            fetch(url, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: "follow", // manual, *follow, error
+                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data), // body data type must match "Content-Type" header
+            });
+            response.json().then((data) => cb(data));
+        });
     });
+
+    socket.on("get temporizadores evento", (cb) => {});
 
     // All users
     io.on("connection", (socket) => {
