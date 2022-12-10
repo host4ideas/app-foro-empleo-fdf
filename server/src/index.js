@@ -6,6 +6,9 @@ const compression = require("compression");
 const { Server } = require("socket.io");
 const { Timer } = require("./lib/tiny-timer");
 const { msToSeconds } = require("./utils");
+const { v4: uuidv4 } = require("uuid");
+const fetch = (...args) =>
+    import("node-fetch").then(({ default: fetch }) => fetch(...args));
 require("dotenv").config();
 // Auth
 const session = require("express-session");
@@ -14,7 +17,6 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const { networkRequest } = require("./services/network_request.service.js");
 const axios = require("axios");
-
 // Cluster
 const cluster = require("cluster");
 const http = require("http");
@@ -60,6 +62,24 @@ if (cluster.isMaster) {
 
     const httpServer = http.createServer(app);
     app.use(compression());
+    // Cors
+    app.use(function (req, res, next) {
+        const allowedDomains = [
+            "http://localhost:3001",
+            "https://app-foro-empleo.azurewebsites.net",
+        ];
+        const origin = req.headers.origin;
+        if (allowedDomains.indexOf(origin) > -1) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "X-Requested-With,content-type, Accept"
+        );
+        res.setHeader("Access-Control-Allow-Credentials", true);
+        next();
+    });
 
     // Accept connections from another URL
     const io = new Server(httpServer, {
@@ -71,7 +91,7 @@ if (cluster.isMaster) {
     /**
      * NAMESPACES
      */
-    const adminNsp = io.of("/admin"); // the "client" namespace
+    const adminNsp = io.of("/admin"); // the "admin" namespace
     const client = io.of("/client"); // the "client" namespace
 
     /**
@@ -87,8 +107,7 @@ if (cluster.isMaster) {
      * AUTH SERVER CONFIG
      */
     const sessionOptions = {
-        // process.env.SESSION_SECRET
-        secret: "somevalue",
+        secret: process.env.SESSION_SECRET,
         cookie: { maxAge: 1 * 24 * 60 * 60 * 1000 }, // 1 day
         resave: false,
         saveUninitialized: false,
@@ -123,40 +142,39 @@ if (cluster.isMaster) {
         return response.json(); // parses JSON response into native JavaScript objects
     }
 
+    function getApiToken(username, password) {
+        return new Promise((res, rej) => {
+            postData(
+                "https://apitimersforoempleofdf.azurewebsites.net/Auth/Login",
+                { userName: username, password: password }
+            ).then((data) => {
+                res(data.response); // JSON data parsed by `data.json()` call
+            });
+        });
+    }
+
     passport.use(
         new LocalStrategy(
             { usernameField: "username", passwordField: "password" },
             (username, password, done) => {
+                console.log(username, password);
                 if (username != "" && password != "") {
                     try {
                         const USER = {
                             id: uuidv4(),
                             username: username,
                         };
-
-                        // Aquí metemos el service auth
-                        var data = {
-                            userName: username,
-                            password: password,
-                        };
-                        networkRequest("post", "auth/login", data).then(
-                            (response) => {
-                                const token = response.data.response;
-                                axios.default.headers.common = {
-                                    Authorization: "Bearer " + token,
-                                };
-                                console.log(token);
-                                USER.token = token;
-                                USER.role = "admin";
-                                return done(null, USER);
-                            }
-                        );
+                        getApiToken(username, password).then((token) => {
+                            USER.token = token;
+                            USER.role = "admin";
+                            return done(null, USER);
+                        });
                     } catch (error) {
-                        console.log("wrong credentials");
+                        console.log(error);
                         return done(null, false);
                     }
                 } else {
-                    console.log("invalid credentials");
+                    console.log(error);
                     return done(null, false);
                 }
             }
@@ -167,10 +185,10 @@ if (cluster.isMaster) {
         const isAuthenticated = !!req.user;
         if (isAuthenticated) {
             console.log(`user is authenticated, session is ${req.session.id}`);
+            res.status(200).send(true);
         } else {
-            console.log("unknown user");
+            res.status(401).send(false);
         }
-        res.send(isAuthenticated ? true : false);
     });
 
     app.post(
@@ -180,10 +198,7 @@ if (cluster.isMaster) {
             if (req.user) {
                 res.json(req.user); // Mandamos al user su info
             } else {
-                // handle errors here, decide what you want to send back to your front end
-                // so that it knows the user wasn't found
-                res.statusCode = 503;
-                res.send({ message: "forbidden" });
+                res.status(401).send(false);
             }
         }
     );
@@ -270,6 +285,16 @@ if (cluster.isMaster) {
      */
     // Admin users
     adminNsp.on("connection", (socket) => {
+        const session = socket.request.session;
+        session.socketId = socket.id;
+        session.save();
+        console.table({
+            "Socket ID": socket.id,
+            Namespace: socket.nsp.name,
+            "Session ID": session.id,
+            "Total Clients": io.sockets.sockets.size,
+        });
+
         adminNsp.emit("play timer", parseInt(timer.time));
         client.emit("play timer", parseInt(timer.time) + 1);
 
@@ -302,16 +327,6 @@ if (cluster.isMaster) {
     io.on("connection", (socket) => {
         socket.on("whoami", (cb) => {
             cb(socket.request.user ? socket.request.user.username : "");
-        });
-
-        const session = socket.request.session;
-        session.socketId = socket.id;
-        session.save();
-        console.table({
-            "Socket ID": socket.id,
-            Namespace: socket.nsp.name,
-            "Session ID": session.id,
-            "Total Clients": io.sockets.sockets.size,
         });
     });
 }
