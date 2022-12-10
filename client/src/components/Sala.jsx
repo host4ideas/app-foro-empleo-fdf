@@ -8,7 +8,7 @@ export default function Salas(props) {
         <div className="container-sala">
             <Link
                 className="link-sala"
-                to={`/${DETALLES_SALA}/${props.numeroSala}`}
+                to={`/${DETALLES_SALA}/${props.nombre}`}
             >
                 {props.nombre}
             </Link>
