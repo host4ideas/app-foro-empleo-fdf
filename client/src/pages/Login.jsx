@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
-import authService from "../services/auth.service";
 import axios from "axios";
 import { AiOutlineUser, AiOutlineArrowRight} from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md"
