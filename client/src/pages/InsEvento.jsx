@@ -10,7 +10,7 @@ function InsEvento() {
     }
 
     return (
-        <div className="div-events">
+        <div className="div-events text-center">
 
 
             <div className="hour-zone">

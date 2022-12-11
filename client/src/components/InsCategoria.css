@@ -41,5 +41,6 @@
     border:none;
     position:relative;
     left:45%;
-    top:17.5px
+    top:17.5px;
+    padding: 2px 4px 2px 4px;
 }
