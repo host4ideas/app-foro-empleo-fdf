@@ -23,7 +23,7 @@ export default function DetallesEvento() {
     return (
         <div className="container text-center">
             <div className="row justify-content-between">
-                <div className="col-4">
+                <div className="col-2">
                     {/* ICON LOGOUT */}
                     <div className="icon-container red">
                         <FaSignOutAlt
@@ -32,7 +32,7 @@ export default function DetallesEvento() {
                         />
                     </div>
                 </div>
-                <div className="col-4">
+                <div className="col-2">
                     {/* ICON EDIT */}
                     <Link to={PRIVATE + "/" + INSEVENTO}>
                         <div className="icon-container blue">

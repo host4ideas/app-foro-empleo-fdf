@@ -5,13 +5,11 @@ import "./sala.css";
 
 export default function Salas(props) {
     return (
-        <div className="container-sala">
-            <Link
-                className="link-sala"
-                to={`/${DETALLES_SALA}/${props.nombre}`}
-            >
-                {props.nombre}
-            </Link>
-        </div>
+        <Link
+            className="container-sala"
+            to={`/${DETALLES_SALA}/${props.nombre}`}
+        >
+            <span className="link-sala">{props.nombre}</span>
+        </Link>
     );
 }
