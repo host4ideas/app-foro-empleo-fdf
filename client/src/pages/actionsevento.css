@@ -1,0 +1,44 @@
+.container-text {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+
+    left: 0;
+    right: 0;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    position: absolute;
+    width: 60%;
+    z-index: 1;
+}
+
+.card-event {
+    height: 80px;
+    width: 100%;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: white;
+    box-shadow: 0px 3px 6px 0px rgb(0 0 0 / 50%);
+    z-index: 2;
+}
+.card-event h1 {
+    font-size: 20px;
+    color: #726eff;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.bottom {
+    position: absolute;
+    bottom: 40px;
+}
+
+input {
+    display: block;
+}

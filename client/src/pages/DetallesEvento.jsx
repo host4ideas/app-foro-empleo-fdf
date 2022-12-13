@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import Timer from "../components/Timer";
 import Sala from "../components/Sala";
-import { FaRegEdit, FaSignOutAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { INSEVENTO, PRIVATE } from "../utils/paths";
+import { FaSignOutAlt, FaArrowLeft } from "react-icons/fa";
 import { useAuthContext } from "../contexts/authContext";
+import io from "socket.io-client";
 import "./table.css";
 import "./detallesEvento.css";
-import io from "socket.io-client";
+import { Link } from "react-router-dom";
+
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
 
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
+    const { isAuthenticated } = useAuthContext();
     const [salas, setSalas] = useState(["Prueba"]);
 
     const mostrarSalas = (salas) => {
@@ -22,25 +23,40 @@ export default function DetallesEvento() {
 
     return (
         <div className="container text-center">
-            <div className="row justify-content-between">
-                <div className="col-4">
-                    {/* ICON LOGOUT */}
-                    <div className="icon-container red">
-                        <FaSignOutAlt
-                            className="icon"
-                            onClick={() => logout()}
-                        />
+            <div className="d-flex flex-row ">
+                <div>
+                    <div className="icon-container blue">
+                        <Link to="/">
+                            <FaArrowLeft className="icon" />
+                        </Link>
                     </div>
                 </div>
-                <div className="col-4">
-                    {/* ICON EDIT */}
+            </div>
+
+            {
+                //COMPROBAR SI ESTA LOGEADO
+                isAuthenticated && (
+                    <div className="row justify-content-between">
+                        <div className="col-4">
+                            {/* ICON LOGOUT */}
+                            <div className="icon-container red">
+                                <FaSignOutAlt
+                                    className="icon"
+                                    onClick={() => logout()}
+                                />
+                            </div>
+                        </div>
+                        {/* ICON EDIT */}
+                        {/* <div className="col-4">
                     <div className="icon-container blue">
                         <Link to={PRIVATE + "/" + INSEVENTO}>
                             <FaRegEdit className="icon" />
                         </Link>
                     </div>
-                </div>
-            </div>
+                </div> */}
+                    </div>
+                )
+            }
 
             <Timer />
 
