@@ -7,6 +7,7 @@ import io from "socket.io-client";
 import "./table.css";
 import "./detallesEvento.css";
 import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
@@ -15,6 +16,7 @@ export default function DetallesEvento() {
     const { logout } = useAuthContext();
     const { isAuthenticated } = useAuthContext();
     const [salas, setSalas] = useState(["Prueba"]);
+    let { nombreevento } = useParams();
 
     const mostrarSalas = (salas) => {
         setSalas(salas);
@@ -46,17 +48,10 @@ export default function DetallesEvento() {
                                 />
                             </div>
                         </div>
-                        {/* ICON EDIT */}
-                        {/* <div className="col-4">
-                    <div className="icon-container blue">
-                        <Link to={PRIVATE + "/" + INSEVENTO}>
-                            <FaRegEdit className="icon" />
-                        </Link>
-                    </div>
-                </div> */}
                     </div>
                 )
             }
+            <h4>{nombreevento}</h4>
 
             <Timer />
 
