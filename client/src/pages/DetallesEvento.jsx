@@ -7,9 +7,7 @@ import { INSEVENTO, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 import "./table.css";
 import "./detallesEvento.css";
-import io from "socket.io-client";
-// Where te Socket.io server is running
-const socket = io("http://localhost:3001");
+// Where the Socket.io server is running
 
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
@@ -28,8 +26,6 @@ export default function DetallesEvento() {
     const mostrarSalas = (salas) => {
         setSalas(salas);
     };
-
-    socket.emit("get salas", mostrarSalas);
 
     return (
         <div className="container text-center">
@@ -86,7 +82,7 @@ export default function DetallesEvento() {
 
             <div className="salas-container mt-4">
                 {localSalas.map((ele, index) => {
-                    return <Sala nombre={ele} numeroSala={index} />;
+                    return <Sala key={index} nombre={ele} numeroSala={index} />;
                 })}
             </div>
         </div>

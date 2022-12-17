@@ -1,6 +1,6 @@
 // React
 import React from "react";
-// Auth context
+// Contexts
 import AuthContextProvider from "./contexts/authContext";
 // Router
 import Router from "./router/Router";
@@ -15,7 +15,7 @@ export default function App() {
     const notify = () => toast("Wow so easy!");
     return (
         <div className="App">
-            <button onClick={notify}>Notify!</button>
+            {/* <button onClick={notify}>Notify!</button> */}
             <ToastContainer />
             <InstallPWA />
             <AuthContextProvider>

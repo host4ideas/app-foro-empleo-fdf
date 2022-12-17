@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
 import "./timer.css";
 import { FaPause, FaPlay, FaTimes, FaCog } from "react-icons/fa";
-// Where te Socket.io server is running
-const socket = io("http://localhost:3001");
+// import { useSocketContext } from "../contexts/socketContext";
+import { useAuthContext } from "../contexts/authContext";
+import io from "socket.io-client";
 
 export default function Timer() {
     const [timer, setTimer] = useState(0);
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
+    const [socketAdmin, setSocketAdmin] = useState();
 
-    socket.on("play timer", function (timer) {
-        setTimer(timer);
-    });
+    // const { clientSocket, adminSocket } = useSocketContext();
+    const { isAuthenticated } = useAuthContext();
 
-    useEffect(() => {
-        socket.on("connect", () => console.log(socket.id));
-        socket.on("connect_error", () => {
-            setTimeout(() => socket.connect(), 5000);
-        });
-        socket.on("play timer", function (timer) {
-            setTimer(timer);
-        });
-        socket.on("disconnect", () => console.warn("Server disconnected"));
-    }, []);
+    // if (clientSocket) {
+    //     clientSocket.on("play timer", function (timer) {
+    //         setTimer(timer);
+    //     });
+    // }
 
     //INICIO DE LA HORA ACTUAL (cada 1s se actualiza)
     useEffect(() => {
@@ -37,9 +32,24 @@ export default function Timer() {
     }, []);
 
     const startTimer = () => {
+        const socket = io("/admin");
+        setSocketAdmin(socket);
+
+        socket.on("connect", () => {
+            console.log("admin connection");
+            socket.emit("whoami", (user) => {
+                console.log("admin whoami");
+                console.log(user);
+            });
+        });
+
         setPlay(true);
     };
     const pauseTimer = () => {
+        socketAdmin.emit("whoami", (user) => {
+            console.log("admin whoami");
+            console.log(user);
+        });
         setPlay(false);
     };
 
@@ -60,22 +70,26 @@ export default function Timer() {
                 <div className="timer-menu">
                     <input type="checkbox" id="toggle" />
                     <label id="show-menu" htmlFor="toggle">
-                        <div className="btn-menu">
-                            <FaCog className="menuBtn animation" />
-                            <FaTimes className="closeBtn" />
-                        </div>
-                        <div className="btn-menu">
-                            <FaPlay
-                                onClick={startTimer}
-                                className="icon-menu"
-                            />
-                        </div>
-                        <div className="btn-menu">
-                            <FaPause
-                                onClick={pauseTimer}
-                                className="icon-menu"
-                            />
-                        </div>
+                        {isAuthenticated ? (
+                            <>
+                                <div className="btn-menu">
+                                    <FaCog className="menuBtn animation" />
+                                    <FaTimes className="closeBtn" />
+                                </div>
+                                <div className="btn-menu">
+                                    <FaPlay
+                                        onClick={startTimer}
+                                        className="icon-menu"
+                                    />
+                                </div>
+                                <div className="btn-menu">
+                                    <FaPause
+                                        onClick={pauseTimer}
+                                        className="icon-menu"
+                                    />
+                                </div>
+                            </>
+                        ) : null}
                     </label>
                 </div>
                 <h1 className="timer-title">{timer}</h1>

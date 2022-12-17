@@ -44,7 +44,6 @@ export default function Router() {
                 {/* Only for logged users, if not redirected to login */}
                 <Route path={PRIVATE} element={<PrivateRoute />}>
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
-
                     <Route path={INSSALAS} element={<InsSala />} />
                     <Route path={INSEVENTO} element={<InsEvento />} />
                 </Route>
