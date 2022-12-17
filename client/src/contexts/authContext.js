@@ -97,8 +97,8 @@ export default function AuthContextProvider({ children }) {
     }, []);
 
     useEffect(() => {
-        // checkLoggedUser();
-    }, [isAuthenticated, checkLoggedUser]);
+        checkLoggedUser();
+    }, [checkLoggedUser]);
 
     // Initialize clientSocket once
     useEffect(() => {
