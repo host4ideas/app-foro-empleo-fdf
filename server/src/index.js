@@ -68,7 +68,7 @@ app.post("/logout", (req, res) => {
     });
 });
 
-require("./init/bootAdminNsp")(io, sessionMiddleware);
+require("./init/bootTimerAdminNsp")(io, sessionMiddleware);
 
 io.on("connect", (socket) => {
     console.log(

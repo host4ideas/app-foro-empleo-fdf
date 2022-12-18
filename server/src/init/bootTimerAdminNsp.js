@@ -7,15 +7,7 @@ module.exports = function (io, sessionMiddleware) {
      * TIMER FUNCTIONALITY
      */
     const timer = new Timer();
-
-    function playTimer({ resume = false, start = false, duration = 0 } = {}) {
-        if (resume) {
-            timer.resume();
-        } else if (start) {
-            timer.stop();
-            timer.start(duration);
-        }
-    }
+    let initialTime = 0;
 
     const adminNsp = io.of("/admin"); // the "admin" namespace
 
@@ -48,32 +40,34 @@ module.exports = function (io, sessionMiddleware) {
         });
 
         socket.on("initial time", (time) => {
-            // Parse to seconds
-            initialTime = parseInt(time) * 1000;
-            adminNsp.emit("initial timer", parseInt(time));
-            io.emit("initial timer", parseInt(time) + 1);
+            timer.stop();
+            initialTime = parseInt(time);
+            io.emit("initial time", time);
         });
 
         socket.on("start timer", () => {
-            playTimer({ start: true, duration: initialTime });
-        });
-
-        socket.on("stop timer", () => {
             timer.stop();
-            io.emit("play timer", 0);
-            adminNsp.emit("play timer", 0);
+            timer.start(initialTime);
+            io.emit("start timer", timer.time);
         });
 
         socket.on("resume timer", () => {
             timer.resume();
+            io.emit("resume", timer.time);
         });
 
         socket.on("pause timer", () => {
             timer.pause();
+            io.emit("pause timer");
         });
 
-        socket.on("get salas", (cb) => {
-            response.json().then((data) => cb(data));
+        socket.on("stop timer", () => {
+            timer.stop();
+            io.emit("stop timer");
         });
+    });
+
+    io.on("check timer", (cb) => {
+        cb(timer.time, timer.status);
     });
 };

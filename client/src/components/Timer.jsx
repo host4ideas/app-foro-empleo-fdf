@@ -1,68 +1,85 @@
+// React
 import React, { useState, useEffect } from "react";
-import "./timer.css";
 import { FaPause, FaPlay, FaTimes, FaCog } from "react-icons/fa";
-// import { useSocketContext } from "../contexts/socketContext";
+// Contexts
 import { useAuthContext } from "../contexts/authContext";
-import io from "socket.io-client";
+// Timer
+import timerCounter from "../lib/tiny-timer";
+import { msToMinutesSecondsAndHours } from "../utils/utils";
+// Styles
+import "./timer.css";
 
 export default function Timer() {
     const [timer, setTimer] = useState(0);
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
-    const [socketAdmin, setSocketAdmin] = useState();
+    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
-    // const { clientSocket, adminSocket } = useSocketContext();
-    const { isAuthenticated } = useAuthContext();
+    const synchronizeTimer = (time) => {
+        timerCounter.stop();
+        timerCounter.start(time);
+    };
 
-    // if (clientSocket) {
-    //     clientSocket.on("play timer", function (timer) {
-    //         setTimer(timer);
-    //     });
-    // }
-
-    //INICIO DE LA HORA ACTUAL (cada 1s se actualiza)
+    // Client timer functionality
     useEffect(() => {
-        const timeActual = window.setInterval(() => {
-            showTime();
-        }, 1000);
-        return () => {
-            // Return callback to run on unmount.
-            window.clearInterval(timeActual);
-        };
-    }, []);
-
-    const startTimer = () => {
-        const socket = io("/admin");
-        setSocketAdmin(socket);
-
-        socket.on("connect", () => {
-            console.log("admin connection");
-            socket.emit("whoami", (user) => {
-                console.log("admin whoami");
-                console.log(user);
+        if (clientSocket) {
+            // Initialize timer (check if the server's timer is running)
+            clientSocket.emit("check timer", (time, status) => {
+                if (status === "running") {
+                    synchronizeTimer(time);
+                }
             });
-        });
+            clientSocket.on("initial time", function (time) {
+                timerCounter.stop();
+                setTimer(msToMinutesSecondsAndHours(time));
+            });
+            clientSocket.on("start timer", function (time) {
+                synchronizeTimer(time);
+            });
+            clientSocket.on("resume timer", function (time) {
+                synchronizeTimer(time);
+            });
+            clientSocket.on("pause timer", function () {
+                timerCounter.pause();
+            });
+            clientSocket.on("stop timer", function () {
+                timerCounter.stop();
+                setTimer("00:00:00");
+            });
+        }
+    }, [clientSocket]);
+
+    // Admin timer functionality
+    const startTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("resume timer");
+        }
 
         setPlay(true);
     };
+
     const pauseTimer = () => {
-        socketAdmin.emit("whoami", (user) => {
-            console.log("admin whoami");
-            console.log(user);
-        });
+        if (adminSocket) {
+            adminSocket.emit("pause timer");
+        }
         setPlay(false);
     };
 
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
-        if (hours < 10) hours = 0 + hours;
-        if (minutes < 10) minutes = "0" + minutes;
-        if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
-    };
+    timerCounter.on("tick", () =>
+        setTimer(msToMinutesSecondsAndHours(timerCounter.time))
+    );
+
+    // Executed on mount
+    useEffect(() => {
+        // Initialize actual hour (updates every 1s)
+        const timeActual = setInterval(() => {
+            setActualTime(msToMinutesSecondsAndHours(new Date()));
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount.
+            clearInterval(timeActual);
+        };
+    }, []);
 
     return (
         <div className="row mt-4">
