@@ -84,6 +84,9 @@ self.addEventListener("push", function (event) {
         // as the body.
         self.registration.showNotification("ServiceWorker Cookbook", {
             body: payload,
+            icon: "",
+            vibrate: [200, 100, 200, 100, 200, 100, 200],
+            tag: "server-notification",
         })
     );
 });
