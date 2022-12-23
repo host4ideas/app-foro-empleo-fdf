@@ -47,6 +47,7 @@ export default function Router() {
                 {/* If users are logged will be redirected to a private route */}
                 <Route path={PUBLIC} element={<PublicRoute />}>
                     <Route path={LOGIN} element={<Login />} />
+                    
                 </Route>
                 {/* Only for logged users, if not redirected to login */}
                 <Route path={PRIVATE} element={<PrivateRoute />}>

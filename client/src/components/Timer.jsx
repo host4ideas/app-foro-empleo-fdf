@@ -58,7 +58,7 @@ export default function Timer() {
         <div className="row mt-4">
             <div className={`timer ${play ? "working" : "stop"}`}>
                 <div className="timer-menu">
-                    <input type="checkbox" id="toggle" />
+                    <input className="toggle-check" type="checkbox" id="toggle" />
                     <label id="show-menu" htmlFor="toggle">
                         <div className="btn-menu">
                             <FaCog className="menuBtn animation" />

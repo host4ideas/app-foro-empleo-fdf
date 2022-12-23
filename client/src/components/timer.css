@@ -35,7 +35,7 @@
 }
 
 /*MENU TOGGLE*/
-input {
+input.toggle-check {
     position: absolute;
     display: none;
 }
@@ -95,13 +95,13 @@ input {
     transition-delay: 0.1s;
 }
 
-input#toggle:checked ~ #show-menu .btn-menu:nth-child(2) {
+input.toggle-check#toggle:checked ~ #show-menu .btn-menu:nth-child(2) {
     top: 70px;
     opacity: 1;
     z-index: 2;
 }
 
-input#toggle:checked ~ #show-menu .btn-menu:nth-child(3) {
+input.toggle-check#toggle:checked ~ #show-menu .btn-menu:nth-child(3) {
     top: 115px;
     opacity: 1;
     z-index: 2;
@@ -119,12 +119,12 @@ input#toggle:checked ~ #show-menu .btn-menu:nth-child(3) {
     color: red;
 }
 
-input#toggle:checked ~ #show-menu .btn-menu .menuBtn {
+input.toggle-check#toggle:checked ~ #show-menu .btn-menu .menuBtn {
     transform: translateY(-50px);
     opacity: 0;
 }
 
-input#toggle:checked ~ #show-menu .btn-menu .closeBtn {
+input.toggle-check#toggle:checked ~ #show-menu .btn-menu .closeBtn {
     transform: translateY(0px);
     opacity: 1;
 }

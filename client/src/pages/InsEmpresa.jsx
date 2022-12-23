@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MdCancel } from "react-icons/md"
 import { AiFillPlusCircle } from "react-icons/ai"
+import { NavLink } from "react-router-dom";
 import './InsEmpresa.css'
 
 function InsEmpresa() {
@@ -44,7 +45,7 @@ function InsEmpresa() {
 
             <div className="button-zone">
                 <div className="cancel-button">
-                    <button><MdCancel/></button>
+                    <NavLink to="/public/insevento"><button><MdCancel/></button></NavLink>
                 </div>
                 <div className="add-button">
                     <button><AiFillPlusCircle/></button>
