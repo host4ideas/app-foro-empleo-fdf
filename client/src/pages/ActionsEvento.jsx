@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 import "./actionsevento.css";
 import {
     DETALLES_EVENTO,
     INSEVENTO,
     LOGIN,
-    PUBLIC,
     PRIVATE,
+    PUBLIC,
 } from "../utils/paths";
 
 export default function ActionsEvento() {
@@ -130,7 +129,7 @@ export default function ActionsEvento() {
                         <div className="card-title">
                             <h1>Nuevo evento</h1>
                             <Link
-                                to={PRIVATE + "/" + INSEVENTO}
+                                to={INSEVENTO}
                                 className="icon-container blue"
                             >
                                 <FaPlus className="icon" />
