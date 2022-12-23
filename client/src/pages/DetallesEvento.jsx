@@ -15,7 +15,7 @@ const socket = io("http://localhost:3001");
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
     const { isAuthenticated } = useAuthContext();
-    const [salas, setSalas] = useState(["Prueba"]);
+    const [salas, setSalas] = useState([]);
     let { nombreevento } = useParams();
 
     const mostrarSalas = (salas) => {
