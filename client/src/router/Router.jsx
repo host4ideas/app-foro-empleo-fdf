@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import InsEmpresa from "../pages/InsEmpresa";
 import InsSala from "../pages/InsSala";
 import InsEvento from "../pages/InsEvento";
+import ActionsEvento from "../pages/ActionsEvento";
 
 import DemoPushNotification from "../pages/DemoPushNotification";
 
@@ -22,21 +23,27 @@ import {
     INSEMPRESA,
     INSSALAS,
     INSEVENTO,
+    DETALLES_EVENTO,
 } from "../utils/paths";
 
 export default function Router() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route index element={<DetallesEvento />} />
+                <Route index element={<ActionsEvento />} />
                 <Route
-                    path={`${DETALLES_SALA}/:idSala`}
+                    path={`${DETALLES_EVENTO}/:nombreevento`}
+                    element={<DetallesEvento />}
+                />
+                <Route
+                    path={`${DETALLES_SALA}/:nombre`}
                     element={<DetallesSala />}
                 />
                 <Route
                     path="notification-test"
                     element={<DemoPushNotification />}
                 />
+
                 {/* If users are logged will be redirected to a private route */}
                 <Route path={PUBLIC} element={<PublicRoute />}>
                     <Route path={LOGIN} element={<Login />} />

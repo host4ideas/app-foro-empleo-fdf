@@ -22,8 +22,6 @@ function InsTiempoEmpresaSala() {
     function handleInputChangeEM(e) {
         setIdemp(e.target.value);
     }
-    useEffect(() => {
-    }, []);
     function handleSubmit(e) {
         e.preventDefault();
         //codigo para insertar timer

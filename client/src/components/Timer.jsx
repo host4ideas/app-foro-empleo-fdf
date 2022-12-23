@@ -81,7 +81,11 @@ export default function Timer() {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                <p className="fst-italic">{actualTime}</p>
+                {actualTime ? (
+                    <p className="fst-italic">{actualTime}</p>
+                ) : (
+                    <p className="fst-italic">Loading...</p>
+                )}
             </div>
         </div>
     );

@@ -15,7 +15,8 @@ export default function App() {
     const notify = () => toast("Wow so easy!");
     return (
         <div className="App">
-            <ToastContainer />
+            {/* <button onClick={notify}>Notify!</button>
+            <ToastContainer /> */}
             <InstallPWA />
             <AuthContextProvider>
                 <Router />
