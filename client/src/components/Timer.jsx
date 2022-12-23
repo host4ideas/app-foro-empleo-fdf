@@ -85,7 +85,7 @@ export default function Timer() {
         <div className="row mt-4">
             <div className={`timer ${play ? "working" : "stop"}`}>
                 <div className="timer-menu">
-                    <input type="checkbox" id="toggle" />
+                    <input className="toggle-check" type="checkbox" id="toggle" />
                     <label id="show-menu" htmlFor="toggle">
                         {isAuthenticated ? (
                             <>
@@ -112,7 +112,11 @@ export default function Timer() {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                <p className="fst-italic">{actualTime}</p>
+                {actualTime ? (
+                    <p className="fst-italic">{actualTime}</p>
+                ) : (
+                    <p className="fst-italic">Loading...</p>
+                )}
             </div>
         </div>
     );

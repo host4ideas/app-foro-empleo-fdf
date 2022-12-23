@@ -35,7 +35,9 @@
     background-color: #7753FF;
     position: relative;
     bottom: 62.5px;
-    left: 25%;
+    left: 70%;
+    padding: 5px 10px 5px 10px;
+    border: none;
 }
 
 .div-login div.link-events {

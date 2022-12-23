@@ -4,7 +4,6 @@ import { AiOutlineUser, AiOutlineArrowRight } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./Login.css";
-import axios from "axios";
 
 function Login() {
     const { setIsAuthenticated, login } = useAuthContext();
