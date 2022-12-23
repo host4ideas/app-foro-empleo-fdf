@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import urlBase64ToUint8Array from "../utils/urlBase64ToUint8Array";
+import { urlBase64ToUint8Array } from "../utils/utils";
 
 export default function DemoPushNotification() {
     const [payload, setPayload] = useState("Insert here a payload");

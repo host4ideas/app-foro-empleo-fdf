@@ -48,7 +48,6 @@ export default function Router() {
                 <Route path={PUBLIC} element={<PublicRoute />}>
                     <Route path={LOGIN} element={<Login />} />
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
-
                     <Route path={INSSALAS} element={<InsSala />} />
                     <Route path={INSEVENTO} element={<InsEvento />} />
                     

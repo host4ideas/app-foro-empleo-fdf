@@ -1,58 +1,85 @@
+// React
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
-import "./timer.css";
 import { FaPause, FaPlay, FaTimes, FaCog } from "react-icons/fa";
-// Where te Socket.io server is running
-const socket = io("http://localhost:3001");
+// Contexts
+import { useAuthContext } from "../contexts/authContext";
+// Timer
+import timerCounter from "../lib/tiny-timer";
+import { msToMinutesSecondsAndHours } from "../utils/utils";
+// Styles
+import "./timer.css";
 
 export default function Timer() {
     const [timer, setTimer] = useState(0);
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
+    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
-    socket.on("play timer", function (timer) {
-        setTimer(timer);
-    });
+    const synchronizeTimer = (time) => {
+        timerCounter.stop();
+        timerCounter.start(time);
+    };
 
+    // Client timer functionality
     useEffect(() => {
-        socket.on("connect", () => console.log(socket.id));
-        socket.on("connect_error", () => {
-            setTimeout(() => socket.connect(), 5000);
-        });
-        socket.on("play timer", function (timer) {
-            setTimer(timer);
-        });
-        socket.on("disconnect", () => console.warn("Server disconnected"));
-    }, []);
+        if (clientSocket) {
+            // Initialize timer (check if the server's timer is running)
+            clientSocket.emit("check timer", (time, status) => {
+                if (status === "running") {
+                    synchronizeTimer(time);
+                }
+            });
+            clientSocket.on("initial time", function (time) {
+                timerCounter.stop();
+                setTimer(msToMinutesSecondsAndHours(time));
+            });
+            clientSocket.on("start timer", function (time) {
+                synchronizeTimer(time);
+            });
+            clientSocket.on("resume timer", function (time) {
+                synchronizeTimer(time);
+            });
+            clientSocket.on("pause timer", function () {
+                timerCounter.pause();
+            });
+            clientSocket.on("stop timer", function () {
+                timerCounter.stop();
+                setTimer("00:00:00");
+            });
+        }
+    }, [clientSocket]);
 
-    //INICIO DE LA HORA ACTUAL (cada 1s se actualiza)
-    useEffect(() => {
-        const timeActual = window.setInterval(() => {
-            showTime();
-        }, 1000);
-        return () => {
-            // Return callback to run on unmount.
-            window.clearInterval(timeActual);
-        };
-    }, []);
-
+    // Admin timer functionality
     const startTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("resume timer");
+        }
+
         setPlay(true);
     };
+
     const pauseTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("pause timer");
+        }
         setPlay(false);
     };
 
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
-        if (hours < 10) hours = 0 + hours;
-        if (minutes < 10) minutes = "0" + minutes;
-        if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
-    };
+    timerCounter.on("tick", () =>
+        setTimer(msToMinutesSecondsAndHours(timerCounter.time))
+    );
+
+    // Executed on mount
+    useEffect(() => {
+        // Initialize actual hour (updates every 1s)
+        const timeActual = setInterval(() => {
+            setActualTime(msToMinutesSecondsAndHours(new Date()));
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount.
+            clearInterval(timeActual);
+        };
+    }, []);
 
     return (
         <div className="row mt-4">
@@ -60,22 +87,26 @@ export default function Timer() {
                 <div className="timer-menu">
                     <input className="toggle-check" type="checkbox" id="toggle" />
                     <label id="show-menu" htmlFor="toggle">
-                        <div className="btn-menu">
-                            <FaCog className="menuBtn animation" />
-                            <FaTimes className="closeBtn" />
-                        </div>
-                        <div className="btn-menu">
-                            <FaPlay
-                                onClick={startTimer}
-                                className="icon-menu"
-                            />
-                        </div>
-                        <div className="btn-menu">
-                            <FaPause
-                                onClick={pauseTimer}
-                                className="icon-menu"
-                            />
-                        </div>
+                        {isAuthenticated ? (
+                            <>
+                                <div className="btn-menu">
+                                    <FaCog className="menuBtn animation" />
+                                    <FaTimes className="closeBtn" />
+                                </div>
+                                <div className="btn-menu">
+                                    <FaPlay
+                                        onClick={startTimer}
+                                        className="icon-menu"
+                                    />
+                                </div>
+                                <div className="btn-menu">
+                                    <FaPause
+                                        onClick={pauseTimer}
+                                        className="icon-menu"
+                                    />
+                                </div>
+                            </>
+                        ) : null}
                     </label>
                 </div>
                 <h1 className="timer-title">{timer}</h1>

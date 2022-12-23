@@ -1,4 +1,4 @@
-import urlBase64ToUint8Array from "./utils/urlBase64ToUint8Array";
+import { urlBase64ToUint8Array } from "./utils/utils";
 
 const convertedVapidKey = urlBase64ToUint8Array(
     "BCVSe35WRbz4Vta2rxptEvFvyoiNEuFuzWWxGAL0ypsHVSjHpefIEEdeOZjx85wfQ2pRo6VkwC7goFJXT-lXGqE"

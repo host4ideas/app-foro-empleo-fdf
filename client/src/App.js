@@ -1,6 +1,6 @@
 // React
 import React from "react";
-// Auth context
+// Contexts
 import AuthContextProvider from "./contexts/authContext";
 // Router
 import Router from "./router/Router";
