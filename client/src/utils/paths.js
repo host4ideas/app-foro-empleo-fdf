@@ -1,6 +1,6 @@
 export const PUBLIC = "public";
 export const PRIVATE = "private";
-export const DETALLES_EVENTO = "/";
+export const DETALLES_EVENTO = "detalles-evento";
 export const LOGIN = "login";
 export const LOGOUT = "logout";
 export const DETALLES_SALA = "detalles-sala";
