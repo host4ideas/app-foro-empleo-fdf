@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
-import axios from "axios";
 import { AiOutlineUser, AiOutlineArrowRight } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
-    const { login } = useAuthContext();
+    const { setIsAuthenticated, login } = useAuthContext();
 
-    const [user, setUser] = useState("");
-    const [password, setPassword] = useState("");
+    const [user, setUser] = useState("JUAN");
+    const [password, setPassword] = useState("12345");
 
     function handleInputUserChange(event) {
         setUser(event.target.value);
@@ -20,21 +19,31 @@ function Login() {
         setPassword(event.target.value);
     }
 
-    function handleSubmit(event) {
-        /* event.preventDefault();
-        authService(user, password);
-        if (validate) {
-            login();
-        } */
+    // /**
+    //  * Tries to perform the login. Updated isAuthenticated state accordingly.
+    //  * @param {string} username
+    //  * @param {string} password
+    //  */
+    // const login = (username, password) => {
+    //     const params = new URLSearchParams();
+    //     params.append("username", username);
+    //     params.append("password", password);
+    //     return axios
+    //         .post("/login", params)
+    //         .then((res) => {
+    //             console.log(res);
+    //             // setIsAuthenticated(true);
+    //         })
+    //         .catch(() => {
+    //             console.warn("invalid or wrong credentials");
+    //             // setIsAuthenticated(false);
+    //         });
+    // };
 
+    async function handleSubmit(event) {
         event.preventDefault();
-
-        const params = new URLSearchParams();
-        params.append("username", user);
-        params.append("password", password);
-        axios.post("http://localhost:3001/login", params).then((res) => {
-            console.log(res.data);
-        });
+        // await login(user, password);
+        login(user, password);
     }
 
     return (

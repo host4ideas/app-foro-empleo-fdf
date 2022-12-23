@@ -31,5 +31,6 @@ button.extra-tes {
     background-color:#7753FF;
     border:none;
     position:relative;
-    bottom:4px
+    bottom:4px;
+    padding: 1px 2px 1px 2px;
 }
