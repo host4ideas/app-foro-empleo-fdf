@@ -3,7 +3,13 @@ import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./actionsevento.css";
-import { DETALLES_EVENTO, INSEVENTO, LOGIN, PUBLIC } from "../utils/paths";
+import {
+    DETALLES_EVENTO,
+    INSEVENTO,
+    LOGIN,
+    PRIVATE,
+    PUBLIC,
+} from "../utils/paths";
 
 export default function ActionsEvento() {
     const eventosLocales = [
@@ -173,7 +179,7 @@ export default function ActionsEvento() {
                                 </div>
                                 {isAuthenticated && (
                                     <div className="card-action">
-                                        <Link to={INSEVENTO}>
+                                        <Link to={PRIVATE + "/" + INSEVENTO}>
                                             <FaEdit className="icon" />
                                         </Link>
                                     </div>
