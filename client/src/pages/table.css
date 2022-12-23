@@ -37,3 +37,6 @@
 .working {
     background-color: #adff6e;
 }
+.details {
+    height: 500px !important;
+}

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
+import axios from "axios";
 import { AiOutlineUser, AiOutlineArrowRight } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./Login.css";
-import axios from "axios";
 
 function Login() {
-    const { setIsAuthenticated, login } = useAuthContext();
+    const { login } = useAuthContext();
 
-    const [user, setUser] = useState("JUAN");
-    const [password, setPassword] = useState("12345");
+    const [user, setUser] = useState("");
+    const [password, setPassword] = useState("");
 
     function handleInputUserChange(event) {
         setUser(event.target.value);
@@ -20,31 +20,21 @@ function Login() {
         setPassword(event.target.value);
     }
 
-    // /**
-    //  * Tries to perform the login. Updated isAuthenticated state accordingly.
-    //  * @param {string} username
-    //  * @param {string} password
-    //  */
-    // const login = (username, password) => {
-    //     const params = new URLSearchParams();
-    //     params.append("username", username);
-    //     params.append("password", password);
-    //     return axios
-    //         .post("/login", params)
-    //         .then((res) => {
-    //             console.log(res);
-    //             // setIsAuthenticated(true);
-    //         })
-    //         .catch(() => {
-    //             console.warn("invalid or wrong credentials");
-    //             // setIsAuthenticated(false);
-    //         });
-    // };
+    function handleSubmit(event) {
+        /* event.preventDefault();
+        authService(user, password);
+        if (validate) {
+            login();
+        } */
 
-    async function handleSubmit(event) {
         event.preventDefault();
-        // await login(user, password);
-        login(user, password);
+
+        const params = new URLSearchParams();
+        params.append("username", user);
+        params.append("password", password);
+        axios.post("http://localhost:3001/login", params).then((res) => {
+            console.log(res.data);
+        });
     }
 
     return (

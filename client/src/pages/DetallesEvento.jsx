@@ -7,25 +7,18 @@ import { INSEVENTO, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 import "./table.css";
 import "./detallesEvento.css";
-// Where the Socket.io server is running
+import io from "socket.io-client";
+// Where te Socket.io server is running
+const socket = io("http://localhost:3001");
 
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
-    const [salas, setSalas] = useState([]);
-
-    const localSalas = [
-        "Desarrollo",
-        "Informatica",
-        "Botanica",
-        "Desarrollo2",
-        "Desarrollo3",
-        "Desarrollo4",
-        "Desarrollo5",
-    ];
+    const [salas, setSalas] = useState(["Prueba"]);
 
     const mostrarSalas = (salas) => {
         setSalas(salas);
     };
+    socket.emit("get salas", mostrarSalas);
 
     return (
         <div className="container text-center">
@@ -41,11 +34,11 @@ export default function DetallesEvento() {
                 </div>
                 <div className="col-4">
                     {/* ICON EDIT */}
-                    <Link to={PRIVATE + "/" + INSEVENTO}>
-                        <div className="icon-container blue">
+                    <div className="icon-container blue">
+                        <Link to={PRIVATE + "/" + INSEVENTO}>
                             <FaRegEdit className="icon" />
-                        </div>
-                    </Link>
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -81,8 +74,14 @@ export default function DetallesEvento() {
             </div>
 
             <div className="salas-container mt-4">
-                {localSalas.map((ele, index) => {
-                    return <Sala key={index} nombre={ele} numeroSala={index} />;
+                {salas.map((ele, index) => {
+                    return (
+                        <Sala
+                            nombre={ele}
+                            numeroSala={index}
+                            key={ele + index}
+                        />
+                    );
                 })}
             </div>
         </div>
