@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import Timer from "../components/Timer";
 import Sala from "../components/Sala";
-import { FaSignOutAlt, FaArrowLeft } from "react-icons/fa";
+import { FaSignOutAlt, FaArrowLeft, FaSignInAlt } from "react-icons/fa";
 import { useAuthContext } from "../contexts/authContext";
 import io from "socket.io-client";
 import "./table.css";
 import "./detallesEvento.css";
 import { Link } from "react-router-dom";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { LOGIN, PUBLIC } from "../utils/paths";
 
 // Where te Socket.io server is running
 const socket = io("http://localhost:3001");
@@ -25,7 +26,7 @@ export default function DetallesEvento() {
 
     return (
         <div className="container text-center">
-            <div className="d-flex flex-row ">
+            <div className="d-flex justify-content-between">
                 <div>
                     <div className="icon-container blue">
                         <Link to="/">
@@ -33,13 +34,10 @@ export default function DetallesEvento() {
                         </Link>
                     </div>
                 </div>
-            </div>
-
-            {
-                //COMPROBAR SI ESTA LOGEADO
-                isAuthenticated && (
-                    <div className="row justify-content-between">
-                        <div className="col-4">
+                {
+                    //COMPROBAR SI ESTA LOGEADO
+                    isAuthenticated ? (
+                        <div>
                             {/* ICON LOGOUT */}
                             <div className="icon-container red">
                                 <FaSignOutAlt
@@ -48,9 +46,19 @@ export default function DetallesEvento() {
                                 />
                             </div>
                         </div>
-                    </div>
-                )
-            }
+                    ) : (
+                        <div>
+                            {/* ICON LOGIN */}
+                            <div className="icon-container blue">
+                                <Link to={"/" + PUBLIC + "/" + LOGIN}>
+                                    <FaSignInAlt className="icon" />
+                                </Link>
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+
             <h4>{nombreevento}</h4>
 
             <Timer />
