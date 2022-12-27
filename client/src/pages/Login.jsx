@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
-    const { setIsAuthenticated, login } = useAuthContext();
+    const { login } = useAuthContext();
 
     const [user, setUser] = useState("JUAN");
     const [password, setPassword] = useState("12345");
@@ -42,7 +42,6 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        // await login(user, password);
         login(user, password);
     }
 
@@ -84,7 +83,10 @@ function Login() {
                 <Link to={"/"}>Event</Link>
             </div>
             <div className="img-clock">
-                <img src="https://i.ibb.co/FHxG5k7/imageonline-co-transparentimage.png" />
+                <img
+                    src="https://i.ibb.co/FHxG5k7/imageonline-co-transparentimage.png"
+                    alt="clock"
+                />
             </div>
         </div>
     );

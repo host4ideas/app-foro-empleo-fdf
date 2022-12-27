@@ -12,6 +12,7 @@ module.exports = function () {
                     userName: username,
                     password: password,
                 },
+                null,
                 true
             ).then((data) => {
                 if (data.response) {

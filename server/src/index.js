@@ -4,15 +4,13 @@ const port = process.env.PORT || 3001;
 const compression = require("compression");
 const cors = require("cors");
 const http = require("http");
+const { Server } = require("socket.io");
 require("dotenv").config();
 // Auth
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const routes = require("./routes/router");
-const { Server } = require("socket.io");
-// Timer
-const { Timer } = require("./lib/tiny-timer");
 
 const httpServer = http.createServer(app);
 
@@ -38,6 +36,7 @@ if (app.get("env") === "production") {
     // Serve secure cookies, requires HTTPS
     sessionOptions.cookie.secure = true;
     corsConfig.origin = process.env.FRONT_PROD;
+    // Accept connections from another URL
     ioServerConfig.cors.origin = process.env.FRONT_PROD;
 }
 
@@ -52,7 +51,6 @@ app.use(passport.session());
 app.use(compression());
 app.use(routes);
 
-// Accept connections from another URL
 const io = new Server(httpServer, ioServerConfig);
 
 app.post("/logout", (req, res) => {
@@ -68,6 +66,7 @@ app.post("/logout", (req, res) => {
     });
 });
 
+// Secure admin namespace
 require("./init/bootTimerAdminNsp")(io, sessionMiddleware);
 
 io.on("connect", (socket) => {
