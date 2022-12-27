@@ -1,6 +1,8 @@
 const passport = require("passport");
 // Timer
 const { Timer } = require("../lib/tiny-timer");
+// Requests
+const categoriasSocket = require("./categoriasSocket");
 
 module.exports = function (io, sessionMiddleware) {
     /**
@@ -20,7 +22,6 @@ module.exports = function (io, sessionMiddleware) {
     adminNsp.use(wrap(passport.session()));
 
     adminNsp.use((socket, next) => {
-        console.log(socket.request.user);
         if (socket.request.user) {
             next();
         } else {
@@ -65,6 +66,8 @@ module.exports = function (io, sessionMiddleware) {
             timer.stop();
             io.emit("stop timer");
         });
+
+        categoriasSocket(socket);
     });
 
     io.on("check timer", (cb) => {
