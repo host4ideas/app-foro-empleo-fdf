@@ -81,6 +81,7 @@ async function deleteData(url = "") {
 
 async function getData(url = "") {
     const response = await fetch(url);
+    console.log(response.json())
     return response.json(); // parses JSON response into native JavaScript objects
 }
 

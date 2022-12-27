@@ -72,3 +72,50 @@
 .div-rooms div.add-room-zone div.inputs-zone div.check-room input {
     margin-top: 10px;
 }
+
+.div-rooms .show-all-room {
+    text-align:center;
+    background-color:white;
+    margin:30px 3% 10px 3%;
+    box-shadow:2px 2.5px 2.5px #AAAAAA;
+    font-size:9px;
+    padding:10px;
+}
+
+.div-rooms .show-all-room .show-name {
+    width: 100%;
+    display: flex;
+    border: 1px solid #BBBBBB;
+}
+
+.div-rooms .show-all-room h6 {
+    background-color: #7753FF;
+    padding: 10px 0px 10px 0px;
+    color: white;
+}
+
+.scroll-room {
+    overflow-y: auto;
+    height: 400px;
+}
+
+.div-rooms .show-all-room .show-name .name-room{
+    width: 75%;
+    padding: 7px 14px 7px 14px;
+    font-weight: bold;
+}
+
+.div-rooms .show-all-room .show-name .name-room h5{
+    font-size: 11px;
+}
+
+.div-rooms .show-all-room .show-name .delete-room-icon{
+    width: 24%;
+    font-size: 15px;
+}
+
+.div-rooms .show-all-room .show-name .delete-room-icon button{
+    border: none;
+    padding: 4px 0px 0px 0px;
+    background-color: white;
+}

@@ -1,44 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdCancel } from "react-icons/md"
 import { AiFillPlusCircle } from "react-icons/ai"
+import { FaTrash } from "react-icons/fa"
 import { NavLink } from "react-router-dom";
+import { postEmpresa, getEmpresas, deleteEmpresa } from "../services/EmpresaService";
 import './InsEmpresa.css'
 
 function InsEmpresa() {
 
+    const [listaEmpresas, setListaEmpresas] = useState([]);
     const [empresa, setEmpresa] = useState("");
-    const [imagen, setImagen] = useState("");
 
-    function handleInputChange(e) {
-        setEmpresa(e.target.value);
+    function getListaEmpresas() {
+        getEmpresas().then(res => {
+            setListaEmpresas(res.data)
+        })
     }
 
-    function handleInputChangeI(e) {
-        setImagen(e.target.value);
+    function cambiaEmpresa(e) {
+        setEmpresa(document.getElementById("inputNameCompany").value);
     }
 
-    function handleSubmit(e) {
-
-        e.preventDefault();
-
-        //codigo para insertar empresa
-        //hay que sustituir por procedimiento para bbdd
-        
-        var arrayEmpresas = [];
-
-        if (window.localStorage.getItem("empresas") == null){
-            arrayEmpresas.push({"idEmpresa":0,"nombreEmpresa":empresa,"imagen":imagen})
-        }else{
-            arrayEmpresas = JSON.parse(window.localStorage.getItem("empresas"));
-            arrayEmpresas.push({"idEmpresa":0,"nombreEmpresa":empresa,"imagen":imagen})   
-        }
-
-        window.localStorage.setItem("empresas",JSON.stringify(arrayEmpresas));
-        console.log(JSON.parse(window.localStorage.getItem("empresas")))
-
-        /* localStorage.removeItem("empresas") */
-
+    function createEmpresa() {
+        postEmpresa(empresa.toUpperCase()).then(res => {
+            document.getElementById("inputNameCompany").value = "";
+            getListaEmpresas()
+        })
     }
+
+    function eliminaEmpresa(id) {
+        deleteEmpresa(id).then(res => {
+            getListaEmpresas()
+        })
+    }
+
+    useEffect(() => {
+       getListaEmpresas()
+    }, []);
 
     return (
         <div className="div-company">
@@ -48,7 +46,7 @@ function InsEmpresa() {
                     <NavLink to="/public/insevento"><button><MdCancel/></button></NavLink>
                 </div>
                 <div className="add-button">
-                    <button><AiFillPlusCircle/></button>
+                    <button onClick={() => createEmpresa()}><AiFillPlusCircle/></button>
                 </div>
             </div>
 
@@ -57,8 +55,10 @@ function InsEmpresa() {
                 <div className="inputs-zone">
                     <div className="name-room">
                         <input
+                            id="inputNameCompany"
                             type="text"
                             required
+                            onChange={() => cambiaEmpresa()}
                         />
                     </div>
                     <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
@@ -69,23 +69,20 @@ function InsEmpresa() {
                     </div>
                 </div>
             </div>
-            {/* <form onSubmit={handleSubmit}>
-                <label>Introduzca nombre de la empresa:</label>
-                <input
-                    type="text"
-                    value={empresa}
-                    onChange={handleInputChange}
-                    style={{"margin":"15px"}} 
-                />
-                <label>Introduzca imagen de la empresa:</label>
-                <input
-                    type="text"
-                    value={imagen}
-                    onChange={handleInputChangeI}
-                    style={{"margin":"15px"}} 
-                />
-                <button style={{"margin":"15px"}} type="submit">Insertar empresa</button>
-            </form> */}
+            
+            <div className="show-all-company">
+                <h6>Empresas Registradas</h6>
+                <div className="scroll-company">
+                {
+                    listaEmpresas.map((empresa,index)=>{
+                        return <div key={index} className="show-name">
+                            <div className="name-company"><h5>{empresa.nombreEmpresa}</h5></div>
+                            <div className="delete-company-icon"><button onClick={() => eliminaEmpresa(empresa.idEmpresa)}><FaTrash/></button></div>
+                        </div>
+                    })
+                }
+                </div>
+            </div>
         </div>
     );
 }
