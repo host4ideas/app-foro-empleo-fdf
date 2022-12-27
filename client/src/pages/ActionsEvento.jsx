@@ -200,7 +200,7 @@ export default function ActionsEvento() {
                                 </div>
                                 {isAuthenticated && (
                                     <div className="card-action">
-                                        <Link to={PRIVATE + "/" + INSEVENTO}>
+                                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
                                             <FaEdit className="icon" />
                                         </Link>
                                     </div>
