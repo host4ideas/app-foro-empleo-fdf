@@ -1,8 +1,15 @@
-//PUT
 const { putData } = require("../utils/utils");
+require("dotenv").config();
+const urlApi = process.env.API_TIMERS;
 
-function updateEvent(event) {
-    return putData("urlapi", event);
+async function updateEvent(event, token) {
+    var url = urlApi + "/api/eventos";
+    try {
+        await putData(url, event, token);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 module.exports = {
