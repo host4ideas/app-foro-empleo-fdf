@@ -1,5 +1,5 @@
-export const PUBLIC = "public";
-export const PRIVATE = "private";
+export const PUBLIC = "auth";
+export const PRIVATE = "admin";
 export const DETALLES_EVENTO = "detalles-evento";
 export const LOGIN = "login";
 export const LOGOUT = "logout";
