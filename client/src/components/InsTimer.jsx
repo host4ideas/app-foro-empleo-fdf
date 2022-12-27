@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 
 function InsTimer() {
-
     const [categorias, setCategorias] = useState([]);
 
     const [fechaI, setFechaI] = useState("");
     const [horaI, setHoraI] = useState("");
     const [minutoI, setMinutoI] = useState("");
-    const [idcat, setIdcat] = useState(0)
+    const [idcat, setIdcat] = useState(0);
 
     function handleInputChangeFI(e) {
         setFechaI(e.target.value);
@@ -26,35 +25,43 @@ function InsTimer() {
     }
 
     useEffect(() => {
-        setCategorias(JSON.parse(window.localStorage.getItem("categorias")))
+        setCategorias(JSON.parse(window.localStorage.getItem("categorias")));
     }, []);
 
     function handleSubmit(e) {
-
         e.preventDefault();
 
         //codigo para insertar timer
         //hay que sustituir por procedimiento para bbdd
-        
-        var arrayTimers = [];
-        var fechaIni = new Date(fechaI).setHours(horaI,minutoI)/1000;
 
-        if (window.localStorage.getItem("timers") == null){
-            arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})
-        }else{
+        var arrayTimers = [];
+        var fechaIni = new Date(fechaI).setHours(horaI, minutoI) / 1000;
+
+        if (window.localStorage.getItem("timers") == null) {
+            arrayTimers.push({
+                idTemporizador: 0,
+                inicio: fechaIni,
+                idCategoria: parseInt(idcat),
+                pausa: false,
+            });
+        } else {
             arrayTimers = JSON.parse(window.localStorage.getItem("timers"));
-            arrayTimers.push({"idTemporizador":0,"inicio":fechaIni, "idCategoria":parseInt(idcat), "pausa":false})   
+            arrayTimers.push({
+                idTemporizador: 0,
+                inicio: fechaIni,
+                idCategoria: parseInt(idcat),
+                pausa: false,
+            });
         }
 
-        window.localStorage.setItem("timers",JSON.stringify(arrayTimers));
-        console.log(JSON.parse(window.localStorage.getItem("timers")))
+        window.localStorage.setItem("timers", JSON.stringify(arrayTimers));
+        console.log(JSON.parse(window.localStorage.getItem("timers")));
 
         /* localStorage.removeItem("timers"); */
-
     }
 
     return (
-        <div style={{"marginTop":"25px"}}>
+        <div style={{ marginTop: "25px" }}>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Introduzca fecha inicial para el timer:</label>
@@ -62,7 +69,7 @@ function InsTimer() {
                         type="date"
                         value={fechaI}
                         onChange={handleInputChangeFI}
-                        style={{"margin":"15px"}}
+                        style={{ margin: "15px" }}
                         required
                     />
                 </div>
@@ -74,7 +81,7 @@ function InsTimer() {
                         min="0"
                         max="23"
                         onChange={handleInputChangeHI}
-                        style={{"margin":"15px"}}
+                        style={{ margin: "15px" }}
                         required
                     />
                     <input
@@ -83,21 +90,32 @@ function InsTimer() {
                         max="59"
                         value={minutoI}
                         onChange={handleInputChangeMI}
-                        style={{"margin":"15px"}}
+                        style={{ margin: "15px" }}
                         required
                     />
                 </div>
                 <div>
                     <label>Selecciona una categoria:</label>
-                    <select onChange={handleInputChangeS} required style={{"margin":"15px"}}>
-                        {
-                            categorias.map((categoria,index)=>{
-                                return(<option key={index} value={categoria.idCategoria}>{categoria.categoria}</option>)
-                            })
-                        }
+                    <select
+                        onChange={handleInputChangeS}
+                        required
+                        style={{ margin: "15px" }}
+                    >
+                        {categorias.map((categoria, index) => {
+                            return (
+                                <option
+                                    key={index}
+                                    value={categoria.idCategoria}
+                                >
+                                    {categoria.categoria}
+                                </option>
+                            );
+                        })}
                     </select>
                 </div>
-                <button style={{"margin":"15px"}} type="submit">Insertar sala</button>
+                <button style={{ margin: "15px" }} type="submit">
+                    Insertar sala
+                </button>
             </form>
         </div>
     );

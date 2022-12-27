@@ -3,6 +3,7 @@ const passport = require("passport");
 const { Timer } = require("../lib/tiny-timer");
 // Requests
 const categoriasSocket = require("./categoriasSocket");
+const eventosSocket = require("./eventosSocket");
 
 module.exports = function (io, sessionMiddleware) {
     /**
@@ -68,6 +69,7 @@ module.exports = function (io, sessionMiddleware) {
         });
 
         categoriasSocket(socket);
+        eventosSocket(socket);
     });
 
     io.on("check timer", (cb) => {

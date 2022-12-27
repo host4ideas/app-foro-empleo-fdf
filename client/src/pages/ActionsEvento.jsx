@@ -12,6 +12,7 @@ import {
     PUBLIC,
     PRIVATE,
 } from "../utils/paths";
+import { useEffect } from "react";
 
 export default function ActionsEvento() {
     const eventosLocales = [
@@ -100,9 +101,18 @@ export default function ActionsEvento() {
         //     finEvento: "2022-12-13T17:42:17.959Z",
         // },
     ];
-    const [eventos, setEventos] = useState(eventosLocales);
+    const [eventos, setEventos] = useState([]);
     const [evento, setEvento] = useState("");
-    const { isAuthenticated } = useAuthContext();
+    const { isAuthenticated, clientSocket } = useAuthContext();
+
+    //SOCKET GET EVENTOS
+    useEffect(() => {
+        if (clientSocket) {
+            clientSocket.emit("eventos", (eventos) => {
+                setEventos(eventos);
+            });
+        }
+    }, [clientSocket]);
 
     const selectEvento = (nombre) => {
         setEvento(nombre);
@@ -200,7 +210,9 @@ export default function ActionsEvento() {
                                 </div>
                                 {isAuthenticated && (
                                     <div className="card-action">
-                                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
+                                        <Link
+                                            to={"/" + PRIVATE + "/" + INSEVENTO}
+                                        >
                                             <FaEdit className="icon" />
                                         </Link>
                                     </div>
