@@ -110,7 +110,7 @@ export default function ActionsEvento() {
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
-        const mh = msToMinutesSecondsAndHours(fechaparse);
+        const mh = msToMinutesSecondsAndHours(fechaparse, "hh:mm");
         return mh;
     };
 
