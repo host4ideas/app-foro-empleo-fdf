@@ -42,7 +42,7 @@ async function newEmpresa(empresa, token) {
 }
 
 module.exports = {
-    updateEmpresa,
+    deleteEmpresa,
     getEmpresaById,
     newEmpresa,
     getEmpresas

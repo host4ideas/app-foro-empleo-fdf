@@ -42,7 +42,7 @@ async function newSala(sala, token) {
 }
 
 module.exports = {
-    updateSala,
+    deleteSala,
     getSalaById,
     newSala,
     getSalas
