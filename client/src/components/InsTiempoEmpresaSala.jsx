@@ -1,42 +1,44 @@
 import { useState, useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai"
 import './InsTiempoEmpresaSala.css'
+import { getEmpresas } from './../services/EmpresaService'
+import { getSalas } from './../services/SalaService'
+import axios from "axios";
+
 function InsTiempoEmpresaSala() {
-    const [timers, setTimers] = useState([]);
+
     const [empresas, setEmpresas] = useState([]);
     const [salas, setSalas] = useState([]);
-    const [eventos, setEventos] = useState([]);
-    const [idtim, setIdtim] = useState(0)
-    const [idemp, setIdemp] = useState(0)
-    const [idsal, setIdsal] = useState(0)
-    const [ideve, setIdeve] = useState(0)
-    function handleInputChangeT(e) {
-        setIdtim(e.target.value);
-    }
-    function handleInputChangeS(e) {
-        setIdsal(e.target.value);
-    }
-    function handleInputChangeEV(e) {
-        setIdeve(e.target.value);
-    }
-    function handleInputChangeEM(e) {
-        setIdemp(e.target.value);
-    }
-    function handleSubmit(e) {
-        e.preventDefault();
-        //codigo para insertar timer
-        //hay que sustituir por procedimiento para bbdd
-        var arrayTieEmpSal = [];
-        if (window.localStorage.getItem("tieempsal") == null){
-            arrayTieEmpSal.push({"id":0,"idTimer":parseInt(idtim),"idEmpresa":parseInt(idemp),"idSala":parseInt(idsal),"idEvento":parseInt(ideve)})
-        }else{
-            arrayTieEmpSal = JSON.parse(window.localStorage.getItem("tieempsal"));
-            arrayTieEmpSal.push({"id":0,"idTimer":parseInt(idtim),"idEmpresa":parseInt(idemp),"idSala":parseInt(idsal),"idEvento":parseInt(ideve)})   
+    const [categorias, setCategorias] = useState([]);
+
+    useEffect(() => {
+
+        getEmpresas().then(res => {
+            setEmpresas(res.data);
+        })
+        getSalas().then(res => {
+            setSalas(res.data)
+            cambiaTablaSala()
+        })
+        axios.get("https://apitimersfgg2022.azurewebsites.net/api/CategoriasTimer").then(res => {
+            setCategorias(res.data)
+        })
+
+    }, []);
+
+    function cambiaTablaSala() {
+        var nomSala = document.getElementById("select-room").selectedOptions[0].innerText;
+        var tablasSala = document.getElementsByClassName("div-table-room");
+        
+        for (var i=0; i < tablasSala.length; i++) {
+            if (tablasSala[i].classList.contains("room-"+nomSala)){
+                tablasSala[i].style.display = "block"
+            }else{
+                tablasSala[i].style.display = "none"
+            }
         }
-        window.localStorage.setItem("tieempsal",JSON.stringify(arrayTieEmpSal));
-        console.log(JSON.parse(window.localStorage.getItem("tieempsal")))
-        /* localStorage.removeItem("tieempsal"); */
     }
+
     return (
         <div style={{"marginTop":"10px"}}>
             <table className="tabla-tes" width="100%">
@@ -51,9 +53,11 @@ function InsTiempoEmpresaSala() {
                         <td className="hora">9:00</td>
                         <td rowspan="3">
                             <select style={{"width":"100%","textAlign":"center"}}>
-                                <option>PAUSA</option>
-                                <option>DESCANSO</option>
-                                <option>SESION</option>
+                                {
+                                    categorias.map((categoria,index) => {
+                                        return <option value={categoria.duracion}>{categoria.categoria}</option>
+                                    })
+                                }
                             </select>
                         </td>
                     </tr>
@@ -61,33 +65,41 @@ function InsTiempoEmpresaSala() {
             </table>
             <button className="extra-tes" type="submit"><AiOutlinePlus/></button>
             <div style={{"width":"100%","margin":"15px 0px 15px 0px"}}>
-                <select style={{"width":"100%","textAlign":"center","outline":"none","padding":"7px","borderRadius":"100px"}}>
-                    <option>SALA 1</option>
-                    <option>SALA 2</option>
-                    <option>SALA 3</option>
+                <select id="select-room" onChange={() => cambiaTablaSala()} style={{"width":"100%","textAlign":"center","outline":"none","padding":"7px","borderRadius":"100px"}}>
+                    {salas.map((sala,index) => {
+                        return <option value={sala.idSala}>{sala.nombreSala}</option>
+                    })}
                 </select>
             </div>
-            <table className="tabla-tes" width="100%">
-                <thead>
-                    <tr>
-                        <th>INICIO</th>
-                        <th rowspan="3">EMPRESA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className="hora">9:00</td>
-                        <td rowspan="3">
-                            <select style={{"width":"100%","textAlign":"center"}}>
-                                <option>EMPRESA 1</option>
-                                <option>EMPRESA 2</option>
-                                <option>EMPRESA 3</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <button className="extra-tes" type="submit"><AiOutlinePlus/></button>
+            {
+                salas.map((sala,index) => {
+                    return <div className={"div-table-room room-"+sala.nombreSala}>
+                        <table className={"tabla-tes"} width="100%">
+                            <thead>
+                                <tr>
+                                    <th>INICIO</th>
+                                    <th rowspan="3">EMPRESA {sala.nombreSala}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="hora">9:00</td>
+                                    <td rowspan="3">
+                                        <select style={{"width":"100%","textAlign":"center"}}>
+                                            {
+                                                empresas.map((empresa,index) => {
+                                                    return <option key={index} value={empresa.idEmpresa}>{empresa.nombreEmpresa}</option>
+                                                })
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                })
+            }
+            
         </div>
     );
 }
