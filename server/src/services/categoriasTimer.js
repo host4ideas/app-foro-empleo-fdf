@@ -1,4 +1,5 @@
 const { putData, postData, getData, deleteData } = require("../utils/utils");
+require("dotenv").config();
 
 /**
  * @typedef {object} categoria
