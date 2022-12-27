@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { msToMinutesSecondsAndHours } from "../utils/utils";
+
 import "./actionsevento.css";
 import {
     DETALLES_EVENTO,
@@ -102,20 +103,30 @@ export default function ActionsEvento() {
     const [eventos, setEventos] = useState(eventosLocales);
     const [evento, setEvento] = useState("");
     const { isAuthenticated } = useAuthContext();
-    //const [isAuthenticated, setIsAuthenticated] = useState(true);
 
     const selectEvento = (nombre) => {
         setEvento(nombre);
     };
 
-    const parseFecha = (fecha) => {
+    const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
-        console.log(fechaparse);
-        return fecha;
+        const mh = msToMinutesSecondsAndHours(fechaparse);
+        return mh;
     };
 
-    const parseFechaHoraToHora = (fechaHora) => {
-        return fechaHora;
+    const parseFechaToFormatDMY = (fecha) => {
+        var miliseconds = Date.parse(fecha);
+        var date = new Date(miliseconds);
+
+        const opciones = {
+            weekday: "long",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        };
+        var parse = date.toLocaleDateString("es-ES", opciones);
+
+        return parse;
     };
 
     if (eventos.length === 0) {
@@ -169,18 +180,27 @@ export default function ActionsEvento() {
                             >
                                 <div className="card-title">
                                     <h1>{event.nombreEvento}</h1>
-                                    <p>Mie 18, ene 2023</p>
-                                    {/* <p>{event.inicioEvento}</p> */}
+                                    {/* <p>Mie 18, ene 2023</p> */}
+                                    <p>
+                                        {parseFechaToFormatDMY(
+                                            event.inicioEvento
+                                        )}
+                                    </p>
                                 </div>
                                 <div className="card-times">
                                     <h1>
-                                        {/* {event.inicioEvento} - {event.finEvento} */}
-                                        {parseFecha(event.inicioEvento)}
+                                        {parseFechaToMinutesAndHours(
+                                            event.inicioEvento
+                                        ) +
+                                            " - " +
+                                            parseFechaToMinutesAndHours(
+                                                event.finEvento
+                                            )}
                                     </h1>
                                 </div>
                                 {isAuthenticated && (
                                     <div className="card-action">
-                                        <Link to={PRIVATE + "/" + INSEVENTO}>
+                                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
                                             <FaEdit className="icon" />
                                         </Link>
                                     </div>

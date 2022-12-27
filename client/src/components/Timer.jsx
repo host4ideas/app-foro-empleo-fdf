@@ -69,23 +69,40 @@ export default function Timer() {
         setTimer(msToMinutesSecondsAndHours(timerCounter.time))
     );
 
-    // Executed on mount
+    //HORA ACTUAL
     useEffect(() => {
-        // Initialize actual hour (updates every 1s)
-        const timeActual = setInterval(() => {
-            setActualTime(msToMinutesSecondsAndHours(new Date()));
-        }, 1000);
-        return () => {
-            // Return callback to run on unmount.
-            clearInterval(timeActual);
-        };
+        const timer = setInterval(() => {
+            const timeActual = setInterval(() => {
+                showTime();
+            }, 1000);
+            return () => {
+                // Return callback to run on unmount.
+                clearInterval(timer);
+                clearInterval(timeActual);
+            };
+        });
     }, []);
+
+    const showTime = () => {
+        var myDate = new Date();
+        var hours = myDate.getHours();
+        var minutes = myDate.getMinutes();
+        var seconds = myDate.getSeconds();
+        if (hours < 10) hours = 0 + hours;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+        setActualTime(hours + ":" + minutes + ":" + seconds);
+    };
 
     return (
         <div className="row mt-4">
             <div className={`timer ${play ? "working" : "stop"}`}>
                 <div className="timer-menu">
-                    <input className="toggle-check" type="checkbox" id="toggle" />
+                    <input
+                        className="toggle-check"
+                        type="checkbox"
+                        id="toggle"
+                    />
                     <label id="show-menu" htmlFor="toggle">
                         {isAuthenticated ? (
                             <>

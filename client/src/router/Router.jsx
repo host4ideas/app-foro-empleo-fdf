@@ -43,18 +43,15 @@ export default function Router() {
                     path="notification-test"
                     element={<DemoPushNotification />}
                 />
-
                 {/* If users are logged will be redirected to a private route */}
                 <Route path={PUBLIC} element={<PublicRoute />}>
                     <Route path={LOGIN} element={<Login />} />
-                    <Route path={INSEMPRESA} element={<InsEmpresa />} />
-                    <Route path={INSSALAS} element={<InsSala />} />
-                    <Route path={INSEVENTO} element={<InsEvento />} />
-                    
                 </Route>
                 {/* Only for logged users, if not redirected to login */}
                 <Route path={PRIVATE} element={<PrivateRoute />}>
-                    
+                    <Route path={INSEMPRESA} element={<InsEmpresa />} />
+                    <Route path={INSSALAS} element={<InsSala />} />
+                    <Route path={INSEVENTO} element={<InsEvento />} />
                 </Route>
                 {/* Redirect for 404 Error */}
                 <Route path="*" element={<Navigate to="/" />} />
