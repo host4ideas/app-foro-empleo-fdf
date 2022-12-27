@@ -50,12 +50,9 @@ export default function Router() {
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
                     <Route path={INSSALAS} element={<InsSala />} />
                     <Route path={INSEVENTO} element={<InsEvento />} />
-                    
                 </Route>
                 {/* Only for logged users, if not redirected to login */}
-                <Route path={PRIVATE} element={<PrivateRoute />}>
-                    
-                </Route>
+                <Route path={PRIVATE} element={<PrivateRoute />}></Route>
                 {/* Redirect for 404 Error */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
