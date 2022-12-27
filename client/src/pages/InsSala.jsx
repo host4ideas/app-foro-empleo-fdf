@@ -1,39 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MdCancel } from "react-icons/md"
+import { FaTrash } from "react-icons/fa"
 import { AiFillPlusCircle } from "react-icons/ai"
 import { NavLink } from "react-router-dom";
+import  { postSala , getSalas , deleteSala } from './../services/SalaService';
 import './InsSala.css'
 
 function InsSala() {
 
+    const [listaSalas, setListaSalas] = useState([]);
     const [sala, setSala] = useState("");
 
-    function handleInputChange(e) {
-        setSala(e.target.value);
+    function getListaSalas() {
+        getSalas().then(res => {
+            setListaSalas(res.data)
+        })
     }
 
-    function handleSubmit(e) {
-
-        e.preventDefault();
-
-        //codigo para insertar sala
-        //hay que sustituir por procedimiento para bbdd
-        
-        var arraySalas = [];
-
-        if (window.localStorage.getItem("salas") == null){
-            arraySalas.push({"idSala":0,"nombre":sala})
-        }else{
-            arraySalas = JSON.parse(window.localStorage.getItem("salas"));
-            arraySalas.push({"idSala":0,"nombre":sala})   
-        }
-
-        window.localStorage.setItem("salas",JSON.stringify(arraySalas));
-        console.log(JSON.parse(window.localStorage.getItem("salas")))
-
-        /* localStorage.clear(); */
-
+    function cambiaSala(e) {
+        setSala(document.getElementById("inputNameRoom").value);
     }
+
+    function createSala() {
+        postSala(sala.toUpperCase()).then(res => {
+            document.getElementById("inputNameRoom").value = "";
+            getListaSalas()
+        })
+    }
+
+    function eliminaSala(id) {
+        deleteSala(id).then(res => {
+            getListaSalas()
+        })
+    }
+
+    useEffect(() => {
+       getListaSalas()
+    }, []);
 
     return (
         <div className="div-rooms">
@@ -43,7 +46,7 @@ function InsSala() {
                     <NavLink to="/public/insevento"><button><MdCancel/></button></NavLink>
                 </div>
                 <div className="add-button">
-                    <button><AiFillPlusCircle/></button>
+                <button onClick={() => createSala()}><AiFillPlusCircle/></button>
                 </div>
             </div>
 
@@ -52,8 +55,10 @@ function InsSala() {
                 <div className="inputs-zone">
                     <div className="name-room">
                         <input
+                            id="inputNameRoom"
                             type="text"
                             required
+                            onChange={() => cambiaSala()}
                         />
                     </div>
                     <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
@@ -65,16 +70,20 @@ function InsSala() {
                 </div>
             </div>
             
-            {/* <form onSubmit={handleSubmit}>
-                <label>Introduzca nombre de la sala:</label>
-                <input
-                    type="text"
-                    value={sala}
-                    onChange={handleInputChange}
-                    style={{"margin":"15px"}} 
-                />
-                <button style={{"margin":"15px"}} type="submit">Insertar sala</button>
-            </form> */}
+            <div className="show-all-room">
+                <h6>Salas Registradas</h6>
+                <div className="scroll-room">
+                {
+                    listaSalas.map((sala,index)=>{
+                        return <div key={index} className="show-name">
+                            <div className="name-room"><h5>{sala.nombreSala}</h5></div>
+                            <div className="delete-room-icon"><button onClick={() => eliminaSala(sala.idSala)}><FaTrash/></button></div>
+                        </div>
+                    })
+                }
+                </div>
+            </div>
+
         </div>
     );
 }

@@ -1,5 +1,7 @@
 .div-events {
     background-color: #EEEEEE;
+    overflow-y: auto;
+    height: 635px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
