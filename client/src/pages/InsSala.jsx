@@ -3,7 +3,6 @@ import { MdCancel } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
 import { AiFillPlusCircle } from "react-icons/ai"
 import { NavLink } from "react-router-dom";
-import  { postSala , getSalas , deleteSala } from './../services/SalaService';
 import './InsSala.css'
 
 function InsSala() {
@@ -12,9 +11,9 @@ function InsSala() {
     const [sala, setSala] = useState("");
 
     function getListaSalas() {
-        getSalas().then(res => {
+        /* getSalas().then(res => {
             setListaSalas(res.data)
-        })
+        }) */
     }
 
     function cambiaSala(e) {
@@ -22,16 +21,16 @@ function InsSala() {
     }
 
     function createSala() {
-        postSala(sala.toUpperCase()).then(res => {
+        /* postSala(sala.toUpperCase()).then(res => {
             document.getElementById("inputNameRoom").value = "";
             getListaSalas()
-        })
+        }) */
     }
 
     function eliminaSala(id) {
-        deleteSala(id).then(res => {
+        /* deleteSala(id).then(res => {
             getListaSalas()
-        })
+        }) */
     }
 
     useEffect(() => {
@@ -74,12 +73,12 @@ function InsSala() {
                 <h6>Salas Registradas</h6>
                 <div className="scroll-room">
                 {
-                    listaSalas.map((sala,index)=>{
+                    /* listaSalas.map((sala,index)=>{
                         return <div key={index} className="show-name">
                             <div className="name-room"><h5>{sala.nombreSala}</h5></div>
                             <div className="delete-room-icon"><button onClick={() => eliminaSala(sala.idSala)}><FaTrash/></button></div>
                         </div>
-                    })
+                    }) */
                 }
                 </div>
             </div>

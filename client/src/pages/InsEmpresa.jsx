@@ -3,7 +3,6 @@ import { MdCancel } from "react-icons/md"
 import { AiFillPlusCircle } from "react-icons/ai"
 import { FaTrash } from "react-icons/fa"
 import { NavLink } from "react-router-dom";
-import { postEmpresa, getEmpresas, deleteEmpresa } from "../services/EmpresaService";
 import './InsEmpresa.css'
 
 function InsEmpresa() {
@@ -12,9 +11,9 @@ function InsEmpresa() {
     const [empresa, setEmpresa] = useState("");
 
     function getListaEmpresas() {
-        getEmpresas().then(res => {
+        /* getEmpresas().then(res => {
             setListaEmpresas(res.data)
-        })
+        }) */
     }
 
     function cambiaEmpresa(e) {
@@ -22,16 +21,16 @@ function InsEmpresa() {
     }
 
     function createEmpresa() {
-        postEmpresa(empresa.toUpperCase()).then(res => {
+        /* postEmpresa(empresa.toUpperCase()).then(res => {
             document.getElementById("inputNameCompany").value = "";
             getListaEmpresas()
-        })
+        }) */
     }
 
     function eliminaEmpresa(id) {
-        deleteEmpresa(id).then(res => {
+        /* deleteEmpresa(id).then(res => {
             getListaEmpresas()
-        })
+        }) */
     }
 
     useEffect(() => {
@@ -74,12 +73,12 @@ function InsEmpresa() {
                 <h6>Empresas Registradas</h6>
                 <div className="scroll-company">
                 {
-                    listaEmpresas.map((empresa,index)=>{
+                    /* listaEmpresas.map((empresa,index)=>{
                         return <div key={index} className="show-name">
                             <div className="name-company"><h5>{empresa.nombreEmpresa}</h5></div>
                             <div className="delete-company-icon"><button onClick={() => eliminaEmpresa(empresa.idEmpresa)}><FaTrash/></button></div>
                         </div>
-                    })
+                    }) */
                 }
                 </div>
             </div>
