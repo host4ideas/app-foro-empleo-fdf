@@ -4,7 +4,7 @@ import Timer from "../components/Timer";
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function DetallesSala() {
-    let { nombre } = useParams();
+    let { nombre, nombreEvento } = useParams();
     const navigate = useNavigate();
 
     return (
@@ -15,7 +15,9 @@ export default function DetallesSala() {
                     <div className="icon-container blue">
                         <FaArrowLeft
                             className="icon"
-                            onClick={() => navigate("/")}
+                            onClick={() =>
+                                navigate("/detalles-evento/" + nombreEvento)
+                            }
                         />
                     </div>
                 </div>

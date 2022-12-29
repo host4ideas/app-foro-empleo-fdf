@@ -1,28 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Timer from "../components/Timer";
 import Sala from "../components/Sala";
 import { FaSignOutAlt, FaArrowLeft, FaSignInAlt } from "react-icons/fa";
 import { useAuthContext } from "../contexts/authContext";
-import io from "socket.io-client";
 import "./table.css";
 import "./detallesEvento.css";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { LOGIN, PUBLIC } from "../utils/paths";
 
-// Where te Socket.io server is running
-const socket = io("http://localhost:3001");
-
 export default function DetallesEvento() {
     const { logout } = useAuthContext();
-    const { isAuthenticated } = useAuthContext();
+    const { isAuthenticated, adminSocket } = useAuthContext();
     const [salas, setSalas] = useState([]);
     let { nombreevento } = useParams();
 
-    const mostrarSalas = (salas) => {
-        setSalas(salas);
-    };
-    socket.emit("get salas", mostrarSalas);
+    useEffect(() => {
+        if (adminSocket) {
+            adminSocket.emit("salas", (salas) => {
+                if (salas) {
+                    setSalas(salas);
+                } else {
+                    console.log("error getting salas");
+                }
+            });
+        }
+    }, [adminSocket]);
 
     return (
         <div className="container text-center">
@@ -59,8 +62,6 @@ export default function DetallesEvento() {
                 }
             </div>
 
-            <h4>{nombreevento}</h4>
-
             <Timer />
 
             <div className="table-container">
@@ -93,12 +94,12 @@ export default function DetallesEvento() {
             </div>
 
             <div className="salas-container mt-4">
-                {salas.map((ele, index) => {
+                {salas.map((sala, index) => {
                     return (
                         <Sala
-                            nombre={ele}
-                            numeroSala={index}
-                            key={ele + index}
+                            nombre={sala.nombreSala}
+                            nombreEvento={nombreevento}
+                            key={index}
                         />
                     );
                 })}

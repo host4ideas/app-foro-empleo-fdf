@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -12,107 +12,24 @@ import {
     PUBLIC,
     PRIVATE,
 } from "../utils/paths";
-import { useEffect } from "react";
 
 export default function ActionsEvento() {
-    const eventosLocales = [
-        {
-            idEvento: 0,
-            nombreEvento: "FORO DE EMPLEO",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        {
-            idEvento: 1,
-            nombreEvento: "FERIA DEL MOTOR",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        {
-            idEvento: 2,
-            nombreEvento: "TECH RIDERS",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-    ];
     const [eventos, setEventos] = useState([]);
     const [evento, setEvento] = useState("");
-    const { isAuthenticated, clientSocket } = useAuthContext();
+    const { isAuthenticated, adminSocket } = useAuthContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
-        if (clientSocket) {
-            clientSocket.emit("eventos", (eventos) => {
-                setEventos(eventos);
+        if (adminSocket) {
+            adminSocket.emit("eventos", (eventos) => {
+                if (eventos) {
+                    setEventos(eventos);
+                } else {
+                    console.log("error getting eventos");
+                }
             });
         }
-    }, [clientSocket]);
+    }, [adminSocket]);
 
     const selectEvento = (nombre) => {
         setEvento(nombre);
