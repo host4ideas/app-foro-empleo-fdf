@@ -14,7 +14,7 @@ require("dotenv").config();
  * @returns {Promise<categoria[]> | null}
  */
 async function getCategorias(token) {
-    const request = process.env.API_TIMERS + "api/CategoriasTimer";
+    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
     try {
         const categorias = await getData(request, token);
         return categorias;
@@ -32,7 +32,7 @@ async function getCategorias(token) {
  */
 async function findCategoria(idCategoria, token) {
     const request =
-        process.env.API_TIMERS + "api/CategoriasTimer/" + idCategoria;
+        process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
     try {
         const categoria = await getData(request, token);
         return categoria;
@@ -49,7 +49,7 @@ async function findCategoria(idCategoria, token) {
  * @returns {boolean}
  */
 async function createCategoria(nuevaCategoria, token) {
-    const request = process.env.API_TIMERS + "api/CategoriasTimer";
+    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
     try {
         await postData(request, nuevaCategoria, token);
         return true;
@@ -66,7 +66,7 @@ async function createCategoria(nuevaCategoria, token) {
  * @returns {boolean}
  */
 async function updateCategoria(nuevaCategoria, token) {
-    const request = process.env.API_TIMERS + "api/CategoriasTimer";
+    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
     try {
         await putData(request, nuevaCategoria, token);
         return true;
@@ -84,7 +84,7 @@ async function updateCategoria(nuevaCategoria, token) {
  */
 async function deleteCategoria(idCategoria, token) {
     const request =
-        process.env.API_TIMERS + "api/CategoriasTimer/" + idCategoria;
+        process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
     try {
         await deleteData(request, token);
         return true;
