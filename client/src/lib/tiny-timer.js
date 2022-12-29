@@ -88,7 +88,6 @@ class TimerCounter {
     }
 }
 
-const singletonInstance = new TimerCounter();
-const timerCounter = Object.freeze(singletonInstance);
+const timerCounter = new TimerCounter();
 
 export default timerCounter;

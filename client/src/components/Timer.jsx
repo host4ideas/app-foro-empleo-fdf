@@ -31,10 +31,10 @@ export default function Timer() {
             });
             clientSocket.on("initial time", function (time) {
                 timerCounter.stop();
-                setTimer(msToMinutesSecondsAndHours(time));
+                setTimer(msToMinutesSecondsAndHours(time, "hh:mm:ss"));
             });
             clientSocket.on("start timer", function (time) {
-                synchronizeTimer(time);
+                synchronizeTimer(10000);
             });
             clientSocket.on("resume timer", function (time) {
                 synchronizeTimer(time);
@@ -49,12 +49,25 @@ export default function Timer() {
         }
     }, [clientSocket]);
 
+    useEffect(() => {
+        if (adminSocket) {
+            adminSocket.emit("categorias", (categorias) => {
+                if (categorias) {
+                    console.log(categorias);
+                } else {
+                    console.log("error getting categorias");
+                }
+            });
+        }
+    }, [adminSocket]);
+
     // Admin timer functionality
     const startTimer = () => {
         if (adminSocket) {
             adminSocket.emit("resume timer");
         }
 
+        // timerCounter.start(10000);
         setPlay(true);
     };
 
@@ -65,9 +78,10 @@ export default function Timer() {
         setPlay(false);
     };
 
-    timerCounter.on("tick", () =>
-        setTimer(msToMinutesSecondsAndHours(timerCounter.time))
-    );
+    timerCounter.on("tick", () => {
+        console.log("test " + timerCounter.time);
+        setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
+    });
 
     //HORA ACTUAL
     useEffect(() => {
@@ -110,17 +124,11 @@ export default function Timer() {
                                     <FaCog className="menuBtn animation" />
                                     <FaTimes className="closeBtn" />
                                 </div>
-                                <div className="btn-menu">
-                                    <FaPlay
-                                        onClick={startTimer}
-                                        className="icon-menu"
-                                    />
+                                <div className="btn-menu" onClick={startTimer}>
+                                    <FaPlay className="icon-menu" />
                                 </div>
-                                <div className="btn-menu">
-                                    <FaPause
-                                        onClick={pauseTimer}
-                                        className="icon-menu"
-                                    />
+                                <div className="btn-menu" onClick={pauseTimer}>
+                                    <FaPause className="icon-menu" />
                                 </div>
                             </>
                         ) : null}
