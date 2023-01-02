@@ -24,24 +24,32 @@ export default function EventoContextProvider({ children }) {
         [setEvento]
     );
 
-    const value = useMemo(
-        () => ({ evento: evento, changeEvento: changeEvento }),
-        [evento, changeEvento]
+    const addPropertiesEvento = useCallback(
+        (newProperties) => {
+            const updatedEvento = { ...evento, newProperties };
+            setNewEvento(updatedEvento);
+        },
+        [setNewEvento, evento]
     );
 
-    const addPropertiesEvento = (newProperties) => {
-        const updatedEvento = { ...evento, newProperties };
-        setNewEvento(updatedEvento);
-    };
-
-    const checkNewEvento = () => {
+    const checkNewEvento = useCallback(() => {
         Object.keys(newEvento).forEach((key) => {
             if (!newEvento[key]) {
                 throw new Error("Propiedad " + key + " falta");
             }
         });
         return true;
-    };
+    }, [newEvento]);
+
+    const value = useMemo(
+        () => ({
+            evento: evento,
+            changeEvento: changeEvento,
+            addPropertiesEvento: addPropertiesEvento,
+            checkNewEvento: checkNewEvento,
+        }),
+        [evento, changeEvento, addPropertiesEvento, checkNewEvento]
+    );
 
     return (
         <EventoContext.Provider value={value}>
