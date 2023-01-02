@@ -12,18 +12,18 @@ module.exports = function (socket) {
         getEmpresas(token).then((empresas) => cb(empresas));
     });
 
-    socket.on("find empresa", (cb, idEmpresa) => {
+    socket.on("find empresa", (idEmpresa,cb) => {
         const token = socket.request.user.token;
         getEmpresaById(idEmpresa, token).then((empresa) => cb(empresa));
     });
 
-    socket.on("delete empresa", (cb, idEmpresa) => {
+    socket.on("delete empresa", (idEmpresa,cb) => {
         const token = socket.request.user.token;
         deleteEmpresa(idEmpresa, token).then((result) => cb(result));
     });
 
-    socket.on("create empresa", (cb, empresa) => {
+    socket.on("create empresa", (nombre, cb) => {
         const token = socket.request.user.token;
-        newEmpresa(empresa, token).then((result) => cb(result));
+        newEmpresa(nombre, token).then((result) => cb(result))
     });
 };

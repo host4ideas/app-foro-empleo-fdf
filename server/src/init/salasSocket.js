@@ -12,17 +12,17 @@ module.exports = function (socket) {
         getSalas(token).then((salas) => cb(salas));
     });
 
-    socket.on("find sala", (cb, idSala) => {
+    socket.on("find sala", (idSala, cb) => {
         const token = socket.request.user.token;
         getSalaById(idSala, token).then((sala) => cb(sala));
     });
 
-    socket.on("delete sala", (cb, idSala) => {
+    socket.on("delete sala", (idSala, cb) => {
         const token = socket.request.user.token;
         deleteSala(idSala, token).then((result) => cb(result));
     });
 
-    socket.on("create sala", (cb, sala) => {
+    socket.on("create sala", (sala, cb) => {
         const token = socket.request.user.token;
         newSala(sala, token).then((result) => cb(result));
     });
