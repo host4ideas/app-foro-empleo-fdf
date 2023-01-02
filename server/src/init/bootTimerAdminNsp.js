@@ -65,6 +65,8 @@ module.exports = function (io, sessionMiddleware) {
             io.emit("stop timer");
         });
 
+        require("./empresasSocket")(socket);
+        require("./salasSocket")(socket);
         require("./categoriasSocket")(socket);
     });
 

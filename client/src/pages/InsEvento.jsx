@@ -96,10 +96,10 @@ function InsEvento() {
             </div>
             <div className="company-room-show">
                 <div className="room-show">
-                <NavLink to="/public/inssalas">SALAS <span> - (0 salas)</span></NavLink>
+                <NavLink to="/admin/inssalas">SALAS <span> - (0 salas)</span></NavLink>
                 </div>
                 <div className="company-show">
-                <NavLink to="/public/insempresa">EMPRESAS <span> - (0 empresas)</span></NavLink>
+                <NavLink to="/admin/insempresa">EMPRESAS <span> - (0 empresas)</span></NavLink>
                 </div>
             </div>
             <div className="category-zone">
