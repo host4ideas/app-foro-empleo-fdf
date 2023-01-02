@@ -2,6 +2,7 @@
 import React from "react";
 // Contexts
 import AuthContextProvider from "./contexts/authContext";
+import EventoContextProvider from "./contexts/eventoContext";
 // Router
 import Router from "./router/Router";
 // Components
@@ -19,7 +20,9 @@ export default function App() {
             <ToastContainer /> */}
             <InstallPWA />
             <AuthContextProvider>
-                <Router />
+                <EventoContextProvider>
+                    <Router />
+                </EventoContextProvider>
             </AuthContextProvider>
         </div>
     );
