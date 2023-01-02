@@ -19,6 +19,7 @@ export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
     const { changeEvento, evento } = useEventoContext();
+    const [eventoSelected, setEventoSelected] = useState("");
 
     //SOCKET GET EVENTOS
     useEffect(() => {
@@ -34,7 +35,7 @@ export default function ActionsEvento() {
     }, [adminSocket]);
 
     const selectEvento = (evento) => {
-        changeEvento(evento);
+        setEventoSelected(evento);
     };
 
     const parseFechaToMinutesAndHours = (fecha) => {
@@ -141,15 +142,17 @@ export default function ActionsEvento() {
                     })}
                 </div>
                 <div className="card-event bottom">
-                    {!evento ? (
+                    {!eventoSelected ? (
                         <h1>Seleccione un evento</h1>
                     ) : (
                         <div className="card-title">
                             <h1>
-                                <span className="fst-italic">{evento}</span>
+                                <span className="fst-italic">
+                                    {eventoSelected.nombreEvento}
+                                </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${evento.nombreEvento.replace(
+                                to={`${DETALLES_EVENTO}/${eventoSelected.nombreEvento.replace(
                                     / /g,
                                     ""
                                 )}`}
