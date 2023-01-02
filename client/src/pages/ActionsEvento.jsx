@@ -144,7 +144,6 @@ export default function ActionsEvento() {
                     ) : (
                         <div className="card-title">
                             <h1>
-                                Comenzar:{" "}
                                 <span className="fst-italic">{evento}</span>
                             </h1>
                             <Link
