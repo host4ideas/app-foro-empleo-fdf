@@ -14,8 +14,8 @@
     border:1px solid #cccccc
 }
 
-.tabla-tes tbody td.hora {
-    padding: 10px
+.tabla-tes tbody tr td{
+    padding:10px;
 }
 
 .tabla-tes tbody tr td select {
@@ -23,6 +23,11 @@
     background-color:#EEEEEE;
     outline:none;
     border:none
+}
+
+.tabla-tes tbody tr td select.select-category, .tabla-tes tbody tr td select.select-room {
+    width: 100%;
+    text-align: center;
 }
 
 button.extra-tes {
