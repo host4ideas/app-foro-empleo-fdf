@@ -70,6 +70,7 @@ module.exports = function (io, sessionMiddleware) {
         require("./categoriasSocket")(socket);
         require("./eventosSocket")(socket);
         require("./salasSocket")(socket);
+        require("./temporizadoresSocket")(socket);
     });
 
     io.on("check timer", (cb) => {
