@@ -53,9 +53,90 @@ function InsTiempoEmpresaSala() {
         }
     }
 
-    function aniadeFila() {
+    function aniadeFilaTimer() {
+
         var tbody = document.getElementById("timer-table").childNodes[1]
-        var fila = document.createElement("tr"); 
+        var hora = tbody.childNodes[tbody.childNodes.length-1].childNodes[0].innerText.split(":")
+
+        hora[0] = parseInt(hora[0]);
+        hora[1] = parseInt(hora[1]);
+
+        var valorCategoria = tbody.childNodes[tbody.childNodes.length-1].childNodes[1].childNodes[0].selectedOptions[0].value;
+
+        hora[1] = hora[1] + parseInt(valorCategoria)
+
+        if (hora[1] >= 60) {
+            hora[0]++
+            hora[1] = hora[1] - 60
+        }
+
+        if (hora[1] < 10) {
+            hora[1] = "0" + hora[1]
+        }
+
+        if (hora[0] < 10 ) {
+            hora[0] = "0" + hora[0]
+        }
+
+        var fila = document.createElement("tr");
+
+        var celdaTiempo = document.createElement("td");
+        celdaTiempo.classList.add("hora")
+        celdaTiempo.innerText = hora[0] + ":" + hora[1]
+
+        var celdaSelect = document.createElement("td")
+
+        var selector = document.createElement("select")
+        selector.classList.add("select-category")
+
+        for (var i = 0; i < categorias.length ; i++) {
+            var opcion = document.createElement("option");
+            opcion.value = categorias[i].duracion
+            opcion.innerText = categorias[i].categoria
+            selector.append(opcion)
+        }
+
+        celdaSelect.append(selector)
+        fila.append(celdaTiempo)
+        fila.append(celdaSelect)
+        tbody.append(fila)
+
+        aniadeFilaSalas(celdaTiempo.innerText)
+    }
+
+    function aniadeFilaSalas(hora) {
+
+        var tablasSala = document.getElementsByClassName("div-table-room");
+        
+        for (var i=0; i < tablasSala.length; i++) {
+
+            var tbody = tablasSala[i].childNodes[0].childNodes[1]
+            console.log(tbody)
+            var fila = document.createElement("tr")
+
+            var celdaTiempo = document.createElement("td")
+            celdaTiempo.classList.add("hora")
+            celdaTiempo.innerText = hora
+            
+            var celdaSelect = document.createElement("td")
+
+            var selector = document.createElement("select")
+            selector.classList.add("select-room")
+
+            empresas.forEach(empresa => {
+                var opcion = document.createElement("option");
+                opcion.value = empresa.idEmpresa;
+                opcion.innerText = empresa.nombreEmpresa;
+                selector.append(opcion)
+            });
+
+            celdaSelect.append(selector)
+            fila.append(celdaTiempo)
+            fila.append(celdaSelect)
+            tbody.append(fila)
+            
+        }
+
     }
 
     return (
@@ -64,14 +145,14 @@ function InsTiempoEmpresaSala() {
                 <thead>
                     <tr>
                         <th>INICIO</th>
-                        <th rowSpan="3">CATEGORIA</th>
+                        <th>CATEGORIA</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td className="hora">9:00</td>
-                        <td rowSpan="3">
-                            <select style={{"width":"100%","textAlign":"center"}}>
+                        <td>
+                            <select className="select-category">
                                 {
                                     categorias.map((categoria,index) => {
                                         return <option value={categoria.duracion}>{categoria.categoria}</option>
@@ -82,29 +163,29 @@ function InsTiempoEmpresaSala() {
                     </tr>
                 </tbody>
             </table>
-            <button className="extra-tes" type="submit" onClick={() => aniadeFila()}><AiOutlinePlus/></button>
+            <button className="extra-tes" type="submit" onClick={() => aniadeFilaTimer()}><AiOutlinePlus/></button>
             <div style={{"width":"100%","margin":"15px 0px 15px 0px"}}>
                 <select id="select-room" onChange={() => cambiaTablaSala()} style={{"width":"100%","textAlign":"center","outline":"none","padding":"7px","borderRadius":"100px"}}>
                     {salas.map((sala,index) => {
-                        return <option value={sala.idSala}>{sala.nombreSala}</option>
+                        return <option key={index} value={sala.idSala}>{sala.nombreSala}</option>
                     })}
                 </select>
             </div>
             {
                 salas.map((sala,index) => {
-                    return <div className={"div-table-room room-"+sala.nombreSala}>
+                    return <div key={index} className={"div-table-room room-"+sala.nombreSala}>
                         <table className={"tabla-tes"} width="100%">
                             <thead>
                                 <tr>
                                     <th>INICIO</th>
-                                    <th rowspan="3">EMPRESA {sala.nombreSala}</th>
+                                    <th>EMPRESA {sala.nombreSala}</th>
                                 </tr>
                             </thead>
                             <tbody className={"tbody-"+sala.nombreSala}>
                                 <tr>
                                     <td className="hora">9:00</td>
-                                    <td rowSpan="3">
-                                        <select style={{"width":"100%","textAlign":"center"}}>
+                                    <td>
+                                        <select className="select-room">
                                             {
                                                 empresas.map((empresa,index) => {
                                                     return <option key={index} value={empresa.idEmpresa}>{empresa.nombreEmpresa}</option>
@@ -115,7 +196,7 @@ function InsTiempoEmpresaSala() {
                                 </tr>
                             </tbody>
                         </table>
-                        </div>
+                    </div>
                 })
             }
             
