@@ -19,7 +19,6 @@ export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
     const { changeEvento, evento } = useEventoContext();
-    const [eventoSelected, setEventoSelected] = useState("");
 
     //SOCKET GET EVENTOS
     useEffect(() => {
@@ -33,10 +32,6 @@ export default function ActionsEvento() {
             });
         }
     }, [adminSocket]);
-
-    const selectEvento = (evento) => {
-        setEventoSelected(evento);
-    };
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
@@ -105,7 +100,7 @@ export default function ActionsEvento() {
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
-                                    selectEvento(event);
+                                    changeEvento(event);
                                 }}
                             >
                                 <div className="card-title">
@@ -142,17 +137,17 @@ export default function ActionsEvento() {
                     })}
                 </div>
                 <div className="card-event bottom">
-                    {!eventoSelected ? (
+                    {!evento ? (
                         <h1>Seleccione un evento</h1>
                     ) : (
                         <div className="card-title">
                             <h1>
                                 <span className="fst-italic">
-                                    {eventoSelected.nombreEvento}
+                                    {evento.nombreEvento}
                                 </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${eventoSelected.nombreEvento.replace(
+                                to={`${DETALLES_EVENTO}/${evento.nombreEvento.replace(
                                     / /g,
                                     ""
                                 )}`}
