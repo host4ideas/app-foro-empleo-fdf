@@ -3,6 +3,8 @@ import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { msToMinutesSecondsAndHours } from "../utils/utils";
+// Context
+import { useEventoContext } from "../contexts/eventoContext";
 
 import "./actionsevento.css";
 import {
@@ -15,8 +17,8 @@ import {
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
-    const [evento, setEvento] = useState("");
     const { isAuthenticated, adminSocket } = useAuthContext();
+    const { changeEvento, evento } = useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
@@ -31,8 +33,8 @@ export default function ActionsEvento() {
         }
     }, [adminSocket]);
 
-    const selectEvento = (nombre) => {
-        setEvento(nombre);
+    const selectEvento = (evento) => {
+        changeEvento(evento);
     };
 
     const parseFechaToMinutesAndHours = (fecha) => {
@@ -96,13 +98,13 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    evento === event.nombreEvento
+                                    evento.nombreEvento === event.nombreEvento
                                         ? "active"
                                         : ""
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
-                                    selectEvento(event.nombreEvento);
+                                    selectEvento(event);
                                 }}
                             >
                                 <div className="card-title">
@@ -145,10 +147,10 @@ export default function ActionsEvento() {
                         <div className="card-title">
                             <h1>
                                 Comenzar:{" "}
-                                <span className="fst-italic">{evento}</span>
+                                <span className="fst-italic">{evento.nombreEvento}</span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${evento.replace(
+                                to={`${DETALLES_EVENTO}/${evento.nombreEvento.replace(
                                     / /g,
                                     ""
                                 )}`}
