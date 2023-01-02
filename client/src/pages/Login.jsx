@@ -4,12 +4,14 @@ import { AiOutlineUser, AiOutlineArrowRight } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./Login.css";
+import Loading from "../components/Loading";
 
 function Login() {
     const { login } = useAuthContext();
 
     const [user, setUser] = useState("JUAN");
     const [password, setPassword] = useState("12345");
+    const [loading, setLoading] = useState(false);
 
     function handleInputUserChange(event) {
         setUser(event.target.value);
@@ -42,6 +44,7 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
+        setLoading(true);
         login(user, password);
     }
 
@@ -88,6 +91,7 @@ function Login() {
                     alt="clock"
                 />
             </div>
+            {loading && <Loading />}
         </div>
     );
 }
