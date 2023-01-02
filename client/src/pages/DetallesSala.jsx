@@ -1,11 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Timer from "../components/Timer";
 import { FaArrowLeft } from "react-icons/fa";
+import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
+import { msToMinutesSecondsAndHours } from "../utils/utils";
 
 export default function DetallesSala() {
-    let { nombre } = useParams();
+    let { nombre, nombreEvento } = useParams();
     const navigate = useNavigate();
+    const { adminSocket } = useAuthContext();
+    const { evento } = useEventoContext();
+    const [timers, setTimers] = useState([]);
+
+    if (adminSocket && evento) {
+        adminSocket.emit("get timers", (timers) => {
+            if (timers) {
+                setTimers(timers);
+            }
+        });
+    }
 
     return (
         <div className="container text-center">
@@ -15,7 +29,9 @@ export default function DetallesSala() {
                     <div className="icon-container blue">
                         <FaArrowLeft
                             className="icon"
-                            onClick={() => navigate("/")}
+                            onClick={() =>
+                                navigate("/detalles-evento/" + nombreEvento)
+                            }
                         />
                     </div>
                 </div>
@@ -31,31 +47,29 @@ export default function DetallesSala() {
                     <h2>EMPRESA</h2>
                 </div>
                 <div className="table-body details">
-                    <div className="table-row working">
-                        <h3>9:00</h3>
-                        <h3>WORK</h3>
-                        <h3>Empresa 1</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:15</h3>
-                        <h3>DESCANSO</h3>
-                        <h3>Empresa 2</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:20</h3>
-                        <h3>WORK</h3>
-                        <h3>Empresa 3</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:35</h3>
-                        <h3>WORK</h3>
-                        <h3>Empresa 4</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:50</h3>
-                        <h3>WORK</h3>
-                        <h3>Empresa 5</h3>
-                    </div>
+                    {timers.map((timer, index) => {
+                        return (
+                            <div
+                                className={`table-row ${
+                                    new Date(timer.inicio) >= new Date() &&
+                                    new Date(timer.inicio) <
+                                        new Date() + timer.duracion * 60 * 1000
+                                        ? "working"
+                                        : null
+                                }`}
+                                key={index}
+                            >
+                                <h3>
+                                    {msToMinutesSecondsAndHours(
+                                        timer.duracion * 60 * 1000,
+                                        "hh:mm"
+                                    )}
+                                </h3>
+                                <h3>{timer.categoria}</h3>
+                                <h3>{timer.empresa}</h3>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

@@ -68,6 +68,9 @@ module.exports = function (io, sessionMiddleware) {
         require("./empresasSocket")(socket);
         require("./salasSocket")(socket);
         require("./categoriasSocket")(socket);
+        require("./eventosSocket")(socket);
+        require("./salasSocket")(socket);
+        require("./temporizadoresSocket")(socket);
     });
 
     io.on("check timer", (cb) => {

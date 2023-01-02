@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../contexts/authContext";
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { msToMinutesSecondsAndHours } from "../utils/utils";
+// Context
+import { useEventoContext } from "../contexts/eventoContext";
 
 import "./actionsevento.css";
 import {
@@ -14,99 +16,22 @@ import {
 } from "../utils/paths";
 
 export default function ActionsEvento() {
-    const eventosLocales = [
-        {
-            idEvento: 0,
-            nombreEvento: "FORO DE EMPLEO",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        {
-            idEvento: 1,
-            nombreEvento: "FERIA DEL MOTOR",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        {
-            idEvento: 2,
-            nombreEvento: "TECH RIDERS",
-            inicioEvento: "2022-12-13T17:42:17.959Z",
-            finEvento: "2022-12-13T17:42:17.959Z",
-        },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-        // {
-        //     idEvento: 2,
-        //     nombreEvento: "TECH RIDERS",
-        //     inicioEvento: "2022-12-13T17:42:17.959Z",
-        //     finEvento: "2022-12-13T17:42:17.959Z",
-        // },
-    ];
-    const [eventos, setEventos] = useState(eventosLocales);
-    const [evento, setEvento] = useState("");
-    const { isAuthenticated } = useAuthContext();
+    const [eventos, setEventos] = useState([]);
+    const { isAuthenticated, adminSocket } = useAuthContext();
+    const { changeEvento, evento } = useEventoContext();
 
-    const selectEvento = (nombre) => {
-        setEvento(nombre);
-    };
+    //SOCKET GET EVENTOS
+    useEffect(() => {
+        if (adminSocket) {
+            adminSocket.emit("eventos", (eventos) => {
+                if (eventos) {
+                    setEventos(eventos);
+                } else {
+                    console.log("error getting eventos");
+                }
+            });
+        }
+    }, [adminSocket]);
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
@@ -169,13 +94,13 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    evento === event.nombreEvento
+                                    evento.nombreEvento === event.nombreEvento
                                         ? "active"
                                         : ""
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
-                                    selectEvento(event.nombreEvento);
+                                    changeEvento(event);
                                 }}
                             >
                                 <div className="card-title">
@@ -200,7 +125,9 @@ export default function ActionsEvento() {
                                 </div>
                                 {isAuthenticated && (
                                     <div className="card-action">
-                                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
+                                        <Link
+                                            to={"/" + PRIVATE + "/" + INSEVENTO}
+                                        >
                                             <FaEdit className="icon" />
                                         </Link>
                                     </div>
@@ -215,11 +142,12 @@ export default function ActionsEvento() {
                     ) : (
                         <div className="card-title">
                             <h1>
-                                Comenzar:{" "}
-                                <span className="fst-italic">{evento}</span>
+                                <span className="fst-italic">
+                                    {evento.nombreEvento}
+                                </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${evento.replace(
+                                to={`${DETALLES_EVENTO}/${evento.nombreEvento.replace(
                                     / /g,
                                     ""
                                 )}`}

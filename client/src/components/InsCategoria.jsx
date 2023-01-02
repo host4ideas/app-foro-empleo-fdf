@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai"
-import './InsCategoria.css'
-
+import { AiOutlinePlus } from "react-icons/ai";
+import "./InsCategoria.css";
+import { useAuthContext } from "../contexts/authContext";
 
 function InsCategoria() {
-
     const [tiempo, setTiempo] = useState("");
     const [nombre, setNombre] = useState("");
+    const [categorias, setCategorias] = useState([]);
+    const { adminSocket } = useAuthContext();
+
+    if (adminSocket) {
+        adminSocket.emit("categorias", (categorias) => {
+            setCategorias(categorias);
+        });
+    }
 
     function handleInputChangeD(e) {
         setTiempo(e.target.value);
@@ -17,31 +24,41 @@ function InsCategoria() {
     }
 
     function handleSubmit(e) {
-
         e.preventDefault();
 
-            //codigo para insertar empresa
-            //hay que sustituir por procedimiento para bbdd
-            //La pausa sera global para todos los tiempos insertados
-            //Hay que mirar como insertar tiempos (Fecha de inicio en seg + Sumar duracion en seg + Sumar pausa si > 0 en seg= Total )
-            //Se resta la duracion en segundos de la fecha actual
+        //codigo para insertar empresa
+        //hay que sustituir por procedimiento para bbdd
+        //La pausa sera global para todos los tiempos insertados
+        //Hay que mirar como insertar tiempos (Fecha de inicio en seg + Sumar duracion en seg + Sumar pausa si > 0 en seg= Total )
+        //Se resta la duracion en segundos de la fecha actual
 
         var arrayCategorias = [];
 
-        if (window.localStorage.getItem("categorias") == null){
-            arrayCategorias.push({ "idCategoria":0,"duracion":parseInt(tiempo) , "categoria":nombre})
-        }else{
-            arrayCategorias = JSON.parse(window.localStorage.getItem("categorias")); 
-            arrayCategorias.push({ "idCategoria":0,"duracion":parseInt(tiempo) , "categoria":nombre})
+        if (window.localStorage.getItem("categorias") == null) {
+            arrayCategorias.push({
+                idCategoria: 0,
+                duracion: parseInt(tiempo),
+                categoria: nombre,
+            });
+        } else {
+            arrayCategorias = JSON.parse(
+                window.localStorage.getItem("categorias")
+            );
+            arrayCategorias.push({
+                idCategoria: 0,
+                duracion: parseInt(tiempo),
+                categoria: nombre,
+            });
         }
 
-        window.localStorage.setItem("categorias",JSON.stringify(arrayCategorias));
-            
-        console.log(JSON.parse(window.localStorage.getItem("categorias")))
+        window.localStorage.setItem(
+            "categorias",
+            JSON.stringify(arrayCategorias)
+        );
+
+        console.log(JSON.parse(window.localStorage.getItem("categorias")));
 
         /* localStorage.removeItem("categorias"); */
-        
-
     }
 
     return (
@@ -49,7 +66,7 @@ function InsCategoria() {
             <h6>CATEGORIAS TEMPORIZADORES</h6>
             <form onSubmit={handleSubmit}>
                 <div className="inputs-zone">
-                    <div className="name-input" style={{"width":"40%"}}>
+                    <div className="name-input" style={{ width: "40%" }}>
                         <label>Nombre:</label>
                         <input
                             type="text"
@@ -68,7 +85,9 @@ function InsCategoria() {
                         />
                     </div>
                 </div>
-                <button type="submit"><AiOutlinePlus/></button>
+                <button type="submit">
+                    <AiOutlinePlus />
+                </button>
             </form>
         </div>
     );
