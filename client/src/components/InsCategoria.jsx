@@ -25,49 +25,19 @@ function InsCategoria() {
 
     function handleSubmit(e) {
         e.preventDefault();
-
-        //codigo para insertar empresa
-        //hay que sustituir por procedimiento para bbdd
-        //La pausa sera global para todos los tiempos insertados
-        //Hay que mirar como insertar tiempos (Fecha de inicio en seg + Sumar duracion en seg + Sumar pausa si > 0 en seg= Total )
-        //Se resta la duracion en segundos de la fecha actual
-
-        var arrayCategorias = [];
-
-        if (window.localStorage.getItem("categorias") == null) {
-            arrayCategorias.push({
-                idCategoria: 0,
-                duracion: parseInt(tiempo),
-                categoria: nombre,
-            });
-        } else {
-            arrayCategorias = JSON.parse(
-                window.localStorage.getItem("categorias")
-            );
-            arrayCategorias.push({
-                idCategoria: 0,
-                duracion: parseInt(tiempo),
-                categoria: nombre,
-            });
-        }
-
-        window.localStorage.setItem(
-            "categorias",
-            JSON.stringify(arrayCategorias)
-        );
-
-        console.log(JSON.parse(window.localStorage.getItem("categorias")));
-
-        /* localStorage.removeItem("categorias"); */
     }
 
     return (
         <div className="div-category">
-            <h6>CATEGORIAS TEMPORIZADORES</h6>
+            <h6 className="main-card-title main-card-title-left mb-2">
+                CATEGORIAS TEMPORIZADORES
+            </h6>
             <form onSubmit={handleSubmit}>
                 <div className="inputs-zone">
                     <div className="name-input" style={{ width: "40%" }}>
-                        <label>Nombre:</label>
+                        <label className="detail-card-title">
+                            Nombre:
+                        </label>
                         <input
                             type="text"
                             value={nombre}
@@ -76,7 +46,9 @@ function InsCategoria() {
                         />
                     </div>
                     <div className="minute-input">
-                        <label>Duracion (Minutos)</label>
+                        <label className="detail-card-title">
+                            Duracion (Minutos):
+                        </label>
                         <input
                             type="number"
                             value={tiempo}
