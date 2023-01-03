@@ -2,6 +2,9 @@
     padding: 0px;
     margin: 0px;
 }
+:root{
+    --bs-primary: #7753ff;
+}
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
@@ -22,7 +25,6 @@
 .App {
     height: 100vh;
     background-color: whitesmoke;
-    overflow: hidden;
 }
 .container {
     width: 95% !important;
@@ -49,7 +51,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
 }
 .icon {
     color: white;
@@ -60,4 +61,34 @@
 }
 .blue {
     background-color: #726eff;
+}
+.icon-black {
+    color: black;
+}
+.main-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: "Space Mono", monospace;
+}
+.main-card-title-left {
+    text-align: start;
+}
+.detail-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: "Space Mono", monospace;
+}
+.card-content-text {
+    font-family: "Space Mono", monospace;
+    font-weight: 300;
+    font-size: 0.8rem;
+}
+.card-content-number {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+}
+.black-link {
+    text-decoration: none;
+    color: black;
 }

@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export const EventoContext = createContext();
 
 export default function EventoContextProvider({ children }) {
-    const [evento, setEvento] = useState({});
+    const [eventoSelected, setEventoSelected] = useState(null);
     const [newEvento, setNewEvento] = useState({});
 
     /**
@@ -19,17 +19,17 @@ export default function EventoContextProvider({ children }) {
      */
     const changeEvento = useCallback(
         (newEvento) => {
-            setEvento(newEvento);
+            setEventoSelected(newEvento);
         },
-        [setEvento]
+        [setEventoSelected]
     );
 
     const addPropertiesEvento = useCallback(
         (newProperties) => {
-            const updatedEvento = { ...evento, newProperties };
+            const updatedEvento = { ...eventoSelected, newProperties };
             setNewEvento(updatedEvento);
         },
-        [setNewEvento, evento]
+        [setNewEvento, eventoSelected]
     );
 
     const checkNewEvento = useCallback(() => {
@@ -43,12 +43,12 @@ export default function EventoContextProvider({ children }) {
 
     const value = useMemo(
         () => ({
-            evento: evento,
+            eventoSelected: eventoSelected,
             changeEvento: changeEvento,
             addPropertiesEvento: addPropertiesEvento,
             checkNewEvento: checkNewEvento,
         }),
-        [evento, changeEvento, addPropertiesEvento, checkNewEvento]
+        [eventoSelected, changeEvento, addPropertiesEvento, checkNewEvento]
     );
 
     return (

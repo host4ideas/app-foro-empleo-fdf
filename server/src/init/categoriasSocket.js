@@ -5,7 +5,7 @@ const {
     createCategoria,
     updateCategoria,
     deleteCategoria,
-} = require("../services/categoriasTimer");
+} = require("../services/categoriasTimer.service");
 
 module.exports = function (socket) {
     socket.on("categorias", (cb) => {
