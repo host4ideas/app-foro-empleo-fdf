@@ -6,7 +6,7 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 // Context
 import { useEventoContext } from "../contexts/eventoContext";
 
-import "./actionsevento.css";
+import "./ActionsEvento.css";
 import {
     DETALLES_EVENTO,
     INSEVENTO,
