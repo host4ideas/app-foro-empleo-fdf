@@ -1,13 +1,13 @@
+// React
 import React, { useState, useEffect } from "react";
-import { useAuthContext } from "../contexts/authContext";
-import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { msToMinutesSecondsAndHours } from "../utils/utils";
 import titleEmpleaTech from "../assets/images/logo-empleatech-title.svg";
 // Context
-import { useEventoContext } from "../contexts/eventoContext";
-
-import "./actionsevento.css";
+import { useAuthContext } from "../contexts/authContext";
+// Icons
+import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
+// Utils
 import {
     DETALLES_EVENTO,
     INSEVENTO,
@@ -15,11 +15,13 @@ import {
     PUBLIC,
     PRIVATE,
 } from "../utils/paths";
+// Styles
+import "./ActionsEvento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
-    const { changeEvento, evento } = useEventoContext();
+    const { changeEvento, eventoSelected } = useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
@@ -105,7 +107,8 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    evento.nombreEvento === event.nombreEvento
+                                    eventoSelected?.nombreEvento ===
+                                    event.nombreEvento
                                         ? "active"
                                         : ""
                                 }`}
@@ -148,20 +151,20 @@ export default function ActionsEvento() {
                     })}
                 </div>
                 <div className="card-event bottom">
-                    {!evento ? (
+                    {!eventoSelected ? (
                         <h1>Seleccione un evento</h1>
                     ) : (
                         <div className="card-title">
                             <h1>
                                 <span className="fst-italic">
-                                    {evento.nombreEvento}
+                                    {eventoSelected.nombreEvento}
                                 </span>
                             </h1>
                             <Link
-                                // to={`${DETALLES_EVENTO}/${evento.nombreEvento.replace(
-                                //     / /g,
-                                //     ""
-                                // )}`}
+                                to={`${DETALLES_EVENTO}/${eventoSelected.nombreEvento.replace(
+                                    / /g,
+                                    ""
+                                )}`}
                                 className="icon-container blue"
                             >
                                 <FaPlay className="icon" />

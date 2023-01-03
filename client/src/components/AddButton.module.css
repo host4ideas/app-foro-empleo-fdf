@@ -1,0 +1,14 @@
+.submitButton {
+    background-color: #7753ff;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px darkslategray;
+    transition: all 0.2s ease;
+	border-radius: 100%;
+}
+
+.submitButton:active {
+    background-color: #48abe0;
+    box-shadow: 0 0 2px darkslategray;
+    transform: translateY(2px);
+}
