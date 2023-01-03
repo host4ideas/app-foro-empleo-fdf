@@ -1,6 +1,7 @@
 * {
     padding: 0px;
     margin: 0px;
+    font-family: "Space Mono", monospace;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -54,10 +55,4 @@
 .icon {
     color: white;
     font-size: 18px;
-}
-.red {
-    background-color: red;
-}
-.blue {
-    background-color: #726eff;
 }

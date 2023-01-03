@@ -1,69 +1,26 @@
-.div-login {
-    background-color: #EEEEEE;
+.container-login {
+    height: 100vh;
 }
-
-.div-login h1 {
-    padding: 70px;
-    font-size: 32px;
-}
-
-.div-login form div.form-inputs {
-    width: 75%;
-    background-color: white;
-}
-
-.div-login form div .up {
-    border-start-end-radius: 100px;
-}
-
-.div-login form div .down {
-    border-end-end-radius: 100px;
-}
-
-.div-login form div.form-inputs input {
-    border: none;
-    padding: 15px;
-    background-color: transparent;
-    font-size: 13px;
-    width: 75%;
-    outline: none;
-}
-
-.div-login form div.button-input button {
-    border-radius: 100%;
-    color: white;
-    background-color: #7753FF;
-    position: relative;
-    bottom: 62.5px;
-    left: 70%;
-    padding: 5px 10px 5px 10px;
-    border: none;
-}
-
-.div-login div.link-events {
-    text-align: start;
-    margin-top: 50px;
-    width: 35%;
-}
-
-.div-login div.link-events a {
-    text-decoration: none;
-    position: relative;
-    top: 50px;
-    background-color: white;
-    padding: 10px 25% 10px 25%;
-    color: #7753FF;
+.title {
+    font-size: 50px;
     font-weight: bold;
-    border-end-end-radius: 100px;
-    border-start-end-radius: 100px;
+    margin-top: 100px;
+    margin-bottom: 90px;
+}
+.container-form {
+    background-color: white;
+    width: 80%;
+    height: 10%;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 20%);
+    overflow: hidden;
 }
 
-.div-login div.img-clock {
-    text-align: end;
-    width: 100%;
+.form-input {
 }
 
-.div-login div.img-clock img {
-    width: 60%;
+.form-button {
+    position: absolute;
+    right: 0;
 }
-
