@@ -50,16 +50,6 @@
     width: 100%;
 }
 
-.div-events div.event-name div input {
-    width: 100%;
-    border: none;
-    padding: 5px;
-    outline: none;
-    border-bottom: 1px solid black;
-    background-color: #eeeeee;
-    margin-top: 5px;
-}
-
 .div-events div.company-room-show {
     display: flex;
     font-size: 9px;
@@ -82,11 +72,6 @@
 
 .div-events div.company-room-show div.company-show {
     margin-left: 20%;
-}
-
-.div-events div.company-room-show div.room-show a span,
-.div-events div.company-room-show div.company-show a span {
-    color: grey;
 }
 
 .div-events div.category-zone {

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 // Components
-import InsCategoria from "../components/InsCategoria";
+import InsCategoria from "./InsCategoria";
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
 import BackButton from "../components/BackButton";
 // Icons
@@ -10,6 +10,7 @@ import { GoArrowLeft } from "react-icons/go";
 // Styles
 import "./InsEvento.css";
 // Routes
+import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 
 function InsEvento() {
     const [fechas, setFechas] = useState({ fechaInicio: "", fechaFin: "" });
@@ -88,16 +89,16 @@ function InsEvento() {
         <div className="div-events text-center">
             <div className="hour-zone text-center">
                 <div className="start-hour">
-                    <h6 className="main-card-title mb-2">Inicio</h6>
+                    <h6 className="main-card-title my-2">Inicio</h6>
                     <input id="fechaI" onChange={cambiaHoraTotal} type="date" />
                     <input id="horaI" onChange={cambiaHoraTotal} type="time" />
                 </div>
                 <div className="calculated-hour">
-                    <h6 className="main-card-title mb-2">Total</h6>
+                    <h6 className="main-card-title my-2">Total</h6>
                     <span>{totalHora}</span>
                 </div>
                 <div className="end-hour">
-                    <h6 className="main-card-title mb-2">Final</h6>
+                    <h6 className="main-card-title my-2">Final</h6>
                     <input id="fechaF" type="date" onChange={cambiaHoraTotal} />
                     <input id="horaF" type="time" onChange={cambiaHoraTotal} />
                 </div>
@@ -107,18 +108,35 @@ function InsEvento() {
                     NOMBRE DEL EVENTO
                 </h6>
                 <div>
-                    <input type="text" required />
+                    <input className="form-control" type="text" required />
                 </div>
             </div>
             <div className="company-room-show">
                 <div className="room-show">
-                    <NavLink className="detail-card-title black-link" to="/admin/inssalas">
-                        SALAS <span> - (0 salas)</span>
+                    <NavLink
+                        className="detail-card-title black-link"
+                        to={"/" + PRIVATE + "/" + INSSALAS}
+                    >
+                        SALAS{" "}
+                        <span className="text-secondary"> - (0 salas)</span>
                     </NavLink>
                 </div>
                 <div className="company-show">
-                    <NavLink className="detail-card-title black-link" to="/admin/insempresa">
-                        EMPRESAS <span> - (0 empresas)</span>
+                    <NavLink
+                        className="detail-card-title black-link"
+                        to={"/" + PRIVATE + "/" + INSEMPRESA}
+                    >
+                        EMPRESAS{" "}
+                        <span className="text-secondary"> - (0 empresas)</span>
+                    </NavLink>
+                </div>
+                <div className="company-show">
+                    <NavLink
+                        className="detail-card-title black-link"
+                        to={"/" + PRIVATE + "/" + INSCATEGORIA}
+                    >
+                        CATEGORIAS TEMPORIZADORES{" "}
+                        <span className="text-secondary"> - (0 empresas)</span>
                     </NavLink>
                 </div>
             </div>

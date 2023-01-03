@@ -1,7 +1,11 @@
+// React
 import { useState, useEffect } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
-import "./InsTiempoEmpresaSala.css";
+// Context
 import { useAuthContext } from "../contexts/authContext";
+// Components
+import AddButton from "./AddButton";
+// Styles
+import "./InsTiempoEmpresaSala.css";
 
 function InsTiempoEmpresaSala() {
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
@@ -165,14 +169,10 @@ function InsTiempoEmpresaSala() {
                     </tr>
                 </tbody>
             </table>
-            <button
-                className="extra-tes"
-                type="submit"
-                onClick={() => aniadeFilaTimer()}
-            >
-                <AiOutlinePlus />
-            </button>
-            <div style={{ width: "100%", margin: "15px 0px 15px 0px" }}>
+            <div className="my-2 text-center">
+                <AddButton clickHandler={aniadeFilaTimer} />
+            </div>
+            <div>
                 <select
                     id="select-room"
                     onChange={() => cambiaTablaSala()}

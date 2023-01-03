@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import InsEmpresa from "../pages/InsEmpresa";
 import InsSala from "../pages/InsSala";
 import InsEvento from "../pages/InsEvento";
+import InsCategoria from "../pages/InsCategoria";
 import ActionsEvento from "../pages/ActionsEvento";
 
 import DemoPushNotification from "../pages/DemoPushNotification";
@@ -23,6 +24,7 @@ import {
     INSEMPRESA,
     INSSALAS,
     INSEVENTO,
+    INSCATEGORIA,
     DETALLES_EVENTO,
 } from "../utils/paths";
 
@@ -52,6 +54,8 @@ export default function Router() {
                     <Route path={INSEMPRESA} element={<InsEmpresa />} />
                     <Route path={INSSALAS} element={<InsSala />} />
                     <Route path={INSEVENTO} element={<InsEvento />} />
+                    <Route path={INSEVENTO} element={<InsEvento />} />
+                    <Route path={INSCATEGORIA} element={<InsCategoria />} />
                 </Route>
                 {/* Redirect for 404 Error */}
                 <Route path="*" element={<Navigate to="/" />} />
