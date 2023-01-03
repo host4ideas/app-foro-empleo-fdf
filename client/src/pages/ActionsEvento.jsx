@@ -1,12 +1,14 @@
+// React
 import React, { useState, useEffect } from "react";
-import { useAuthContext } from "../contexts/authContext";
-import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { msToMinutesSecondsAndHours } from "../utils/utils";
+// Context
+import { useAuthContext } from "../contexts/authContext";
+// Icons
+import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 // Context
 import { useEventoContext } from "../contexts/eventoContext";
-
-import "./ActionsEvento.css";
+// Utils
+import { msToMinutesSecondsAndHours } from "../utils/utils";
 import {
     DETALLES_EVENTO,
     INSEVENTO,
@@ -14,6 +16,8 @@ import {
     PUBLIC,
     PRIVATE,
 } from "../utils/paths";
+// Styles
+import "./ActionsEvento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
