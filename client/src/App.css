@@ -3,9 +3,6 @@
     margin: 0px;
     font-family: "Space Mono", monospace;
 }
-:root {
-    --bs-primary: #7753ff;
-}
 /* width */
 ::-webkit-scrollbar {
     width: 5px;
@@ -48,6 +45,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
+    border: none;
     margin: auto;
     display: flex;
     justify-content: center;

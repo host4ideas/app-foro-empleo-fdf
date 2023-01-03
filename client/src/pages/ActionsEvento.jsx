@@ -5,6 +5,7 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 import titleEmpleaTech from "../assets/images/logo-empleatech-title.svg";
 // Context
 import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
 // Icons
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
 // Utils

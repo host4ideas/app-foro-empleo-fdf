@@ -41,6 +41,7 @@ function Login() {
                         placeholder="Username"
                     />
                 </div>
+                <div className="form-line"></div>
                 <div className="form-input">
                     <MdLockOutline />
                     <input
@@ -52,15 +53,17 @@ function Login() {
                 </div>
                 <button
                     type="submit"
-                    className="form-button"
+                    className="form-button icon-container"
                     style={{ backgroundColor: "var(--primary-color)" }}
                 >
                     <AiOutlineArrowRight />
                 </button>
             </form>
-            <div className="link-events">
-                <Link to={"/"}>Event</Link>
-            </div>
+
+            <Link className="link-events" to={"/"}>
+                Event
+            </Link>
+
             <div className="img-clock">
                 <img src={clock} alt="clock" />
             </div>
