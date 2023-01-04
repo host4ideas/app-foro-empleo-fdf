@@ -38,15 +38,22 @@ function InsCategoria() {
     function handleClick(e) {
         e.preventDefault();
 
-        if (adminSocket) {
-            // adminSocket.emit("create categoria",empresa,(result) => {
-            //     if (result) {
-            //         //Notificacion acierto
-            //         getListaEmpresas()
-            //     }else{
-            //         //Notificacion error
-            //     }
-            // })
+        if (adminSocket && nombre && nombre !== "" && tiempo && tiempo > 0) {
+            adminSocket.emit(
+                "create categoria",
+                { categoria: nombre, duracion: tiempo },
+                (result) => {
+                    if (result) {
+                        //Notificacion acierto
+                        // Reacargamos las categorias
+                        adminSocket.emit("categorias", (categorias) => {
+                            setCategorias(categorias);
+                        });
+                    } else {
+                        //Notificacion error
+                    }
+                }
+            );
         }
     }
 
