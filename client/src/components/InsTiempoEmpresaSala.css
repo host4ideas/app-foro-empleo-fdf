@@ -1,5 +1,5 @@
 .tabla-tes thead tr {
-    background-color:#7753FF;
+    background-color:#c8b88e;
     color:white;
     border:1px solid #cccccc
 }
@@ -33,7 +33,7 @@
 button.extra-tes {
     border-radius:100%;
     color:white;
-    background-color:#7753FF;
+    background-color:#c8b88e;
     border:none;
     position:relative;
     bottom:4px;
@@ -45,7 +45,7 @@ div.div-table-room {
 }
 
 .button-add-timer button{
-    background-color: #7753FF;
+    background-color: #c8b88e;
     color: white;
     border: none;
 }
