@@ -5,7 +5,6 @@ import { MdLockOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./Login.css";
 import Loading from "../components/Loading";
-import clock from "../assets/images/clock.svg";
 
 function Login() {
     const { login } = useAuthContext();
@@ -29,7 +28,7 @@ function Login() {
     }
 
     return (
-        <div className="container-login">
+        <div>
             <h1 className="text-center title">Login</h1>
             <form onSubmit={handleSubmit} className="container-form">
                 <div className="form-input">
@@ -64,9 +63,7 @@ function Login() {
                 Event
             </Link>
 
-            <div className="img-clock">
-                <img src={clock} alt="clock" />
-            </div>
+            <div className="img-clock"></div>
             {loading && <Loading />}
         </div>
     );
