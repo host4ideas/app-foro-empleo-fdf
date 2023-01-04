@@ -5,6 +5,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useAuthContext } from "../contexts/authContext";
 import { useEventoContext } from "../contexts/eventoContext";
 import { msToMinutesSecondsAndHours } from "../utils/utils";
+import { useEffect } from "react";
 
 export default function DetallesSala() {
     let { nombre, nombreEvento } = useParams();
@@ -13,13 +14,15 @@ export default function DetallesSala() {
     const { evento } = useEventoContext();
     const [timers, setTimers] = useState([]);
 
-    if (adminSocket && evento) {
-        adminSocket.emit("get timers", (timers) => {
-            if (timers) {
-                setTimers(timers);
-            }
-        });
-    }
+    useEffect(() => {
+        if (adminSocket && evento) {
+            adminSocket.emit("get timers", (timers) => {
+                if (timers) {
+                    setTimers(timers);
+                }
+            });
+        }
+    }, [adminSocket, evento]);
 
     return (
         <div className="container text-center">
