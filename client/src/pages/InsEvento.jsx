@@ -13,20 +13,16 @@ import "./InsEvento.css";
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 
 function InsEvento() {
-    const [fechas, setFechas] = useState({ fechaInicio: "", fechaFin: "" });
+    const [fechas, setFechas] = useState({ fechaInicio: ""});
     const [totalHora, setTotalHora] = useState("00:00");
 
     function cambiaHoraTotal() {
         var fechaInicioInput = document
             .getElementById("fechaI")
             .value.split("-", 3);
-        var fechaFinInput = document
-            .getElementById("fechaF")
-            .value.split("-", 3);
         var horaInicioInput = document
             .getElementById("horaI")
             .value.split(":", 2);
-        var horaFinInput = document.getElementById("horaF").value.split(":", 2);
 
         var fechaState = {
             fechaInicio: new Date(
@@ -36,53 +32,9 @@ function InsEvento() {
                 horaInicioInput[0],
                 horaInicioInput[1]
             ),
-            fechaFin: new Date(
-                fechaFinInput[0],
-                fechaFinInput[1],
-                fechaFinInput[2],
-                horaFinInput[0],
-                horaFinInput[1]
-            ),
         };
 
-        compararFechas(fechaState);
         setFechas(fechaState);
-    }
-
-    function compararFechas(fecha) {
-        if ((fecha.fechaFin - fecha.fechaInicio) / 1000 >= 0) {
-            if ((fecha.fechaFin - fecha.fechaInicio) / 1000 < 3600) {
-                var minutos = (fecha.fechaFin - fecha.fechaInicio) / 1000 / 60;
-
-                if (minutos < 10) {
-                    setTotalHora("00:0" + minutos);
-                } else {
-                    setTotalHora("00:" + minutos);
-                }
-            } else {
-                var hora = Math.trunc(
-                    (fecha.fechaFin - fecha.fechaInicio) / 1000 / 3600
-                );
-                var minutos =
-                    (((fecha.fechaFin - fecha.fechaInicio) / 1000) % 3600) / 60;
-
-                if (hora < 10) {
-                    if (minutos < 10) {
-                        setTotalHora("0" + hora + ":0" + minutos);
-                    } else {
-                        setTotalHora("0" + hora + ":" + minutos);
-                    }
-                } else {
-                    if (minutos < 10) {
-                        setTotalHora(hora + ":0" + minutos);
-                    } else {
-                        setTotalHora(hora + ":" + minutos);
-                    }
-                }
-            }
-        } else {
-            setTotalHora("00:00");
-        }
     }
 
     return (
@@ -92,15 +44,6 @@ function InsEvento() {
                     <h6 className="main-card-title my-2">Inicio</h6>
                     <input id="fechaI" onChange={cambiaHoraTotal} type="date" />
                     <input id="horaI" onChange={cambiaHoraTotal} type="time" />
-                </div>
-                <div className="calculated-hour">
-                    <h6 className="main-card-title my-2">Total</h6>
-                    <span>{totalHora}</span>
-                </div>
-                <div className="end-hour">
-                    <h6 className="main-card-title my-2">Final</h6>
-                    <input id="fechaF" type="date" onChange={cambiaHoraTotal} />
-                    <input id="horaF" type="time" onChange={cambiaHoraTotal} />
                 </div>
             </div>
             <div className="event-name">
@@ -140,15 +83,11 @@ function InsEvento() {
                     </NavLink>
                 </div>
             </div>
-            <div className="category-zone">
-                <InsCategoria />
-                {/*<InsCategoria metodo='actualizaCategorias'/> y esas categorias guardadas se pasan a InsTiempoEmpresaSala*/}
-            </div>
             <div className="organization-zone">
-                <h6 className="main-card-title main-card-title-left mb-1">
+                <h6 className="my-2 text-center main-card-title main-card-title-left">
                     ORGANIZACION
                 </h6>
-                <InsTiempoEmpresaSala />
+                <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio}/>
                 {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}
             </div>
             <div>

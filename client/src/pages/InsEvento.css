@@ -10,27 +10,24 @@
     box-shadow: 10px 5px 5px #aaaaaa;
     margin: 10px 5% 20px 5%;
     background-color: white;
-    display: flex;
     padding: 5%;
 }
 
-.div-events div.hour-zone div.start-hour,
-.div-events div.hour-zone div.end-hour {
+.div-events div.hour-zone div.start-hour {
     color: white;
     background-color: #7753ff;
-    width: 40%;
+    width: 100%;
+    padding: 10px;
 }
 
-.div-events div.hour-zone div.start-hour input,
-.div-events div.hour-zone div.end-hour input {
+.div-events div.hour-zone div.start-hour input {
     margin-bottom: 5px;
     width: 90%;
 }
 
 .calculated-hour {
     background-color: #eeeeee;
-    width: 20%;
-    display: flex;
+    width: 100%;
     flex-direction: column;
     justify-content: center;
 }
@@ -51,27 +48,17 @@
 }
 
 .div-events div.company-room-show {
-    display: flex;
-    font-size: 9px;
-    margin: 10px 5% 20px 5%;
-}
-
-.div-events div.company-room-show {
-    display: flex;
-    font-size: 9px;
+    font-size: 8px;
     margin: 10px 5% 20px 5%;
 }
 
 .div-events div.company-room-show div.room-show,
 .div-events div.company-room-show div.company-show {
     background-color: white;
-    width: 40%;
+    width: 100%;
     padding: 10px;
+    margin: 10px 0px 10px 0px;
     box-shadow: 10px 5px 5px #aaaaaa;
-}
-
-.div-events div.company-room-show div.company-show {
-    margin-left: 20%;
 }
 
 .div-events div.category-zone {
