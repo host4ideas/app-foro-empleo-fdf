@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
-import { useEventoContext } from "../contexts/eventoContext";
 // Components
 import AddButton from "../components/AddButton";
 // Styles
@@ -13,7 +12,6 @@ function InsCategoria() {
     const [nombre, setNombre] = useState("");
     const [categorias, setCategorias] = useState([]);
     const { adminSocket } = useAuthContext();
-    const { addPropertiesEvento } = useEventoContext();
 
     useEffect(() => {
         if (adminSocket) {
@@ -31,10 +29,6 @@ function InsCategoria() {
         setNombre(e.target.value);
     }
 
-    function response(res) {
-        console.log(res);
-    }
-
     function handleClick(e) {
         e.preventDefault();
 
@@ -44,13 +38,13 @@ function InsCategoria() {
                 { categoria: nombre, duracion: tiempo },
                 (result) => {
                     if (result) {
-                        //Notificacion acierto
-                        // Reacargamos las categorias
-                        adminSocket.emit("categorias", (categorias) => {
+                        // Notificacion acierto
+                        // Recargamos las categorias
+                        adminSocket.emit("create categoria", (categorias) => {
                             setCategorias(categorias);
                         });
                     } else {
-                        //Notificacion error
+                        // Notificacion error
                     }
                 }
             );
