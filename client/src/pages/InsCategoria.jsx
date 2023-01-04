@@ -31,19 +31,22 @@ function InsCategoria() {
         setNombre(e.target.value);
     }
 
+    function response(res) {
+        console.log(res);
+    }
+
     function handleClick(e) {
         e.preventDefault();
 
         if (adminSocket) {
-            adminSocket.emit(
-                "create categoria",
-                () => {
-                    adminSocket.emit("categorias", (categorias) => {
-                        setCategorias(categorias);
-                    });
-                },
-                { categoria: nombre, duracion: tiempo }
-            );
+            // adminSocket.emit("create categoria",empresa,(result) => {
+            //     if (result) {
+            //         //Notificacion acierto
+            //         getListaEmpresas()
+            //     }else{
+            //         //Notificacion error
+            //     }
+            // })
         }
     }
 

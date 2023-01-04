@@ -43,3 +43,9 @@ button.extra-tes {
 div.div-table-room {
     display: none;
 }
+
+.button-add-timer button{
+    background-color: #7753FF;
+    color: white;
+    border: none;
+}

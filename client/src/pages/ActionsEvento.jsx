@@ -17,7 +17,7 @@ import {
     PRIVATE,
 } from "../utils/paths";
 // Styles
-import "./ActionsEvento.css";
+import "./actionsevento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
