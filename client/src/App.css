@@ -1,9 +1,7 @@
 * {
     padding: 0px;
     margin: 0px;
-}
-:root{
-    --bs-primary: #7753ff;
+    font-family: "Space Mono", monospace;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -47,6 +45,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
+    border: none;
     margin: auto;
     display: flex;
     justify-content: center;
@@ -55,12 +54,6 @@
 .icon {
     color: white;
     font-size: 18px;
-}
-.red {
-    background-color: red;
-}
-.blue {
-    background-color: #726eff;
 }
 .icon-black {
     color: black;

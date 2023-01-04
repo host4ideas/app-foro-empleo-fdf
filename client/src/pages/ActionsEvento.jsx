@@ -1,14 +1,14 @@
 // React
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { msToMinutesSecondsAndHours } from "../utils/utils";
+import titleEmpleaTech from "../assets/images/logo-empleatech-title.svg";
 // Context
 import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
 // Icons
 import { FaSignInAlt, FaPlus, FaEdit, FaPlay } from "react-icons/fa";
-// Context
-import { useEventoContext } from "../contexts/eventoContext";
 // Utils
-import { msToMinutesSecondsAndHours } from "../utils/utils";
 import {
     DETALLES_EVENTO,
     INSEVENTO,
@@ -61,6 +61,10 @@ export default function ActionsEvento() {
     if (eventos.length === 0) {
         return (
             <div>
+                <div className="container-logo">
+                    <img src={titleEmpleaTech} alt="EmpleaTech" />
+                </div>
+
                 <div className="container-text">
                     <h5>Aún no hay eventos</h5>
                 </div>
@@ -78,10 +82,13 @@ export default function ActionsEvento() {
                         </div>
                     ) : (
                         <div className="card-title">
-                            <h1>Inicie sesión para crear un evento </h1>
+                            <h1>Inicie sesión para crear un evento</h1>
                             <Link
                                 to={PUBLIC + "/" + LOGIN}
-                                className="icon-container blue"
+                                className="icon-container"
+                                style={{
+                                    backgroundColor: "var(--primary-color)",
+                                }}
                             >
                                 <FaSignInAlt className="icon" />
                             </Link>
@@ -93,12 +100,16 @@ export default function ActionsEvento() {
     } else {
         return (
             <div>
-                <div className="container-events mt-5">
+                <div className="container-logo">
+                    <img src={titleEmpleaTech} alt="EmpleaTech" />
+                </div>
+                <div className="container-events mt-3">
                     {eventos.map((event) => {
                         return (
                             <div
                                 className={`card-event ${
-                                    eventoSelected?.nombreEvento === event.nombreEvento
+                                    eventoSelected?.nombreEvento ===
+                                    event.nombreEvento
                                         ? "active"
                                         : ""
                                 }`}
