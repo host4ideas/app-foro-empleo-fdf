@@ -31,7 +31,7 @@ export default function DetallesEvento() {
         <div className="container text-center">
             <div className="d-flex justify-content-between">
                 <div>
-                    <div className="icon-container blue">
+                    <div className="icon-container principal">
                         <Link to="/">
                             <FaArrowLeft className="icon" />
                         </Link>
@@ -42,7 +42,7 @@ export default function DetallesEvento() {
                     isAuthenticated ? (
                         <div>
                             {/* ICON LOGOUT */}
-                            <div className="icon-container red">
+                            <div className="icon-container logout">
                                 <FaSignOutAlt
                                     className="icon"
                                     onClick={() => logout()}

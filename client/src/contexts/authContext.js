@@ -31,28 +31,12 @@ export default function AuthContextProvider({ children }) {
         setIsAuthenticated(false);
     }, [adminSocket, clientSocket]);
 
-    /**
-     * Checks if the user is logged by reaching the server, sets the isAuthenticated state
-     * accordingly {true | false}.
-     */
-    const checkLoggedUser = useCallback(() => {
-        return axios
-            .get("/check-user")
-            .then((response) => {
-                console.log("user authenticated: " + response.data);
-                setIsAuthenticated(response.data);
-            })
-            .catch((error) => {
-                console.warn(error);
-                setIsAuthenticated(false);
-            });
-    }, []);
-
-    const getSocketSession = (count) => {
+    const getSocketSession = () => {
         return new Promise((resolve) => {
             const socketAdmin = io("/admin");
 
             socketAdmin.on("connect", () => {
+                // console.log("test")
                 resolve(socketAdmin);
             });
 
@@ -62,6 +46,26 @@ export default function AuthContextProvider({ children }) {
             }, 1000);
         });
     };
+
+    /**
+     * Checks if the user is logged by reaching the server, sets the isAuthenticated state
+     * accordingly {true | false}.
+     */
+    const checkLoggedUser = useCallback(() => {
+        return axios
+            .get("/check-user")
+            .then((response) => {
+                console.log("user authenticated: " + response.data);
+                getSocketSession().then((socketAdmin) => {
+                    setAdminSocket(socketAdmin);
+                    setIsAuthenticated(response.data);
+                });
+            })
+            .catch((error) => {
+                console.warn(error);
+                setIsAuthenticated(false);
+            });
+    }, []);
 
     /**
      * Tries to perform the login. Updated isAuthenticated state accordingly.

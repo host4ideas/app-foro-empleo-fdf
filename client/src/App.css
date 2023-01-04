@@ -22,6 +22,7 @@
 }
 .App {
     height: 100vh;
+    padding: 10px 0px 10px 0px;
     background-color: whitesmoke;
 }
 .container {
@@ -54,6 +55,12 @@
 .icon {
     color: white;
     font-size: 18px;
+}
+.principal {
+    background-color: var(--primary-color);
+}
+.logout {
+    background-color: var(--red-color);
 }
 .icon-black {
     color: black;
