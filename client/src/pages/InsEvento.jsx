@@ -1,5 +1,5 @@
 // React
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 // Components
 import InsCategoria from "./InsCategoria";
@@ -11,10 +11,44 @@ import { GoArrowLeft } from "react-icons/go";
 import "./InsEvento.css";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
+import { useAuthContext } from "../contexts/authContext";
 
 function InsEvento() {
+
+    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
+
     const [fechas, setFechas] = useState({ fechaInicio: ""});
     const [totalHora, setTotalHora] = useState("00:00");
+
+    const [longEmp, setLongEmp] = useState(0);
+    const [longSal, setLongSal] = useState(0);
+    const [longCat, setLongCat] = useState(0);
+
+    useEffect(() => {
+        if (adminSocket) {
+            adminSocket.emit("categorias", (categorias) => {
+                if (categorias) {
+                    setLongCat(categorias.length);
+                } else {
+                    console.log("error getting categorias");
+                }
+            });
+            adminSocket.emit("salas", (salas) => {
+                if (salas) {
+                    setLongSal(salas.length);
+                } else {
+                    console.log("error getting salas");
+                }
+            });
+            adminSocket.emit("empresas", (empresas) => {
+                if (empresas) {
+                    setLongEmp(empresas.length);
+                } else {
+                    console.log("error getting empresas");
+                }
+            });
+        }
+    }, [adminSocket]);
 
     function cambiaHoraTotal() {
         var fechaInicioInput = document
@@ -61,7 +95,7 @@ function InsEvento() {
                         to={"/" + PRIVATE + "/" + INSSALAS}
                     >
                         SALAS{" "}
-                        <span className="text-secondary"> - (0 salas)</span>
+                        <span className="text-secondary"> - ({longSal} salas)</span>
                     </NavLink>
                 </div>
                 <div className="company-show">
@@ -70,7 +104,7 @@ function InsEvento() {
                         to={"/" + PRIVATE + "/" + INSEMPRESA}
                     >
                         EMPRESAS{" "}
-                        <span className="text-secondary"> - (0 empresas)</span>
+                        <span className="text-secondary"> - ({longEmp} empresas)</span>
                     </NavLink>
                 </div>
                 <div className="company-show">
@@ -78,8 +112,8 @@ function InsEvento() {
                         className="detail-card-title black-link"
                         to={"/" + PRIVATE + "/" + INSCATEGORIA}
                     >
-                        CATEGORIAS TEMPORIZADORES{" "}
-                        <span className="text-secondary"> - (0 empresas)</span>
+                        CATEGORIAS{" "}
+                        <span className="text-secondary"> - ({longCat} categorias)</span>
                     </NavLink>
                 </div>
             </div>
