@@ -17,7 +17,7 @@ import {
     PRIVATE,
 } from "../utils/paths";
 // Styles
-import "./actionsevento.css";
+import "./ActionsEvento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
@@ -76,7 +76,7 @@ export default function ActionsEvento() {
                             <h1>Nuevo evento</h1>
                             <Link
                                 to={PRIVATE + "/" + INSEVENTO}
-                                className="icon-container blue"
+                                className="icon-container prinicpal"
                             >
                                 <FaPlus className="icon" />
                             </Link>
