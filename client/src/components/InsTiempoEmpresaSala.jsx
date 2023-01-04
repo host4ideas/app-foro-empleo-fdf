@@ -7,8 +7,9 @@ import AddButton from "./AddButton";
 // Styles
 import "./InsTiempoEmpresaSala.css";
 
-function InsTiempoEmpresaSala(props) {
+import EmpresaSala from "./EmpresaSala";
 
+function InsTiempoEmpresaSala(props) {
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     const [empresas, setEmpresas] = useState([]);
@@ -48,134 +49,136 @@ function InsTiempoEmpresaSala(props) {
 
     useEffect(() => {
         var tablasSala = document.getElementsByClassName("div-table-room");
-        if (tablasSala.length > 0){
-            cambiaTablaSala()
+        if (tablasSala.length > 0) {
+            cambiaTablaSala();
         }
-    },[salas])
+    }, [salas]);
 
     useEffect(() => {
-        console.log(props)
-        if (props.tiempoinicial != "Invalid Date" && props.tiempoinicial != ""){
-            console.log(props.tiempoInicial)
-            var tiempo = props.tiempoinicial.toLocaleTimeString().split(":")
+        console.log(props);
+        if (
+            props.tiempoinicial != "Invalid Date" &&
+            props.tiempoinicial != ""
+        ) {
+            console.log(props.tiempoInicial);
+            var tiempo = props.tiempoinicial.toLocaleTimeString().split(":");
             if (parseInt(tiempo[0]) < 10) {
-                tiempo[0] = "0"+tiempo[0]
+                tiempo[0] = "0" + tiempo[0];
             }
-            setTiempoInicial(tiempo[0]+":"+tiempo[1])
-        }else{
-            setTiempoInicial("Sin hora")
+            setTiempoInicial(tiempo[0] + ":" + tiempo[1]);
+        } else {
+            setTiempoInicial("Sin hora");
         }
-    },[props])
+    }, [props]);
 
     useEffect(() => {
-        console.log(tiempoInicial)
-        if (tiempoInicial != "Invalid Date" && tiempoInicial != "" && tiempoInicial != "Sin hora"){
-            ajustaTiempo()
+        console.log(tiempoInicial);
+        if (
+            tiempoInicial != "Invalid Date" &&
+            tiempoInicial != "" &&
+            tiempoInicial != "Sin hora"
+        ) {
+            ajustaTiempo();
         }
-    },[tiempoInicial])
+    }, [tiempoInicial]);
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
 
-    function ajustaTiempo(){
-        var tbodyTimer = document.getElementById("timer-table").childNodes[1].childNodes
-        var hora = tiempoInicial.split(":"); hora[0] = parseInt(hora[0]); hora[1] = parseInt(hora[1])
+    function ajustaTiempo() {
+        var tbodyTimer =
+            document.getElementById("timer-table").childNodes[1].childNodes;
+        var hora = tiempoInicial.split(":");
+        hora[0] = parseInt(hora[0]);
+        hora[1] = parseInt(hora[1]);
         var arrayHoras = [];
 
         if (tbodyTimer.length > 1) {
-
             //CAMBIO DE HORAS EN LA TABLA DE TIMER
 
             for (var i = 0; i < tbodyTimer.length; i++) {
+                var horaCelda = tbodyTimer[i].childNodes[0];
+                var duracion = parseInt(
+                    tbodyTimer[i].childNodes[1].childNodes[0].selectedOptions[0]
+                        .value
+                );
 
-                var horaCelda = tbodyTimer[i].childNodes[0]
-                var duracion = parseInt(tbodyTimer[i].childNodes[1].childNodes[0].selectedOptions[0].value)
-
-                if (i==0){
-
-                    hora[1] = hora[1] + duracion
-
-                }else{
-                    
-                    if (hora[1] < 10 && hora[0] < 10){
-
-                        horaCelda.innerText= "0"+hora[0]+":0"+hora[1]
-                        arrayHoras.push("0"+hora[0]+":0"+hora[1])
-
-                    }else if(hora[1] < 10 && hora[0] >= 10) {
-
-                        horaCelda.innerText= hora[0]+":0"+hora[1]
-                        arrayHoras.push(hora[0]+":0"+hora[1])
-
-                    }else if(hora[1] >= 10 && hora[0] < 10){
-
-                        horaCelda.innerText= "0"+hora[0]+":"+hora[1]
-                        arrayHoras.push("0"+hora[0]+":"+hora[1])
-                    }else{
-
-                        horaCelda.innerText=hora[0]+":"+hora[1]
-                        arrayHoras.push(hora[0]+":"+hora[1])
-
+                if (i == 0) {
+                    hora[1] = hora[1] + duracion;
+                } else {
+                    if (hora[1] < 10 && hora[0] < 10) {
+                        horaCelda.innerText = "0" + hora[0] + ":0" + hora[1];
+                        arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
+                    } else if (hora[1] < 10 && hora[0] >= 10) {
+                        horaCelda.innerText = hora[0] + ":0" + hora[1];
+                        arrayHoras.push(hora[0] + ":0" + hora[1]);
+                    } else if (hora[1] >= 10 && hora[0] < 10) {
+                        horaCelda.innerText = "0" + hora[0] + ":" + hora[1];
+                        arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                    } else {
+                        horaCelda.innerText = hora[0] + ":" + hora[1];
+                        arrayHoras.push(hora[0] + ":" + hora[1]);
                     }
 
-                    hora[1] = hora[1] + duracion
-
+                    hora[1] = hora[1] + duracion;
                 }
 
-                console.log(props)
+                console.log(props);
 
-                if (hora[1] >= 60){
+                if (hora[1] >= 60) {
                     hora[0]++;
-                    hora[1] = hora[1] - 60
+                    hora[1] = hora[1] - 60;
                 }
 
                 if (hora[0] >= 24) {
-                    hora[0] = hora[0] - 24
+                    hora[0] = hora[0] - 24;
                 }
-
             }
 
             //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
 
             var tablasSala = document.getElementsByClassName("div-table-room");
 
-            for (var i=0; i < tablasSala.length; i++) {
+            for (var i = 0; i < tablasSala.length; i++) {
+                var tbodySala =
+                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
 
-                var tbodySala = tablasSala[i].childNodes[0].childNodes[1].childNodes;
-
-                for (var j=0; j < tbodySala.length; j++ ) {
-                    if (j != 0){
-                        tbodySala[j].childNodes[0].innerText = arrayHoras[j-1]
+                for (var j = 0; j < tbodySala.length; j++) {
+                    if (j != 0) {
+                        tbodySala[j].childNodes[0].innerText =
+                            arrayHoras[j - 1];
                     }
                 }
             }
-
         }
     }
 
     //FUNCION PARA CAMBIAR LA TABLA DE CADA SALA
 
     function cambiaTablaSala() {
-
         if (salas != []) {
-            var nomSala = document.getElementById("select-room").selectedOptions[0].innerText;
+            var nomSala =
+                document.getElementById("select-room").selectedOptions[0]
+                    .innerText;
             var tablasSala = document.getElementsByClassName("div-table-room");
-            
-            for (var i=0; i < tablasSala.length; i++) {
-                if (tablasSala[i].classList.contains("room-"+nomSala)){
-                    tablasSala[i].style.display = "block"
-                }else{
-                    tablasSala[i].style.display = "none"
+
+            for (var i = 0; i < tablasSala.length; i++) {
+                if (tablasSala[i].classList.contains("room-" + nomSala)) {
+                    tablasSala[i].style.display = "block";
+                } else {
+                    tablasSala[i].style.display = "none";
                 }
             }
         }
-
     }
 
     //FUNCION PARA AÑADIR FILA AL TIMER
 
     function aniadeFilaTimer() {
-
-        if (tiempoInicial != "Invalid Date" && tiempoInicial != "" && tiempoInicial != "Sin hora") {
+        if (
+            tiempoInicial !== "Invalid Date" &&
+            tiempoInicial !== "" &&
+            tiempoInicial !== "Sin hora"
+        ) {
             var tbody = document.getElementById("timer-table").childNodes[1];
             var hora =
                 tbody.childNodes[
@@ -203,11 +206,11 @@ function InsTiempoEmpresaSala(props) {
             if (hora[0] < 10) {
                 hora[0] = "0" + hora[0];
             }
-            
+
             if (hora[0] >= 24) {
-                hora[0] = hora[0] - 24
-                if (hora[0]<10){
-                    hora[0]="0"+hora[0]
+                hora[0] = hora[0] - 24;
+                if (hora[0] < 10) {
+                    hora[0] = "0" + hora[0];
                 }
             }
 
@@ -226,7 +229,11 @@ function InsTiempoEmpresaSala(props) {
             for (var i = 0; i < categorias.length; i++) {
                 var opcion = document.createElement("option");
                 opcion.value = categorias[i].duracion;
-                opcion.innerText = categorias[i].categoria + " - " + categorias[i].duracion + " min";
+                opcion.innerText =
+                    categorias[i].categoria +
+                    " - " +
+                    categorias[i].duracion +
+                    " min";
                 selector.append(opcion);
             }
 
@@ -236,14 +243,12 @@ function InsTiempoEmpresaSala(props) {
             tbody.append(fila);
 
             aniadeFilaSalas(celdaTiempo.innerText);
-
-        }else{
-            console.log("Inserta hora de inicio")
+        } else {
+            console.log("Inserta hora de inicio");
         }
-        
     }
 
-    //FUNCION PARA AÑADIR FILA DE LA HORA 
+    //FUNCION PARA AÑADIR FILA DE LA HORA
     function aniadeFilaSalas(hora) {
         var tablasSala = document.getElementsByClassName("div-table-room");
 
@@ -272,25 +277,23 @@ function InsTiempoEmpresaSala(props) {
             fila.append(celdaSelect);
             tbody.append(fila);
         }
-
     }
 
     function eliminaFila() {
-        
-        var tbodyTimer = document.getElementById("timer-table").childNodes[1].childNodes
+        var tbodyTimer =
+            document.getElementById("timer-table").childNodes[1].childNodes;
 
         if (tbodyTimer.length > 1) {
-            tbodyTimer[tbodyTimer.length-1].remove()
+            tbodyTimer[tbodyTimer.length - 1].remove();
 
             var tablasSala = document.getElementsByClassName("div-table-room");
 
             for (var i = 0; i < tablasSala.length; i++) {
-                var tbodySala = tablasSala[i].childNodes[0].childNodes[1].childNodes;
-                tbodySala[tbodySala.length-1].remove()
+                var tbodySala =
+                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
+                tbodySala[tbodySala.length - 1].remove();
             }
         }
-        
-
     }
 
     return (
@@ -306,11 +309,17 @@ function InsTiempoEmpresaSala(props) {
                     <tr>
                         <td className="hora">{tiempoInicial}</td>
                         <td>
-                            <select onChange={ajustaTiempo} className="select-category">
+                            <select
+                                onChange={ajustaTiempo}
+                                className="select-category"
+                            >
                                 {categorias.map((categoria, index) => {
                                     return (
                                         <option value={categoria.duracion}>
-                                            {categoria.categoria + " - " + categoria.duracion + " min"}
+                                            {categoria.categoria +
+                                                " - " +
+                                                categoria.duracion +
+                                                " min"}
                                         </option>
                                     );
                                 })}
@@ -320,12 +329,15 @@ function InsTiempoEmpresaSala(props) {
                 </tbody>
             </table>
             <div className="button-add-timer">
-                <button className="p-2 w-100" onClick={eliminaFila}>Eliminar Ultimo Tiempo</button>
+                <button className="p-2 w-100" onClick={eliminaFila}>
+                    Eliminar Ultimo Tiempo
+                </button>
             </div>
             <div className="mt-4 text-center">
                 <AddButton clickHandler={aniadeFilaTimer} />
             </div>
             <div>
+                <h6>Salas</h6>
                 <select
                     className="my-3"
                     id="select-room"
@@ -349,40 +361,12 @@ function InsTiempoEmpresaSala(props) {
             </div>
             {salas.map((sala, index) => {
                 return (
-                    <div
+                    <EmpresaSala
                         key={index}
-                        className={"div-table-room room-" + sala.nombreSala}
-                    >
-                        <table className={"tabla-tes"} width="100%">
-                            <thead>
-                                <tr>
-                                    <th>INICIO</th>
-                                    <th>EMPRESA {sala.nombreSala}</th>
-                                </tr>
-                            </thead>
-                            <tbody className={"tbody-" + sala.nombreSala}>
-                                <tr>
-                                    <td className="hora">{tiempoInicial}</td>
-                                    <td>
-                                        <select className="select-room">
-                                            {empresas.map((empresa, index) => {
-                                                return (
-                                                    <option
-                                                        key={index}
-                                                        value={
-                                                            empresa.idEmpresa
-                                                        }
-                                                    >
-                                                        {empresa.nombreEmpresa}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                        sala={sala}
+                        tiempoInicial={tiempoInicial}
+                        empresas={empresas}
+                    />
                 );
             })}
         </div>
