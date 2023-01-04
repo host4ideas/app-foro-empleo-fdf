@@ -49,18 +49,6 @@ export default function Timer() {
         }
     }, [clientSocket]);
 
-    useEffect(() => {
-        if (adminSocket) {
-            adminSocket.emit("categorias", (categorias) => {
-                if (categorias) {
-                    console.log(categorias);
-                } else {
-                    console.log("error getting categorias");
-                }
-            });
-        }
-    }, [adminSocket]);
-
     // Admin timer functionality
     const startTimer = () => {
         if (adminSocket) {

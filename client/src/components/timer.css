@@ -21,7 +21,7 @@
     background-color: #adff6e;
 }
 .stop {
-    background-color: #726eff;
+    background-color: var(--primary-color);
 }
 
 /* ANIMATION ICON CONFIG */

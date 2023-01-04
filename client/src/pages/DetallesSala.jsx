@@ -26,7 +26,7 @@ export default function DetallesSala() {
             <div className="d-flex flex-row ">
                 <div>
                     {/* ICON LOGOUT */}
-                    <div className="icon-container blue">
+                    <div className="icon-container principal">
                         <FaArrowLeft
                             className="icon"
                             onClick={() =>

@@ -17,7 +17,7 @@ import {
     PRIVATE,
 } from "../utils/paths";
 // Styles
-import "./actionsevento.css";
+import "./ActionsEvento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
@@ -82,7 +82,7 @@ export default function ActionsEvento() {
                         </div>
                     ) : (
                         <div className="card-title">
-                            <h1>Inicie sesión para crear un evento</h1>
+                            <h1>Iniciar sesión</h1>
                             <Link
                                 to={PUBLIC + "/" + LOGIN}
                                 className="icon-container"
@@ -103,7 +103,7 @@ export default function ActionsEvento() {
                 <div className="container-logo">
                     <img src={titleEmpleaTech} alt="EmpleaTech" />
                 </div>
-                <div className="container-events mt-3">
+                <div className="container-events mt-4">
                     {eventos.map((event) => {
                         return (
                             <div
@@ -166,7 +166,7 @@ export default function ActionsEvento() {
                                     / /g,
                                     ""
                                 )}`}
-                                className="icon-container blue"
+                                className="icon-container principal"
                             >
                                 <FaPlay className="icon" />
                             </Link>

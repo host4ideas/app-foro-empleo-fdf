@@ -4,7 +4,7 @@
 }
 
 .table-header {
-    background-color: #726eff;
+    background-color: var(--black-color);
     display: flex;
     justify-content: space-around;
     align-items: center;
