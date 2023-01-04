@@ -97,9 +97,9 @@ export default function Timer() {
     };
 
     return (
-        <div className="row mt-4">
+        <div className="mt-4 ">
             <div className={`timer ${play ? "working" : "stop"}`}>
-                <div className="timer-menu">
+                {/* <div className="timer-menu">
                     <input
                         className="toggle-check"
                         type="checkbox"
@@ -121,7 +121,7 @@ export default function Timer() {
                             </>
                         ) : null}
                     </label>
-                </div>
+                </div> */}
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">

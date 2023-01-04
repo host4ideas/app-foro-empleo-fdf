@@ -23,7 +23,6 @@ export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
     const { changeEvento, eventoSelected } = useEventoContext();
-
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {

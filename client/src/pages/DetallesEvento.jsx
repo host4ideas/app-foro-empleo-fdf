@@ -52,7 +52,7 @@ export default function DetallesEvento() {
                     ) : (
                         <div>
                             {/* ICON LOGIN */}
-                            <div className="icon-container blue">
+                            <div className="icon-container principal">
                                 <Link to={"/" + PUBLIC + "/" + LOGIN}>
                                     <FaSignInAlt className="icon" />
                                 </Link>
@@ -61,9 +61,7 @@ export default function DetallesEvento() {
                     )
                 }
             </div>
-
             <Timer />
-
             <div className="table-container">
                 <div className="table-header">
                     <h2>INICIO</h2>
@@ -92,7 +90,6 @@ export default function DetallesEvento() {
                     </div>
                 </div>
             </div>
-
             <div className="salas-container mt-4">
                 {salas.map((sala, index) => {
                     return (
