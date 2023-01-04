@@ -1,5 +1,3 @@
-.container-login {
-}
 .title {
     font-size: 50px;
     font-weight: bold;
@@ -80,7 +78,11 @@
 
 .img-clock {
     position: absolute;
+    bottom: 0;
+    height: 40vh;
     width: 100%;
-    height: 100%;
-    left: 35%;
+    background-image: url("../assets/images/clock-med.png");
+    background-position: right;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
