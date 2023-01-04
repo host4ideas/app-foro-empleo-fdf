@@ -84,6 +84,7 @@
 }
 .bottom .card-title {
     display: flex;
+    padding-left: 30px;
 }
 .bottom .card-title h1 {
     padding: 0px;
@@ -93,5 +94,5 @@
 }
 
 .active {
-    background-color: #736eff1a;
+    background-color: var(--primary-opacity-color);
 }

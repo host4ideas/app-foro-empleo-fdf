@@ -27,6 +27,7 @@ export default function ActionsEvento() {
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
+            console.log("test");
             adminSocket.emit("eventos", (eventos) => {
                 if (eventos) {
                     setEventos(eventos);
@@ -82,7 +83,7 @@ export default function ActionsEvento() {
                         </div>
                     ) : (
                         <div className="card-title">
-                            <h1>Inicie sesión para crear un evento</h1>
+                            <h1>Iniciar sesión</h1>
                             <Link
                                 to={PUBLIC + "/" + LOGIN}
                                 className="icon-container"
@@ -103,7 +104,7 @@ export default function ActionsEvento() {
                 <div className="container-logo">
                     <img src={titleEmpleaTech} alt="EmpleaTech" />
                 </div>
-                <div className="container-events mt-3">
+                <div className="container-events mt-4">
                     {eventos.map((event) => {
                         return (
                             <div
@@ -166,7 +167,7 @@ export default function ActionsEvento() {
                                     / /g,
                                     ""
                                 )}`}
-                                className="icon-container blue"
+                                className="icon-container principal"
                             >
                                 <FaPlay className="icon" />
                             </Link>

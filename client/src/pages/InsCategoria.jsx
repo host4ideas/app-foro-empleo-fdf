@@ -31,18 +31,28 @@ function InsCategoria() {
         setNombre(e.target.value);
     }
 
+    function response(res) {
+        console.log(res);
+    }
+
     function handleClick(e) {
         e.preventDefault();
 
-        if (adminSocket) {
+        if (adminSocket && nombre && nombre !== "" && tiempo && tiempo > 0) {
             adminSocket.emit(
                 "create categoria",
-                () => {
-                    adminSocket.emit("categorias", (categorias) => {
-                        setCategorias(categorias);
-                    });
-                },
-                { categoria: nombre, duracion: tiempo }
+                { categoria: nombre, duracion: tiempo },
+                (result) => {
+                    if (result) {
+                        //Notificacion acierto
+                        // Reacargamos las categorias
+                        adminSocket.emit("categorias", (categorias) => {
+                            setCategorias(categorias);
+                        });
+                    } else {
+                        //Notificacion error
+                    }
+                }
             );
         }
     }
