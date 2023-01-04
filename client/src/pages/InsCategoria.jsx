@@ -39,14 +39,14 @@ function InsCategoria() {
         e.preventDefault();
 
         if (adminSocket) {
-            adminSocket.emit("create categoria",empresa,(result) => {
-                if (result) {
-                    //Notificacion acierto
-                    getListaEmpresas()
-                }else{
-                    //Notificacion error
-                }
-            })
+            // adminSocket.emit("create categoria",empresa,(result) => {
+            //     if (result) {
+            //         //Notificacion acierto
+            //         getListaEmpresas()
+            //     }else{
+            //         //Notificacion error
+            //     }
+            // })
         }
     }
 
