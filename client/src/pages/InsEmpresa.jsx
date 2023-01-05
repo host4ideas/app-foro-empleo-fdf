@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
-import { MdCancel } from "react-icons/md"
-import { AiFillPlusCircle } from "react-icons/ai"
-import { FaTrash } from "react-icons/fa"
-import { NavLink } from "react-router-dom";
+import { FaTrash, FaTimes, FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
-import './InsEmpresa.css'
+import "./InsStyles.css";
+import { INSEVENTO, PRIVATE } from "../utils/paths";
 
 function InsEmpresa() {
-
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     const [listaEmpresas, setListaEmpresas] = useState([]);
@@ -16,7 +14,7 @@ function InsEmpresa() {
     function getListaEmpresas() {
         adminSocket.emit("empresas", (empresas) => {
             if (empresas) {
-                setListaEmpresas(empresas)
+                setListaEmpresas(empresas);
                 console.log(empresas);
             } else {
                 console.log("error getting empresas");
@@ -24,80 +22,111 @@ function InsEmpresa() {
         });
     }
 
-    function cambiaEmpresa(e) {
-        setEmpresa(document.getElementById("inputNameCompany").value);
-    }
-
     function createEmpresa() {
-        adminSocket.emit("create empresa",empresa,(result) => {
-            if (result) {
-                //Notificacion acierto
-                getListaEmpresas()
-            }else{
-                //Notificacion error
-            }
-        })
+        if (!empresa) {
+            console.log("vacio");
+        } else {
+            adminSocket.emit("create empresa", empresa, (result) => {
+                if (result) {
+                    //Notificacion acierto
+                    getListaEmpresas();
+                } else {
+                    //Notificacion error
+                }
+            });
+        }
     }
 
     function eliminaEmpresa(id) {
-        adminSocket.emit("delete empresa",id,(result) => {
+        adminSocket.emit("delete empresa", id, (result) => {
             if (result) {
                 //Notificacion acierto
-                getListaEmpresas()
-            }else{
+                getListaEmpresas();
+            } else {
                 //Notificacion error
             }
-        })
+        });
     }
 
     useEffect(() => {
-       getListaEmpresas()
+        getListaEmpresas();
     }, []);
 
     return (
-        <div className="div-company">
-
-            <div className="button-zone">
-                <div className="cancel-button">
-                    <NavLink to="/public/insevento"><button><MdCancel/></button></NavLink>
+        <div className="container">
+            <div className="d-flex justify-content-between">
+                <div>
+                    <button
+                        onClick={() => createEmpresa()}
+                        className="icon-container principal"
+                    >
+                        <FaPlus className="icon" />
+                    </button>
                 </div>
-                <div className="add-button">
-                    <button onClick={() => createEmpresa()}><AiFillPlusCircle/></button>
-                </div>
-            </div>
-
-            <div className="add-room-zone">
-                <h6>NOMBRE DE LA EMPRESA</h6>
-                <div className="inputs-zone">
-                    <div className="name-room">
-                        <input
-                            id="inputNameCompany"
-                            type="text"
-                            required
-                            onChange={() => cambiaEmpresa()}
-                        />
-                    </div>
-                    <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
-                        <input
-                            type="checkbox"
-                            required
-                        />
+                <div>
+                    <div className="icon-container danger">
+                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
+                            <FaTimes className="icon" />
+                        </Link>
                     </div>
                 </div>
             </div>
-            
-            <div className="show-all-company">
-                <h6>Empresas Registradas</h6>
-                <div className="scroll-company">
-                {
-                    listaEmpresas.map((empresa,index)=>{
-                        return <div key={index} className="show-name">
-                            <div className="name-company"><h5>{empresa.nombreEmpresa}</h5></div>
-                            <div className="delete-company-icon"><button onClick={() => eliminaEmpresa(empresa.idEmpresa)}><FaTrash/></button></div>
+
+            <div className="container-card">
+                <h6 className="main-card-title">NOMBRE DE LA EMPRESA</h6>
+                <div className="card-input">
+                    <input
+                        id="inputNameCompany"
+                        type="text"
+                        required
+                        value={empresa}
+                        onChange={(e) =>
+                            setEmpresa(e.target.value.toUpperCase())
+                        }
+                        autocomplete="off"
+                    />
+                </div>
+            </div>
+
+            <div className="mt-5">
+                {listaEmpresas.length === 0 ? (
+                    <h4 className="title-description">
+                        Añada las empresas que necesite{" "}
+                    </h4>
+                ) : (
+                    <>
+                        <h4 className="title-description">
+                            Empresas Registradas
+                        </h4>
+                        <div className="container-list">
+                            {listaEmpresas.map((empresa, index) => {
+                                return (
+                                    <div key={index} className="element-list">
+                                        <div className="element-title">
+                                            <h5>{empresa.nombreEmpresa}</h5>
+                                        </div>
+
+                                        <button
+                                            className="icon-container danger"
+                                            onClick={() =>
+                                                eliminaEmpresa(
+                                                    empresa.idEmpresa
+                                                )
+                                            }
+                                        >
+                                            <FaTrash className="icon" />
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    })
-                }
-                </div>
+                        <div className="text-center">
+                            <button className="btn btn-success mt-2">
+                                Confirmar
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -58,7 +58,7 @@
 .principal {
     background-color: var(--primary-color);
 }
-.logout {
+.danger {
     background-color: var(--red-color);
 }
 .icon-black {
