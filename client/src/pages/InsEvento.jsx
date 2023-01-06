@@ -1,5 +1,5 @@
 // React
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 // Components
 import InsCategoria from "./InsCategoria";
@@ -14,12 +14,8 @@ import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 
 function InsEvento() {
-
-    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
-
-    const [fechas, setFechas] = useState({ fechaInicio: ""});
-    const [totalHora, setTotalHora] = useState("00:00");
-
+    const { adminSocket } = useAuthContext();
+    const [fechas, setFechas] = useState({ fechaInicio: "" });
     const [longEmp, setLongEmp] = useState(0);
     const [longSal, setLongSal] = useState(0);
     const [longCat, setLongCat] = useState(0);
@@ -81,12 +77,12 @@ function InsEvento() {
                 </div>
             </div>
             <div className="event-name">
-                <h6 className="main-card-title main-card-title-left mb-1">
-                    NOMBRE DEL EVENTO
-                </h6>
-                <div>
-                    <input className="form-control" type="text" required />
-                </div>
+                <h6 className="main-card-title">NOMBRE DEL EVENTO</h6>
+                <input
+                    className="form-control rounded-0"
+                    type="text"
+                    required
+                />
             </div>
             <div className="company-room-show">
                 <div className="room-show">
@@ -95,7 +91,10 @@ function InsEvento() {
                         to={"/" + PRIVATE + "/" + INSSALAS}
                     >
                         SALAS{" "}
-                        <span className="text-secondary"> - ({longSal} salas)</span>
+                        <span className="text-secondary">
+                            {" "}
+                            - ({longSal} salas)
+                        </span>
                     </NavLink>
                 </div>
                 <div className="company-show">
@@ -104,7 +103,10 @@ function InsEvento() {
                         to={"/" + PRIVATE + "/" + INSEMPRESA}
                     >
                         EMPRESAS{" "}
-                        <span className="text-secondary"> - ({longEmp} empresas)</span>
+                        <span className="text-secondary">
+                            {" "}
+                            - ({longEmp} empresas)
+                        </span>
                     </NavLink>
                 </div>
                 <div className="company-show">
@@ -112,21 +114,22 @@ function InsEvento() {
                         className="detail-card-title black-link"
                         to={"/" + PRIVATE + "/" + INSCATEGORIA}
                     >
-                        CATEGORIAS{" "}
-                        <span className="text-secondary"> - ({longCat} categorias)</span>
+                        CATEGORÍAS{" "}
+                        <span className="text-secondary">
+                            {" "}
+                            - ({longCat} categorias)
+                        </span>
                     </NavLink>
                 </div>
             </div>
             <div className="organization-zone">
-                <h6 className="my-2 text-center main-card-title main-card-title-left">
-                    ORGANIZACION
-                </h6>
-                <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio}/>
+                <h6 className="text-center main-card-title">ORGANIZACIÓN</h6>
+                <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
                 {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}
             </div>
             <div>
                 <BackButton path={"/"} />
-                <button className="btn btn-primary">CREAR</button>
+                <button className="btn btn-primary">ACTUALIZAR</button>
             </div>
         </div>
     );

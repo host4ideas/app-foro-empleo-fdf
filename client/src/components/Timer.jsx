@@ -16,6 +16,7 @@ export default function Timer(props) {
 
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
+    // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     /* const synchronizeTimer = (time) => {
@@ -41,19 +42,18 @@ export default function Timer(props) {
     };
 
     timerCounter.on("tick", () => {
-        console.log("test " + timerCounter.time);
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
     }); */
 
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
+    const showClockTime = () => {
+        let myDate = new Date();
+        let hours = myDate.getHours();
+        let minutes = myDate.getMinutes();
+        let seconds = myDate.getSeconds();
         if (hours < 10) hours = 0 + hours;
         if (minutes < 10) minutes = "0" + minutes;
         if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
+        setActualClockTime(hours + ":" + minutes + ":" + seconds);
     };
 
     const compruebaInicio = () => {
@@ -195,8 +195,8 @@ export default function Timer(props) {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                {actualTime ? (
-                    <p className="fst-italic">{actualTime}</p>
+                {actualClockTime ? (
+                    <p className="fst-italic">{actualClockTime}</p>
                 ) : (
                     <p className="fst-italic">Loading...</p>
                 )}
