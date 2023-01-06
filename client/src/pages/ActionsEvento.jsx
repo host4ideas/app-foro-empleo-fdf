@@ -170,10 +170,7 @@ export default function ActionsEvento() {
                                 </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${eventoSelected?.nombreEvento?.replace(
-                                    / /g,
-                                    ""
-                                )}`}
+                                to={`${DETALLES_EVENTO}/${eventoSelected.idEvento}`}
                                 className="icon-container principal"
                             >
                                 <FaPlay className="icon" />

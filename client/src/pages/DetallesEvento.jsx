@@ -10,11 +10,48 @@ import { useParams } from "react-router-dom";
 import { LOGIN, PUBLIC } from "../utils/paths";
 
 export default function DetallesEvento() {
+
     const { logout } = useAuthContext();
     const { isAuthenticated, adminSocket } = useAuthContext();
     const [salas, setSalas] = useState([]);
-    let { nombreevento } = useParams();
+    const [timerEventos, setTimerEventos] = useState([]);
 
+    let { idevento } = useParams();
+
+    function filtraTimer(arrayTiemposEvento) {
+
+        var arrayIdTimers = []
+        var arrayDatos = []
+
+        for (var i=0; i < arrayTiemposEvento.length; i++) {
+            
+            if (idevento == arrayTiemposEvento[i].idEvento) {
+
+                /* console.log(arrayTiemposEvento[i].idTimer) */
+                if (!(arrayIdTimers.includes(arrayTiemposEvento[i].idTimer))){
+                    arrayIdTimers.push(arrayTiemposEvento[i].idTimer)
+                    arrayDatos.push({"horaInicio":new Date(arrayTiemposEvento[i].inicioTimer),"categoria":arrayTiemposEvento[i].categoria,"duracion":arrayTiemposEvento[i].duracion})
+                }
+
+            }
+
+        }
+
+        arrayDatos.sort((a,b) => a.horaInicio - b.horaInicio)
+        setTimerEventos(arrayDatos)
+    }
+
+    function cambiaActivo(indice) {
+        var filaTimers = document.getElementsByClassName("row-time")
+        for (var i=0; i < filaTimers.length; i++){
+            if (filaTimers[i].classList.contains("time-"+indice)){
+                filaTimers[i].classList.add("working")
+            }else{
+                filaTimers[i].classList.remove("working")
+            }
+        }
+    }
+    
     useEffect(() => {
         if (adminSocket) {
             adminSocket.emit("salas", (salas) => {
@@ -24,6 +61,13 @@ export default function DetallesEvento() {
                     console.log("error getting salas");
                 }
             });
+            adminSocket.emit("timereventos",(tEventos) => {
+                if (tEventos) {
+                    filtraTimer(tEventos)
+                }else{
+                    console.log("error getting timer eventos")
+                }
+            })
         }
     }, [adminSocket]);
 
@@ -62,7 +106,7 @@ export default function DetallesEvento() {
                 }
             </div>
 
-            <Timer />
+            <Timer timerev={timerEventos} metodoact={cambiaActivo}/>
 
             <div className="table-container">
                 <div className="table-header">
@@ -70,26 +114,14 @@ export default function DetallesEvento() {
                     <h2>CATEGORIA</h2>
                 </div>
                 <div className="table-body">
-                    <div className="table-row working">
-                        <h3>9:00</h3>
-                        <h3>WORK</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:15</h3>
-                        <h3>DESCANSO</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:20</h3>
-                        <h3>WORK</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:35</h3>
-                        <h3>WORK</h3>
-                    </div>
-                    <div className="table-row">
-                        <h3>9:50</h3>
-                        <h3>WORK</h3>
-                    </div>
+                    {
+                        timerEventos.map((timer,index) => {
+                            return <div key={index} className={"table-row row-time time-"+index}>
+                                <h3>{timer.horaInicio.toTimeString().substring(0,5)}</h3>
+                                <h3>{timer.categoria}</h3>
+                            </div>
+                        })
+                    }
                 </div>
             </div>
 
@@ -97,8 +129,8 @@ export default function DetallesEvento() {
                 {salas.map((sala, index) => {
                     return (
                         <Sala
-                            nombre={sala.nombreSala}
-                            nombreEvento={nombreevento}
+                            sala={sala}
+                            idevento={idevento}
                             key={index}
                         />
                     );
