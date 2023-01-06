@@ -6,14 +6,12 @@ const deepDiffMapper = (function () {
         VALUE_UNCHANGED: "unchanged",
         map: function (obj1, obj2) {
             if (this.isFunction(obj1) || this.isFunction(obj2)) {
-                throw Error(
-                    "Invalid argument. Function given, object expected."
-                );
+                throw "Invalid argument. Function given, object expected.";
             }
             if (this.isValue(obj1) || this.isValue(obj2)) {
                 return {
                     type: this.compareValues(obj1, obj2),
-                    data: obj1 === undefined ? obj2 : obj1,
+                    data: obj1 === undefined ? obj1 : obj2,
                 };
             }
 
@@ -30,7 +28,7 @@ const deepDiffMapper = (function () {
 
                 diff[key] = this.map(obj1[key], value2);
             }
-            for (let key in obj2) {
+            for (var key in obj2) {
                 if (this.isFunction(obj2[key]) || diff[key] !== undefined) {
                     continue;
                 }
