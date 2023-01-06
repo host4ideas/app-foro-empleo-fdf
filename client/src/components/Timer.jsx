@@ -9,18 +9,135 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 // Styles
 import "./timer.css";
 
-export default function Timer() {
-    const [timer, setTimer] = useState(0);
+export default function Timer(props) {
+
+    const [timer, setTimer] = useState("00:00");
+    var prueba = 0;
+
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
-    const synchronizeTimer = (time) => {
+    /* const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
     };
 
-    // Client timer functionality
+    // Admin timer functionality
+    const startTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("resume timer");
+        }
+
+        // timerCounter.start(10000);
+        setPlay(true);
+    };
+
+    const pauseTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("pause timer");
+        }
+        setPlay(false);
+    };
+
+    timerCounter.on("tick", () => {
+        console.log("test " + timerCounter.time);
+        setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
+    }); */
+
+    const showTime = () => {
+        var myDate = new Date();
+        var hours = myDate.getHours();
+        var minutes = myDate.getMinutes();
+        var seconds = myDate.getSeconds();
+        if (hours < 10) hours = 0 + hours;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+        setActualTime(hours + ":" + minutes + ":" + seconds);
+    };
+
+    const compruebaInicio = () => {
+
+        if (props.timerev[0] != undefined){
+
+            var ahora = Math.trunc(new Date(2023,0,18,8,59,prueba).getTime()/1000)
+            /* var ahora = Math.trunc(new Date().getTime()/1000) */
+            var inicio = Math.trunc(props.timerev[0].horaInicio.getTime()/1000)
+
+            if ((ahora - inicio) >= 0){
+                calculaDuracion(ahora)
+            }else{
+                console.log("Aun no empezo")
+            }
+        }
+    }
+
+    const calculaDuracion = (fechaactual) => {
+
+        var indiceTiempoEvento = 0;
+        var finalizado = false;
+        var duracionSeg = 0;
+
+        while (!(finalizado)) {
+            
+            var timerSeleccionado = props.timerev[indiceTiempoEvento];
+            
+            if (props.timerev.length > indiceTiempoEvento) {
+
+                var tiempoSig = Math.trunc(timerSeleccionado.horaInicio.getTime()/1000 + timerSeleccionado.duracion*60)
+                
+                if (fechaactual >= tiempoSig){
+                    indiceTiempoEvento++;
+                }else{
+                    duracionSeg = (tiempoSig - fechaactual)
+                    finalizado = true;
+                }
+
+                props.metodoact(indiceTiempoEvento)
+            }else{
+                finalizado = true;
+            }
+            
+        }
+
+        preparaTimer(duracionSeg)
+
+    }
+
+    const preparaTimer = (duracion) => {
+
+        var minutos = Math.trunc(duracion/60)
+        if (minutos < 10){
+            minutos = "0"+minutos
+        }
+
+        var segundos = duracion % 60;
+        if (segundos < 10){
+            segundos = "0"+segundos
+        }
+        
+        setTimer(minutos+":"+segundos)
+
+    }
+
+    //HORA ACTUAL
+    useEffect(() => {
+
+        const timeActual = setInterval(() => {
+            
+            if (props.timerev != []){
+                showTime();
+                prueba++
+                compruebaInicio()
+            }
+            
+        },1000);
+
+        return () => clearInterval(timeActual);
+
+    }, [props.timerev]);
+
+   /*  // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)
@@ -47,54 +164,7 @@ export default function Timer() {
                 setTimer("00:00:00");
             });
         }
-    }, [clientSocket]);
-
-    // Admin timer functionality
-    const startTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("resume timer");
-        }
-
-        // timerCounter.start(10000);
-        setPlay(true);
-    };
-
-    const pauseTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("pause timer");
-        }
-        setPlay(false);
-    };
-
-    timerCounter.on("tick", () => {
-        console.log("test " + timerCounter.time);
-        setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
-    });
-
-    //HORA ACTUAL
-    useEffect(() => {
-        const timer = setInterval(() => {
-            const timeActual = setInterval(() => {
-                showTime();
-            }, 1000);
-            return () => {
-                // Return callback to run on unmount.
-                clearInterval(timer);
-                clearInterval(timeActual);
-            };
-        });
-    }, []);
-
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
-        if (hours < 10) hours = 0 + hours;
-        if (minutes < 10) minutes = "0" + minutes;
-        if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
-    };
+    }, [clientSocket]); */
 
     return (
         <div className="row mt-4">
@@ -112,10 +182,10 @@ export default function Timer() {
                                     <FaCog className="menuBtn animation" />
                                     <FaTimes className="closeBtn" />
                                 </div>
-                                <div className="btn-menu" onClick={startTimer}>
+                                <div className="btn-menu">
                                     <FaPlay className="icon-menu" />
                                 </div>
-                                <div className="btn-menu" onClick={pauseTimer}>
+                                <div className="btn-menu">
                                     <FaPause className="icon-menu" />
                                 </div>
                             </>

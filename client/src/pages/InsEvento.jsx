@@ -24,6 +24,27 @@ function InsEvento() {
     const [longSal, setLongSal] = useState(0);
     const [longCat, setLongCat] = useState(0);
 
+    function cambiaHoraTotal() {
+        var fechaInicioInput = document
+            .getElementById("fechaI")
+            .value.split("-", 3);
+        var horaInicioInput = document
+            .getElementById("horaI")
+            .value.split(":", 2);
+
+        var fechaState = {
+            fechaInicio: new Date(
+                fechaInicioInput[0],
+                fechaInicioInput[1],
+                fechaInicioInput[2],
+                horaInicioInput[0],
+                horaInicioInput[1]
+            ),
+        };
+
+        setFechas(fechaState);
+    }
+    
     useEffect(() => {
         if (adminSocket) {
             adminSocket.emit("categorias", (categorias) => {
@@ -49,27 +70,6 @@ function InsEvento() {
             });
         }
     }, [adminSocket]);
-
-    function cambiaHoraTotal() {
-        var fechaInicioInput = document
-            .getElementById("fechaI")
-            .value.split("-", 3);
-        var horaInicioInput = document
-            .getElementById("horaI")
-            .value.split(":", 2);
-
-        var fechaState = {
-            fechaInicio: new Date(
-                fechaInicioInput[0],
-                fechaInicioInput[1],
-                fechaInicioInput[2],
-                horaInicioInput[0],
-                horaInicioInput[1]
-            ),
-        };
-
-        setFechas(fechaState);
-    }
 
     return (
         <div className="div-events text-center">

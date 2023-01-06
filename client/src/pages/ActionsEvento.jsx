@@ -17,7 +17,7 @@ import {
     PRIVATE,
 } from "../utils/paths";
 // Styles
-import "./ActionsEvento.css";
+import "./actionsevento.css";
 
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
@@ -163,10 +163,7 @@ export default function ActionsEvento() {
                                 </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${eventoSelected.nombreEvento.replace(
-                                    / /g,
-                                    ""
-                                )}`}
+                                to={`${DETALLES_EVENTO}/${eventoSelected.idEvento}`}
                                 className="icon-container principal"
                             >
                                 <FaPlay className="icon" />
