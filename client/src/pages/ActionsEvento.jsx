@@ -22,12 +22,19 @@ import "./actionsevento.css";
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
-    const { changeEvento, eventoSelected } = useEventoContext();
+    const { changeEvento, eventoSelected, setTiemposEventos } =
+        useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
-            console.log("test");
+            adminSocket.emit("timereventos", (eventos) => {
+                if (eventos) {
+                    setTiemposEventos(eventos);
+                } else {
+                    console.log("error getting eventos");
+                }
+            });
             adminSocket.emit("eventos", (eventos) => {
                 if (eventos) {
                     setEventos(eventos);
@@ -36,7 +43,7 @@ export default function ActionsEvento() {
                 }
             });
         }
-    }, [adminSocket]);
+    }, [adminSocket, setTiemposEventos]);
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
@@ -109,14 +116,14 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    eventoSelected?.nombreEvento ===
-                                    event.nombreEvento
+                                    eventoSelected?.nombreEvento === event.evento
                                         ? "active"
                                         : ""
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
                                     changeEvento(event);
+                                    console.log(event);
                                 }}
                             >
                                 <div className="card-title">

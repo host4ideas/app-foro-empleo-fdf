@@ -16,6 +16,7 @@ export default function Timer(props) {
 
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
+    // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     /* const synchronizeTimer = (time) => {
@@ -148,10 +149,12 @@ export default function Timer(props) {
             });
             clientSocket.on("initial time", function (time) {
                 timerCounter.stop();
+                setInitialTimerTime(time);
                 setTimer(msToMinutesSecondsAndHours(time, "hh:mm:ss"));
             });
-            clientSocket.on("start timer", function (time) {
-                synchronizeTimer(10000);
+            clientSocket.on("start timer", function () {
+                // Start the timer with the initial time
+                synchronizeTimer(initialTimerTime);
             });
             clientSocket.on("resume timer", function (time) {
                 synchronizeTimer(time);

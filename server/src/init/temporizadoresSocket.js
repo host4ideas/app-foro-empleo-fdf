@@ -11,7 +11,7 @@ module.exports = function (socket) {
         const token = socket.request.user.token;
         updateTimer(timer, token).then((res) => cb(res));
     });
-    socket.on("find timer", (cb, id) => {
+    socket.on("find timer", (id, cb) => {
         const token = socket.request.user.token;
         getTimerById(id, token).then((res) => cb(res));
     });
@@ -19,7 +19,7 @@ module.exports = function (socket) {
         const token = socket.request.user.token;
         getTimers(token).then((res) => cb(res));
     });
-    socket.on("new timer", (cb, timer) => {
+    socket.on("new timer", (timer, cb) => {
         const token = socket.request.user.token;
         newTimer(timer, token).then((res) => cb(res));
     });
