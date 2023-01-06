@@ -35,7 +35,7 @@ async function createTiempoEmpresaSala(timer, token) {
         await postData(url, timer, token);
         return true;
     } catch (e) {
-        console.warn(error);
+        console.warn(e);
         return false;
     }
 }
@@ -45,7 +45,7 @@ async function deleteTiempoEmpresaSala(id, token) {
         await deleteData(url, token);
         return true;
     } catch (e) {
-        console.warn(error);
+        console.warn(e);
         return false;
     }
 }

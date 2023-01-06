@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
 // Components
 import EmpresaSala from "./EmpresaSala";
 // Styles
@@ -11,11 +12,14 @@ import { toast } from "react-toastify";
 
 function InsTiempoEmpresaSala(props) {
     const { adminSocket } = useAuthContext();
+    const { tiemposEventos, eventoSelected } = useEventoContext();
 
+    const [tiemposEventosFiltered, setTiemposEventosFiltered] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [salas, setSalas] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [tiempoInicial, setTiempoInicial] = useState([]);
+    const [cleanedArrayTimers, setCleanedArrayTimers] = useState([]);
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
 
@@ -329,6 +333,32 @@ function InsTiempoEmpresaSala(props) {
         }
     }, [tiempoInicial, ajustaTiempo]);
 
+    useEffect(() => {
+        const arrayFiltered = tiemposEventos.filter(
+            (tiempoEvento) => tiempoEvento.idEvento === eventoSelected.idEvento
+        );
+
+        const filteredArrayByIdTimer = arrayFiltered.reduce((acc, current) => {
+            const x = acc.find((item) => item.idTimer === current.idTimer);
+            if (!x) {
+                return acc.concat([current]);
+            } else {
+                return acc;
+            }
+        }, []);
+
+        setCleanedArrayTimers(
+            filteredArrayByIdTimer.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+            )
+        );
+        setTiemposEventosFiltered(
+            arrayFiltered.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+            )
+        );
+    }, [tiemposEventos, eventoSelected]);
+
     return (
         <>
             <table className="tabla-tes" id="timer-table" width="100%">
@@ -339,30 +369,42 @@ function InsTiempoEmpresaSala(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="hora">{tiempoInicial}</td>
-                        <td>
-                            <select
-                                onChange={ajustaTiempo}
-                                className="select-category"
-                            >
-                                {categorias.map((categoria, index) => {
-                                    return (
-                                        <option
-                                            key={index}
-                                            value={categoria.duracion}
-                                            idCategoria={categoria.idCategoria}
-                                        >
-                                            {categoria.categoria +
-                                                " - " +
-                                                categoria.duracion +
-                                                " min"}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </td>
-                    </tr>
+                    {cleanedArrayTimers.map((tiempoEvento) => (
+                        <tr>
+                            <td className="hora">
+                                {new Date(tiempoEvento.inicioTimer)
+                                    .toTimeString()
+                                    .substring(0, 5)}
+                            </td>
+                            <td>
+                                <select
+                                    onChange={ajustaTiempo}
+                                    className="select-category"
+                                >
+                                    {categorias.map((categoria, index) => {
+                                        return (
+                                            <option
+                                                key={index}
+                                                value={categoria.duracion}
+                                                idCategoria={
+                                                    categoria.idCategoria
+                                                }
+                                                selected={
+                                                    tiempoEvento.idCategoria ===
+                                                    categoria.idCategoria
+                                                }
+                                            >
+                                                {categoria.categoria +
+                                                    " - " +
+                                                    categoria.duracion +
+                                                    " min"}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
             <div className="d-flex">
@@ -404,6 +446,7 @@ function InsTiempoEmpresaSala(props) {
                         sala={sala}
                         tiempoInicial={tiempoInicial}
                         empresas={empresas}
+                        tiemposEventosFiltered={tiemposEventosFiltered}
                     />
                 );
             })}

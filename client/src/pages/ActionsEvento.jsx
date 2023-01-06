@@ -22,27 +22,28 @@ import "./actionsevento.css";
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
-    const { changeEvento, eventoSelected } = useEventoContext();
+    const { changeEvento, eventoSelected, setTiemposEventos } =
+        useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
             adminSocket.emit("timereventos", (eventos) => {
                 if (eventos) {
+                    setTiemposEventos(eventos);
+                } else {
+                    console.log("error getting eventos");
+                }
+            });
+            adminSocket.emit("eventos", (eventos) => {
+                if (eventos) {
                     setEventos(eventos);
                 } else {
                     console.log("error getting eventos");
                 }
             });
-            adminSocket.emit("tiempos_empresas_salas", (eventos) => {
-                if (eventos) {
-                    setEventos(eventos);
-                } else {
-                    console.log("error getting tiempos_empresas_salas");
-                }
-            });
         }
-    }, [adminSocket]);
+    }, [adminSocket, setTiemposEventos]);
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
@@ -115,18 +116,18 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    eventoSelected?.evento ===
-                                    event.evento
+                                    eventoSelected?.nombreEvento === event.evento
                                         ? "active"
                                         : ""
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
                                     changeEvento(event);
+                                    console.log(event);
                                 }}
                             >
                                 <div className="card-title">
-                                    <h1>{event.evento}</h1>
+                                    <h1>{event.nombreEvento}</h1>
                                     {/* <p>Mie 18, ene 2023</p> */}
                                     <p>
                                         {parseFechaToFormatDMY(
@@ -165,11 +166,11 @@ export default function ActionsEvento() {
                         <div className="card-title">
                             <h1>
                                 <span className="fst-italic">
-                                    {eventoSelected.evento}
+                                    {eventoSelected.nombreEvento}
                                 </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${eventoSelected.evento.replace(
+                                to={`${DETALLES_EVENTO}/${eventoSelected?.nombreEvento?.replace(
                                     / /g,
                                     ""
                                 )}`}

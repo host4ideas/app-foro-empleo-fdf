@@ -12,8 +12,7 @@ export const EventoContext = createContext();
 export default function EventoContextProvider({ children }) {
     const [eventoSelected, setEventoSelected] = useState(null);
     const [newEvento, setNewEvento] = useState({});
-    const [tiempoEmpresaSalas, setTiempoEmpresaSalas] = useState([]);
-    const [categorias, setCategorias] = useState([]);
+    const [tiemposEventos, setTiemposEventos] = useState([]);
 
     /**
      * Changes the actual selected event
@@ -48,8 +47,17 @@ export default function EventoContextProvider({ children }) {
             changeEvento: changeEvento,
             addPropertiesEvento: addPropertiesEvento,
             checkNewEvento: checkNewEvento,
+            setTiemposEventos: setTiemposEventos,
+            tiemposEventos: tiemposEventos,
         }),
-        [eventoSelected, changeEvento, addPropertiesEvento, checkNewEvento]
+        [
+            eventoSelected,
+            changeEvento,
+            addPropertiesEvento,
+            checkNewEvento,
+            tiemposEventos,
+            setTiemposEventos,
+        ]
     );
 
     return (
