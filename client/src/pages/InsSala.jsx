@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaTrash, FaTimes, FaPlus } from "react-icons/fa";
+import { FaTrash, FaTimes, FaPlus, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
 import "./InsStyles.css";
@@ -62,24 +62,16 @@ function InsSala() {
         <div className="container">
             <div className="d-flex justify-content-between">
                 <div>
-                    <button
-                        onClick={() => createSala()}
-                        className="icon-container principal"
-                    >
-                        <FaPlus className="icon" />
-                    </button>
-                </div>
-                <div>
-                    <div className="icon-container danger">
+                    <div className="icon-container principal">
                         <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
-                            <FaTimes className="icon" />
+                            <FaArrowLeft className="icon" />
                         </Link>
                     </div>
                 </div>
             </div>
 
             <div className="container-card">
-                <h6 className="main-card-title">NOMBRE DE LA SALA</h6>
+                <h6 className="main-card-title">NUEVA SALA</h6>
                 <div className="card-input">
                     <input
                         id="inputNameRoom"
@@ -87,8 +79,15 @@ function InsSala() {
                         required
                         value={sala}
                         onChange={(e) => setSala(e.target.value.toUpperCase())}
-                        autocomplete="off"
+                        autoComplete="off"
                     />
+                </div>
+
+                <div
+                    onClick={() => createSala()}
+                    className="icon-container principal add"
+                >
+                    <FaPlus className="icon" />
                 </div>
             </div>
 

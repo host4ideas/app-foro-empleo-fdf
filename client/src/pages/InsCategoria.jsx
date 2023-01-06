@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
 // Components
-import AddButton from "../components/AddButton";
-import { FaTrash, FaTimes, FaPlus, FaEdit } from "react-icons/fa";
+import { FaTrash, FaTimes, FaPlus, FaEdit, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 // Styles
-import styles from "./InsCategoria.module.css";
 import { INSEVENTO, PRIVATE } from "../utils/paths";
 
 function InsCategoria() {
@@ -57,7 +55,9 @@ function InsCategoria() {
             );
         }
     }
+
     function deleteCategoria(id) {}
+
     function updateCategoria() {
         setEdit(false);
     }
@@ -74,25 +74,25 @@ function InsCategoria() {
         <div className="container">
             <div className="d-flex justify-content-between">
                 <div>
-                    <button
-                        onClick={() => {
-                            console.log("generar otra categoria");
-                        }}
-                        className="icon-container principal"
-                    >
-                        <FaPlus className="icon" />
-                    </button>
-                </div>
-                <div>
-                    <div className="icon-container danger">
+                    <div className="icon-container principal">
                         <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
-                            <FaTimes className="icon" />
+                            <FaArrowLeft className="icon" />
                         </Link>
                     </div>
                 </div>
             </div>
 
             <div className="container-card">
+                {edit && (
+                    <div className="icon-container danger close">
+                        <FaTimes
+                            className="icon"
+                            onClick={() => {
+                                setEdit(false);
+                            }}
+                        />
+                    </div>
+                )}
                 <h6 className="main-card-title">
                     {!edit ? "NUEVA CATEGORIA" : "EDITAR CATEGORIA"}
                 </h6>
@@ -119,15 +119,26 @@ function InsCategoria() {
                         />
                     </div>
                 </div>
-                {edit && (
-                    <button
-                        className="button-edit"
-                        onClick={() => {
-                            updateCategoria();
-                        }}
-                    >
-                        Editar
-                    </button>
+                {edit ? (
+                    <div className="text-center mt-3">
+                        <button
+                            className="btn btn-success"
+                            onClick={() => {
+                                updateCategoria();
+                            }}
+                        >
+                            Editar
+                        </button>
+                    </div>
+                ) : (
+                    <div className="icon-container principal add">
+                        <FaPlus
+                            className="icon"
+                            onClick={() => {
+                                console.log("generar otra categoria");
+                            }}
+                        />
+                    </div>
                 )}
             </div>
 
@@ -174,11 +185,13 @@ function InsCategoria() {
                                 );
                             })}
                         </div>
-                        <div className="text-center">
-                            <button className="btn btn-success mt-2">
-                                Confirmar
-                            </button>
-                        </div>
+                        {!edit && (
+                            <div className="text-center">
+                                <button className="btn btn-success mt-2">
+                                    Confirmar
+                                </button>
+                            </div>
+                        )}
                     </>
                 )}
             </div>

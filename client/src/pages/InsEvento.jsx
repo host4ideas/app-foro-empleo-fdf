@@ -1,14 +1,9 @@
 // React
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 // Components
-import InsCategoria from "./InsCategoria";
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
-import BackButton from "../components/BackButton";
-// Icons
-import { GoArrowLeft } from "react-icons/go";
-// Styles
-import "./InsEvento.css";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
@@ -72,20 +67,34 @@ function InsEvento() {
 
     return (
         <div className="container">
+            <div className="d-flex justify-content-between">
+                <div>
+                    <Link to="/" className="icon-container principal">
+                        <FaArrowLeft className="icon" />
+                    </Link>
+                </div>
+                <div>
+                    <button className="icon-container working">
+                        <FaCheck className="icon" />
+                    </button>
+                </div>
+            </div>
             <div className="container-card mb-3">
                 <div className="start-hour">
-                    <h6 className="main-card-title my-2">Inicio</h6>
+                    <h6 className="main-card-title main-card-title-left">
+                        FECHA Y HORA DEL EVENTO
+                    </h6>
                     <input id="fechaI" onChange={cambiaHoraTotal} type="date" />
                     <input id="horaI" onChange={cambiaHoraTotal} type="time" />
                 </div>
             </div>
 
             <div className="container-card mb-3">
-                <h6 className="main-card-title main-card-title-left mb-1">
+                <h6 className="main-card-title main-card-title-left">
                     NOMBRE DEL EVENTO
                 </h6>
-                <div>
-                    <input className="form-control" type="text" required />
+                <div className="card-input">
+                    <input type="text" required autoComplete="off" />
                 </div>
             </div>
 
@@ -116,15 +125,10 @@ function InsEvento() {
             </div>
 
             <div className="container-card mb-3">
-                <h6 className="my-2 text-center main-card-title main-card-title-left">
-                    ORGANIZACION
+                <h6 className="main-card-title main-card-title-left">
+                    ORGANIZACIÓN
                 </h6>
                 <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
-            </div>
-
-            <div>
-                <BackButton path={"/"} />
-                <button className="btn btn-primary">CREAR</button>
             </div>
         </div>
     );

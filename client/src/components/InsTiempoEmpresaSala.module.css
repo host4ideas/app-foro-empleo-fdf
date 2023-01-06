@@ -1,0 +1,12 @@
+.tableHead {
+    background-color: var(--primary-color);
+    height: 30px;
+}
+.tableSelect {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.tableButtons {
+    background-color: var(--primary-color);
+}

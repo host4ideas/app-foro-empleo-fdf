@@ -28,7 +28,7 @@ export default function DetallesSala() {
         <div className="container text-center">
             <div className="d-flex flex-row ">
                 <div>
-                    {/* ICON LOGOUT */}
+                    {/* ICON BACK */}
                     <div className="icon-container principal">
                         <FaArrowLeft
                             className="icon"

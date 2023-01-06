@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaTrash, FaTimes, FaPlus } from "react-icons/fa";
+import { FaTrash, FaTimes, FaPlus, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
 import "./InsStyles.css";
@@ -15,7 +15,6 @@ function InsEmpresa() {
         adminSocket.emit("empresas", (empresas) => {
             if (empresas) {
                 setListaEmpresas(empresas.reverse());
-                console.log(empresas);
             } else {
                 console.log("error getting empresas");
             }
@@ -30,6 +29,7 @@ function InsEmpresa() {
                 if (result) {
                     //Notificacion acierto
                     getListaEmpresas();
+                    setEmpresa("");
                 } else {
                     //Notificacion error
                 }
@@ -56,24 +56,16 @@ function InsEmpresa() {
         <div className="container">
             <div className="d-flex justify-content-between">
                 <div>
-                    <button
-                        onClick={() => createEmpresa()}
-                        className="icon-container principal"
-                    >
-                        <FaPlus className="icon" />
-                    </button>
-                </div>
-                <div>
-                    <div className="icon-container danger">
+                    <div className="icon-container principal">
                         <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
-                            <FaTimes className="icon" />
+                            <FaArrowLeft className="icon" />
                         </Link>
                     </div>
                 </div>
             </div>
 
             <div className="container-card">
-                <h6 className="main-card-title">NOMBRE DE LA EMPRESA</h6>
+                <h6 className="main-card-title">NUEVA EMPRESA</h6>
                 <div className="card-input">
                     <input
                         id="inputNameCompany"
@@ -83,7 +75,15 @@ function InsEmpresa() {
                         onChange={(e) =>
                             setEmpresa(e.target.value.toUpperCase())
                         }
-                        autocomplete="off"
+                        autoComplete="off"
+                    />
+                </div>
+                <div className="icon-container principal add">
+                    <FaPlus
+                        className="icon"
+                        onClick={() => {
+                            createEmpresa();
+                        }}
                     />
                 </div>
             </div>
