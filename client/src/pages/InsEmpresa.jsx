@@ -14,7 +14,7 @@ function InsEmpresa() {
     function getListaEmpresas() {
         adminSocket.emit("empresas", (empresas) => {
             if (empresas) {
-                setListaEmpresas(empresas);
+                setListaEmpresas(empresas.reverse());
                 console.log(empresas);
             } else {
                 console.log("error getting empresas");

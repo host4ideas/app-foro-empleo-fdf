@@ -13,7 +13,15 @@
 .card-input {
     width: 100%;
 }
-.card-input input {
+.card-flex {
+    display: flex;
+    justify-content: space-between;
+}
+.card-input-50 {
+    width: 45%;
+}
+.card-input input,
+.card-input-50 input {
     width: 100%;
     border: none;
     border-bottom: solid 1px black;
@@ -44,7 +52,7 @@
 }
 
 .element-title {
-    width: 80%;
+    width: 70%;
 }
 .element-list h5 {
     margin: 0px;

@@ -4,29 +4,36 @@ import React, { useState, useEffect } from "react";
 import { useAuthContext } from "../contexts/authContext";
 // Components
 import AddButton from "../components/AddButton";
+import { FaTrash, FaTimes, FaPlus, FaEdit } from "react-icons/fa";
+import { Link } from "react-router-dom";
 // Styles
 import styles from "./InsCategoria.module.css";
+import { INSEVENTO, PRIVATE } from "../utils/paths";
 
 function InsCategoria() {
     const [tiempo, setTiempo] = useState("");
     const [nombre, setNombre] = useState("");
     const [categorias, setCategorias] = useState([]);
+    const [edit, setEdit] = useState(false);
+    const [categoria, setCategoria] = useState();
     const { adminSocket } = useAuthContext();
 
-    useEffect(() => {
-        if (adminSocket) {
-            adminSocket.emit("categorias", (categorias) => {
-                setCategorias(categorias);
-            });
-        }
-    }, [setCategorias, adminSocket]);
+    function getListaCategorias() {
+        adminSocket.emit("categorias", (categorias) => {
+            if (categorias) {
+                setCategorias(categorias.reverse());
+            } else {
+                console.log("error getting categorias");
+            }
+        });
+    }
 
-    function handleInputChangeD(e) {
-        setTiempo(e.target.value);
+    function handleInputChangeN(e) {
+        setNombre(e.target.value);
     }
 
     function handleInputChangeT(e) {
-        setNombre(e.target.value);
+        setTiempo(e.target.value);
     }
 
     function handleClick(e) {
@@ -50,68 +57,131 @@ function InsCategoria() {
             );
         }
     }
+    function deleteCategoria(id) {}
+    function updateCategoria() {
+        setEdit(false);
+    }
 
     function handleUseCategory() {
         console.timeLog("clicked");
     }
 
+    useEffect(() => {
+        getListaCategorias();
+    }, []);
+
     return (
-        <div className={styles.divCategory}>
-            <h6 className="main-card-title main-card-title-left mb-2">
-                CATEGORIAS TEMPORIZADORES
-            </h6>
-            <form>
-                {categorias.map((categoria, index) => {
-                    return (
-                        <div key={index} className={styles.inputsZone}>
-                            <div className={styles.nameInput}>
-                                <label className="detail-card-title">
-                                    Nombre:
-                                </label>
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    defaultValue={categoria.categoria}
-                                    value={nombre}
-                                    onChange={handleInputChangeT}
-                                    required
-                                />
-                            </div>
-                            <div className={styles.minuteInput}>
-                                <label className="detail-card-title">
-                                    Duracion (Minutos):
-                                </label>
-                                <input
-                                    className="form-control"
-                                    type="number"
-                                    defaultValue={categoria.duracion}
-                                    value={tiempo}
-                                    onChange={handleInputChangeD}
-                                    required
-                                />
-                            </div>
-                            <div class="form-check">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    value=""
-                                    id="flexCheckDefault"
-                                    onClick={handleUseCategory}
-                                />
-                                <label
-                                    class="form-check-label"
-                                    for="flexCheckDefault"
-                                >
-                                    Utilizar esta categoria
-                                </label>
-                            </div>
-                        </div>
-                    );
-                })}
-                <div className="text-center mt-2">
-                    <AddButton clickHandler={handleClick} />
+        <div className="container">
+            <div className="d-flex justify-content-between">
+                <div>
+                    <button
+                        onClick={() => {
+                            console.log("generar otra categoria");
+                        }}
+                        className="icon-container principal"
+                    >
+                        <FaPlus className="icon" />
+                    </button>
                 </div>
-            </form>
+                <div>
+                    <div className="icon-container danger">
+                        <Link to={"/" + PRIVATE + "/" + INSEVENTO}>
+                            <FaTimes className="icon" />
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            <div className="container-card">
+                <h6 className="main-card-title">
+                    {!edit ? "NUEVA CATEGORIA" : "EDITAR CATEGORIA"}
+                </h6>
+                <div className="card-flex">
+                    <div className="card-input-50">
+                        <input
+                            type="text"
+                            required
+                            value={!edit ? nombre : categoria.categoria}
+                            onChange={handleInputChangeN}
+                            autocomplete="off"
+                            placeholder="Nombre"
+                        />
+                    </div>
+                    <div className="card-input-50">
+                        <input
+                            type="number"
+                            required
+                            value={!edit ? tiempo : categoria.duracion}
+                            onChange={handleInputChangeT}
+                            autocomplete="off"
+                            placeholder="Duración (min)"
+                            min={1}
+                        />
+                    </div>
+                </div>
+                {edit && (
+                    <button
+                        className="button-edit"
+                        onClick={() => {
+                            updateCategoria();
+                        }}
+                    >
+                        Editar
+                    </button>
+                )}
+            </div>
+
+            <div className="mt-5">
+                {categorias.length === 0 ? (
+                    <h4 className="title-description">
+                        Añada las categorias que necesite{" "}
+                    </h4>
+                ) : (
+                    <>
+                        <h4 className="title-description">
+                            Categorias Registradas
+                        </h4>
+                        <div className="container-list">
+                            {categorias.map((categoria, index) => {
+                                return (
+                                    <div key={index} className="element-list">
+                                        <div className="element-title">
+                                            <h5>
+                                                {categoria.categoria} -{" "}
+                                                {categoria.duracion} min
+                                            </h5>
+                                        </div>
+                                        <button
+                                            className="icon-container warning"
+                                            onClick={() => {
+                                                setEdit(true);
+                                                setCategoria(categoria);
+                                            }}
+                                        >
+                                            <FaEdit className="icon" />
+                                        </button>
+                                        <button
+                                            className="icon-container danger"
+                                            onClick={() =>
+                                                deleteCategoria(
+                                                    categoria.idCategoria
+                                                )
+                                            }
+                                        >
+                                            <FaTrash className="icon" />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="text-center">
+                            <button className="btn btn-success mt-2">
+                                Confirmar
+                            </button>
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
