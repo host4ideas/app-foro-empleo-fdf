@@ -27,12 +27,18 @@ export default function ActionsEvento() {
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
-            console.log("test");
-            adminSocket.emit("eventos", (eventos) => {
+            adminSocket.emit("timereventos", (eventos) => {
                 if (eventos) {
                     setEventos(eventos);
                 } else {
                     console.log("error getting eventos");
+                }
+            });
+            adminSocket.emit("tiempos_empresas_salas", (eventos) => {
+                if (eventos) {
+                    setEventos(eventos);
+                } else {
+                    console.log("error getting tiempos_empresas_salas");
                 }
             });
         }
@@ -109,8 +115,8 @@ export default function ActionsEvento() {
                         return (
                             <div
                                 className={`card-event ${
-                                    eventoSelected?.nombreEvento ===
-                                    event.nombreEvento
+                                    eventoSelected?.evento ===
+                                    event.evento
                                         ? "active"
                                         : ""
                                 }`}
@@ -120,7 +126,7 @@ export default function ActionsEvento() {
                                 }}
                             >
                                 <div className="card-title">
-                                    <h1>{event.nombreEvento}</h1>
+                                    <h1>{event.evento}</h1>
                                     {/* <p>Mie 18, ene 2023</p> */}
                                     <p>
                                         {parseFechaToFormatDMY(
@@ -159,11 +165,11 @@ export default function ActionsEvento() {
                         <div className="card-title">
                             <h1>
                                 <span className="fst-italic">
-                                    {eventoSelected.nombreEvento}
+                                    {eventoSelected.evento}
                                 </span>
                             </h1>
                             <Link
-                                to={`${DETALLES_EVENTO}/${eventoSelected.nombreEvento.replace(
+                                to={`${DETALLES_EVENTO}/${eventoSelected.evento.replace(
                                     / /g,
                                     ""
                                 )}`}

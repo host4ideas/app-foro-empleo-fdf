@@ -10,14 +10,35 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 import "./timer.css";
 
 export default function Timer() {
+    // Initial timer time set by the admin
+    const [initialTimerTime, setInitialTimerTime] = useState(0);
+    // Timer time
     const [timer, setTimer] = useState(0);
-    const [actualTime, setActualTime] = useState("");
+    // Clock time
+    const [actualClockTime, setActualClockTime] = useState("");
+    // Timer play state
     const [play, setPlay] = useState(false);
+    // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
+    };
+
+    // Admin timer functionality
+    const startTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("resume timer");
+        }
+        setPlay(true);
+    };
+
+    const pauseTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("pause timer");
+        }
+        setPlay(false);
     };
 
     // Client timer functionality
@@ -31,10 +52,12 @@ export default function Timer() {
             });
             clientSocket.on("initial time", function (time) {
                 timerCounter.stop();
+                setInitialTimerTime(time);
                 setTimer(msToMinutesSecondsAndHours(time, "hh:mm:ss"));
             });
-            clientSocket.on("start timer", function (time) {
-                synchronizeTimer(10000);
+            clientSocket.on("start timer", function () {
+                // Start the timer with the initial time
+                synchronizeTimer(initialTimerTime);
             });
             clientSocket.on("resume timer", function (time) {
                 synchronizeTimer(time);
@@ -47,53 +70,32 @@ export default function Timer() {
                 setTimer("00:00:00");
             });
         }
-    }, [clientSocket]);
-
-    // Admin timer functionality
-    const startTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("resume timer");
-        }
-
-        // timerCounter.start(10000);
-        setPlay(true);
-    };
-
-    const pauseTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("pause timer");
-        }
-        setPlay(false);
-    };
+    }, [clientSocket, initialTimerTime]);
 
     timerCounter.on("tick", () => {
-        console.log("test " + timerCounter.time);
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
     });
 
-    //HORA ACTUAL
+    // HORA ACTUAL
     useEffect(() => {
-        const timer = setInterval(() => {
-            const timeActual = setInterval(() => {
-                showTime();
-            }, 1000);
-            return () => {
-                // Return callback to run on unmount.
-                clearInterval(timer);
-                clearInterval(timeActual);
-            };
-        });
+        const actualClockTime = setInterval(() => {
+            showClockTime();
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount (stop clock)
+            clearInterval(actualClockTime);
+        };
     }, []);
 
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
+    const showClockTime = () => {
+        let myDate = new Date();
+        let hours = myDate.getHours();
+        let minutes = myDate.getMinutes();
+        let seconds = myDate.getSeconds();
         if (hours < 10) hours = 0 + hours;
         if (minutes < 10) minutes = "0" + minutes;
         if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
+        setActualClockTime(hours + ":" + minutes + ":" + seconds);
     };
 
     return (
@@ -125,8 +127,8 @@ export default function Timer() {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                {actualTime ? (
-                    <p className="fst-italic">{actualTime}</p>
+                {actualClockTime ? (
+                    <p className="fst-italic">{actualClockTime}</p>
                 ) : (
                     <p className="fst-italic">Loading...</p>
                 )}
