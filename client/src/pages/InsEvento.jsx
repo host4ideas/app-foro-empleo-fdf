@@ -1,6 +1,6 @@
 // React
-import { useState,useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 // Components
 import InsCategoria from "./InsCategoria";
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
@@ -14,10 +14,9 @@ import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 
 function InsEvento() {
-
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
-    const [fechas, setFechas] = useState({ fechaInicio: ""});
+    const [fechas, setFechas] = useState({ fechaInicio: "" });
     const [totalHora, setTotalHora] = useState("00:00");
 
     const [longEmp, setLongEmp] = useState(0);
@@ -72,15 +71,16 @@ function InsEvento() {
     }
 
     return (
-        <div className="div-events text-center">
-            <div className="hour-zone text-center">
+        <div className="container">
+            <div className="container-card mb-3">
                 <div className="start-hour">
                     <h6 className="main-card-title my-2">Inicio</h6>
                     <input id="fechaI" onChange={cambiaHoraTotal} type="date" />
                     <input id="horaI" onChange={cambiaHoraTotal} type="time" />
                 </div>
             </div>
-            <div className="event-name">
+
+            <div className="container-card mb-3">
                 <h6 className="main-card-title main-card-title-left mb-1">
                     NOMBRE DEL EVENTO
                 </h6>
@@ -88,42 +88,40 @@ function InsEvento() {
                     <input className="form-control" type="text" required />
                 </div>
             </div>
-            <div className="company-room-show">
-                <div className="room-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSSALAS}
-                    >
-                        SALAS{" "}
-                        <span className="text-secondary"> - ({longSal} salas)</span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSEMPRESA}
-                    >
-                        EMPRESAS{" "}
-                        <span className="text-secondary"> - ({longEmp} empresas)</span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSCATEGORIA}
-                    >
-                        CATEGORIAS{" "}
-                        <span className="text-secondary"> - ({longCat} categorias)</span>
-                    </NavLink>
-                </div>
+
+            <div className="container-links mb-3">
+                <Link className="card-link" to={"/" + PRIVATE + "/" + INSSALAS}>
+                    <span className="link">
+                        <b>SALAS</b> ({longSal})
+                    </span>
+                </Link>
+
+                <Link
+                    className="card-link "
+                    to={"/" + PRIVATE + "/" + INSEMPRESA}
+                >
+                    <span className="link">
+                        <b>EMPRESAS</b> ({longEmp})
+                    </span>
+                </Link>
+
+                <Link
+                    className="card-link"
+                    to={"/" + PRIVATE + "/" + INSCATEGORIA}
+                >
+                    <span className="link">
+                        <b>CATEGORIAS</b> ({longCat})
+                    </span>
+                </Link>
             </div>
-            <div className="organization-zone">
+
+            <div className="container-card mb-3">
                 <h6 className="my-2 text-center main-card-title main-card-title-left">
                     ORGANIZACION
                 </h6>
-                <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio}/>
-                {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}
+                <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
             </div>
+
             <div>
                 <BackButton path={"/"} />
                 <button className="btn btn-primary">CREAR</button>

@@ -42,7 +42,7 @@ export default function DetallesEvento() {
                     isAuthenticated ? (
                         <div>
                             {/* ICON LOGOUT */}
-                            <div className="icon-container logout">
+                            <div className="icon-container danger">
                                 <FaSignOutAlt
                                     className="icon"
                                     onClick={() => logout()}
