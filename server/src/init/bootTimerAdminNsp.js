@@ -71,6 +71,7 @@ module.exports = function (io, sessionMiddleware) {
         require("./eventosSocket")(socket);
         require("./salasSocket")(socket);
         require("./temporizadoresSocket")(socket);
+        require("./tiemposEventosSocket")(socket);
     });
 
     io.on("check timer", (cb) => {

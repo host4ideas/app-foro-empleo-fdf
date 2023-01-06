@@ -12,6 +12,16 @@ async function getEvents(token) {
     }
 }
 
+async function getEventById(idEvento, token) {
+    var url = urlApi + "/api/eventos/"+idEvento;
+    try {
+        const res = await getData(url, token);
+        return res;
+    } catch (e) {
+        return null;
+    }
+}
+
 async function updateEvent(event, token) {
     var url = urlApi + "/api/eventos";
     try {
@@ -25,4 +35,5 @@ async function updateEvent(event, token) {
 module.exports = {
     updateEvent,
     getEvents,
+    getEventById
 };
