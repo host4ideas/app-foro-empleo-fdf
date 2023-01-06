@@ -4,6 +4,7 @@ export default function EmpresaSala({
     sala,
     empresas,
     tiemposEventosFiltered,
+    primerTiempo,
 }) {
     const [tiemposEventosBySala, setTiemposEventosBySala] = useState([]);
 
@@ -36,9 +37,13 @@ export default function EmpresaSala({
                         .map((tiempoEvento, index) => (
                             <tr key={index}>
                                 <td className="hora">
-                                    {new Date(tiempoEvento.inicioTimer)
-                                        .toTimeString()
-                                        .substring(0, 5)}
+                                    {index === 0
+                                        ? primerTiempo
+                                              .toTimeString()
+                                              .substring(0, 5)
+                                        : new Date(tiempoEvento.inicioTimer)
+                                              .toTimeString()
+                                              .substring(0, 5)}
                                 </td>
                                 <td>
                                     <select className="select-room">

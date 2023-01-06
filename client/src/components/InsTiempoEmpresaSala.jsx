@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
-import { useEventoContext } from "../contexts/eventoContext";
 // Components
 import EmpresaSala from "./EmpresaSala";
 // Styles
@@ -10,16 +9,17 @@ import "./InsTiempoEmpresaSala.css";
 // React notifications
 import { toast } from "react-toastify";
 
-function InsTiempoEmpresaSala(props) {
+function InsTiempoEmpresaSala({
+    primerTiempo,
+    tiemposEventosFiltered,
+    cleanedArrayTimers,
+}) {
     const { adminSocket } = useAuthContext();
-    const { tiemposEventos, eventoSelected } = useEventoContext();
 
-    const [tiemposEventosFiltered, setTiemposEventosFiltered] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [salas, setSalas] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [tiempoInicial, setTiempoInicial] = useState([]);
-    const [cleanedArrayTimers, setCleanedArrayTimers] = useState([]);
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
 
@@ -32,60 +32,67 @@ function InsTiempoEmpresaSala(props) {
             hora[1] = parseInt(hora[1]);
             var arrayHoras = [];
 
-            if (tbodyTimer.length > 1) {
+            if (tbodyTimer.length > 0) {
                 //CAMBIO DE HORAS EN LA TABLA DE TIMER
 
                 for (let i = 0; i < tbodyTimer.length; i++) {
-                    var horaCelda = tbodyTimer[i].childNodes[0];
-                    var duracion = parseInt(
+                    if (
                         tbodyTimer[i].childNodes[1].childNodes[0]
-                            .selectedOptions[0].value
-                    );
+                            .selectedOptions[0]
+                    ) {
+                        var horaCelda = tbodyTimer[i].childNodes[0];
+                        var duracion = parseInt(
+                            tbodyTimer[i].childNodes[1].childNodes[0]
+                                .selectedOptions[0].value
+                        );
 
-                    if (i === 0) {
-                        hora[1] = hora[1] + duracion;
-                    } else {
-                        if (hora[1] < 10 && hora[0] < 10) {
-                            horaCelda.innerText =
-                                "0" + hora[0] + ":0" + hora[1];
-                            arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
-                        } else if (hora[1] < 10 && hora[0] >= 10) {
-                            horaCelda.innerText = hora[0] + ":0" + hora[1];
-                            arrayHoras.push(hora[0] + ":0" + hora[1]);
-                        } else if (hora[1] >= 10 && hora[0] < 10) {
-                            horaCelda.innerText = "0" + hora[0] + ":" + hora[1];
-                            arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                        if (i === 0) {
+                            hora[1] = hora[1] + duracion;
                         } else {
-                            horaCelda.innerText = hora[0] + ":" + hora[1];
-                            arrayHoras.push(hora[0] + ":" + hora[1]);
+                            if (hora[1] < 10 && hora[0] < 10) {
+                                horaCelda.innerText =
+                                    "0" + hora[0] + ":0" + hora[1];
+                                arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
+                            } else if (hora[1] < 10 && hora[0] >= 10) {
+                                horaCelda.innerText = hora[0] + ":0" + hora[1];
+                                arrayHoras.push(hora[0] + ":0" + hora[1]);
+                            } else if (hora[1] >= 10 && hora[0] < 10) {
+                                horaCelda.innerText =
+                                    "0" + hora[0] + ":" + hora[1];
+                                arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                            } else {
+                                horaCelda.innerText = hora[0] + ":" + hora[1];
+                                arrayHoras.push(hora[0] + ":" + hora[1]);
+                            }
+
+                            hora[1] = hora[1] + duracion;
                         }
 
-                        hora[1] = hora[1] + duracion;
+                        if (hora[1] >= 60) {
+                            hora[0]++;
+                            hora[1] = hora[1] - 60;
+                        }
+
+                        if (hora[0] >= 24) {
+                            hora[0] = hora[0] - 24;
+                        }
                     }
 
-                    if (hora[1] >= 60) {
-                        hora[0]++;
-                        hora[1] = hora[1] - 60;
-                    }
+                    //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
 
-                    if (hora[0] >= 24) {
-                        hora[0] = hora[0] - 24;
-                    }
-                }
+                    var tablasSala =
+                        document.getElementsByClassName("div-table-room");
 
-                //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
+                    for (let i = 0; i < tablasSala.length; i++) {
+                        var tbodySala =
+                            tablasSala[i].childNodes[0].childNodes[1]
+                                .childNodes;
 
-                var tablasSala =
-                    document.getElementsByClassName("div-table-room");
-
-                for (let i = 0; i < tablasSala.length; i++) {
-                    var tbodySala =
-                        tablasSala[i].childNodes[0].childNodes[1].childNodes;
-
-                    for (var j = 0; j < tbodySala.length; j++) {
-                        if (j !== 0) {
-                            tbodySala[j].childNodes[0].innerText =
-                                arrayHoras[j - 1];
+                        for (var j = 0; j < tbodySala.length; j++) {
+                            if (j !== 0) {
+                                tbodySala[j].childNodes[0].innerText =
+                                    arrayHoras[j - 1];
+                            }
                         }
                     }
                 }
@@ -306,58 +313,37 @@ function InsTiempoEmpresaSala(props) {
     }, [salas, cambiaTablaSala]);
 
     useEffect(() => {
-        console.log(props);
         if (
-            props.tiempoinicial !== "Invalid Date" &&
-            props.tiempoinicial !== ""
+            primerTiempo !== "Invalid Date" &&
+            primerTiempo !== "Inval" &&
+            primerTiempo !== ""
         ) {
-            console.log(props.tiempoInicial);
-            var tiempo = props.tiempoinicial.toLocaleTimeString().split(":");
+            let tiempo = primerTiempo.toLocaleTimeString().split(":");
             if (parseInt(tiempo[0]) < 10) {
                 tiempo[0] = "0" + tiempo[0];
+                if (cleanedArrayTimers && cleanedArrayTimers.length > 0) {
+                    setTiempoInicial(
+                        new Date(cleanedArrayTimers[0].inicioTimer)
+                            .toTimeString()
+                            .substring(0, 5)
+                    );
+                }
             }
             setTiempoInicial(tiempo[0] + ":" + tiempo[1]);
         } else {
-            setTiempoInicial("Sin hora");
         }
-    }, [props]);
+    }, [primerTiempo, cleanedArrayTimers]);
 
     useEffect(() => {
-        console.log(tiempoInicial);
         if (
-            tiempoInicial !== "Invalid Date" &&
-            tiempoInicial !== "" &&
-            tiempoInicial !== "Sin hora"
+            primerTiempo !== "Invalid Date" &&
+            primerTiempo !== "Inval" &&
+            primerTiempo !== "" &&
+            primerTiempo !== "Sin hora"
         ) {
             ajustaTiempo();
         }
-    }, [tiempoInicial, ajustaTiempo]);
-
-    useEffect(() => {
-        const arrayFiltered = tiemposEventos.filter(
-            (tiempoEvento) => tiempoEvento.idEvento === eventoSelected.idEvento
-        );
-
-        const filteredArrayByIdTimer = arrayFiltered.reduce((acc, current) => {
-            const x = acc.find((item) => item.idTimer === current.idTimer);
-            if (!x) {
-                return acc.concat([current]);
-            } else {
-                return acc;
-            }
-        }, []);
-
-        setCleanedArrayTimers(
-            filteredArrayByIdTimer.sort(
-                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-            )
-        );
-        setTiemposEventosFiltered(
-            arrayFiltered.sort(
-                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-            )
-        );
-    }, [tiemposEventos, eventoSelected]);
+    }, [primerTiempo, ajustaTiempo]);
 
     return (
         <>
@@ -371,11 +357,7 @@ function InsTiempoEmpresaSala(props) {
                 <tbody>
                     {cleanedArrayTimers.map((tiempoEvento) => (
                         <tr>
-                            <td className="hora">
-                                {new Date(tiempoEvento.inicioTimer)
-                                    .toTimeString()
-                                    .substring(0, 5)}
-                            </td>
+                            <td className="hora">{tiempoInicial}</td>
                             <td>
                                 <select
                                     onChange={ajustaTiempo}
@@ -447,6 +429,7 @@ function InsTiempoEmpresaSala(props) {
                         tiempoInicial={tiempoInicial}
                         empresas={empresas}
                         tiemposEventosFiltered={tiemposEventosFiltered}
+                        primerTiempo={primerTiempo}
                     />
                 );
             })}
