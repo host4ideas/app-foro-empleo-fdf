@@ -1,161 +1,102 @@
 // React
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
 // Components
-import AddButton from "./AddButton";
+import EmpresaSala from "./EmpresaSala";
 // Styles
 import "./InsTiempoEmpresaSala.css";
-
-import EmpresaSala from "./EmpresaSala";
+// React notifications
+import { toast } from "react-toastify";
 
 function InsTiempoEmpresaSala(props) {
-    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
+    const { adminSocket } = useAuthContext();
+    const { tiemposEventos, eventoSelected } = useEventoContext();
 
+    const [tiemposEventosFiltered, setTiemposEventosFiltered] = useState([]);
     const [empresas, setEmpresas] = useState([]);
     const [salas, setSalas] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [tiempoInicial, setTiempoInicial] = useState([]);
-
-    //USE EFFECT DE LOS SOCKETS
-
-    useEffect(() => {
-        if (adminSocket) {
-            adminSocket.emit("categorias", (categorias) => {
-                if (categorias) {
-                    setCategorias(categorias);
-                } else {
-                    console.log("error getting categorias");
-                }
-            });
-            adminSocket.emit("salas", (salas) => {
-                if (salas) {
-                    setSalas(salas);
-                } else {
-                    console.log("error getting salas");
-                }
-            });
-            adminSocket.emit("empresas", (empresas) => {
-                if (empresas) {
-                    setEmpresas(empresas);
-                } else {
-                    console.log("error getting empresas");
-                }
-            });
-        }
-    }, [adminSocket]);
-
-    //USE EFFECTS PARA CADA ELEMENTO NECESARIO
-
-    useEffect(() => {
-        var tablasSala = document.getElementsByClassName("div-table-room");
-        if (tablasSala.length > 0) {
-            cambiaTablaSala();
-        }
-    }, [salas]);
-
-    useEffect(() => {
-        console.log(props);
-        if (
-            props.tiempoinicial != "Invalid Date" &&
-            props.tiempoinicial != ""
-        ) {
-            console.log(props.tiempoInicial);
-            var tiempo = props.tiempoinicial.toLocaleTimeString().split(":");
-            if (parseInt(tiempo[0]) < 10) {
-                tiempo[0] = "0" + tiempo[0];
-            }
-            setTiempoInicial(tiempo[0] + ":" + tiempo[1]);
-        } else {
-            setTiempoInicial("Sin hora");
-        }
-    }, [props]);
-
-    useEffect(() => {
-        console.log(tiempoInicial);
-        if (
-            tiempoInicial != "Invalid Date" &&
-            tiempoInicial != "" &&
-            tiempoInicial != "Sin hora"
-        ) {
-            ajustaTiempo();
-        }
-    }, [tiempoInicial]);
+    const [cleanedArrayTimers, setCleanedArrayTimers] = useState([]);
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
 
-    function ajustaTiempo() {
-        var tbodyTimer =
-            document.getElementById("timer-table").childNodes[1].childNodes;
-        var hora = tiempoInicial.split(":");
-        hora[0] = parseInt(hora[0]);
-        hora[1] = parseInt(hora[1]);
-        var arrayHoras = [];
+    const ajustaTiempo = useCallback(() => {
+        if (typeof tiempoInicial === "string") {
+            var tbodyTimer =
+                document.getElementById("timer-table").childNodes[1].childNodes;
+            var hora = tiempoInicial.split(":");
+            hora[0] = parseInt(hora[0]);
+            hora[1] = parseInt(hora[1]);
+            var arrayHoras = [];
 
-        if (tbodyTimer.length > 1) {
-            //CAMBIO DE HORAS EN LA TABLA DE TIMER
+            if (tbodyTimer.length > 1) {
+                //CAMBIO DE HORAS EN LA TABLA DE TIMER
 
-            for (var i = 0; i < tbodyTimer.length; i++) {
-                var horaCelda = tbodyTimer[i].childNodes[0];
-                var duracion = parseInt(
-                    tbodyTimer[i].childNodes[1].childNodes[0].selectedOptions[0]
-                        .value
-                );
+                for (let i = 0; i < tbodyTimer.length; i++) {
+                    var horaCelda = tbodyTimer[i].childNodes[0];
+                    var duracion = parseInt(
+                        tbodyTimer[i].childNodes[1].childNodes[0]
+                            .selectedOptions[0].value
+                    );
 
-                if (i == 0) {
-                    hora[1] = hora[1] + duracion;
-                } else {
-                    if (hora[1] < 10 && hora[0] < 10) {
-                        horaCelda.innerText = "0" + hora[0] + ":0" + hora[1];
-                        arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
-                    } else if (hora[1] < 10 && hora[0] >= 10) {
-                        horaCelda.innerText = hora[0] + ":0" + hora[1];
-                        arrayHoras.push(hora[0] + ":0" + hora[1]);
-                    } else if (hora[1] >= 10 && hora[0] < 10) {
-                        horaCelda.innerText = "0" + hora[0] + ":" + hora[1];
-                        arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                    if (i === 0) {
+                        hora[1] = hora[1] + duracion;
                     } else {
-                        horaCelda.innerText = hora[0] + ":" + hora[1];
-                        arrayHoras.push(hora[0] + ":" + hora[1]);
+                        if (hora[1] < 10 && hora[0] < 10) {
+                            horaCelda.innerText =
+                                "0" + hora[0] + ":0" + hora[1];
+                            arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
+                        } else if (hora[1] < 10 && hora[0] >= 10) {
+                            horaCelda.innerText = hora[0] + ":0" + hora[1];
+                            arrayHoras.push(hora[0] + ":0" + hora[1]);
+                        } else if (hora[1] >= 10 && hora[0] < 10) {
+                            horaCelda.innerText = "0" + hora[0] + ":" + hora[1];
+                            arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                        } else {
+                            horaCelda.innerText = hora[0] + ":" + hora[1];
+                            arrayHoras.push(hora[0] + ":" + hora[1]);
+                        }
+
+                        hora[1] = hora[1] + duracion;
                     }
 
-                    hora[1] = hora[1] + duracion;
+                    if (hora[1] >= 60) {
+                        hora[0]++;
+                        hora[1] = hora[1] - 60;
+                    }
+
+                    if (hora[0] >= 24) {
+                        hora[0] = hora[0] - 24;
+                    }
                 }
 
-                console.log(props);
+                //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
 
-                if (hora[1] >= 60) {
-                    hora[0]++;
-                    hora[1] = hora[1] - 60;
-                }
+                var tablasSala =
+                    document.getElementsByClassName("div-table-room");
 
-                if (hora[0] >= 24) {
-                    hora[0] = hora[0] - 24;
-                }
-            }
+                for (let i = 0; i < tablasSala.length; i++) {
+                    var tbodySala =
+                        tablasSala[i].childNodes[0].childNodes[1].childNodes;
 
-            //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
-
-            var tablasSala = document.getElementsByClassName("div-table-room");
-
-            for (var i = 0; i < tablasSala.length; i++) {
-                var tbodySala =
-                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
-
-                for (var j = 0; j < tbodySala.length; j++) {
-                    if (j != 0) {
-                        tbodySala[j].childNodes[0].innerText =
-                            arrayHoras[j - 1];
+                    for (var j = 0; j < tbodySala.length; j++) {
+                        if (j !== 0) {
+                            tbodySala[j].childNodes[0].innerText =
+                                arrayHoras[j - 1];
+                        }
                     }
                 }
             }
         }
-    }
+    }, [tiempoInicial]);
 
     //FUNCION PARA CAMBIAR LA TABLA DE CADA SALA
 
-    function cambiaTablaSala() {
-        if (salas != []) {
+    const cambiaTablaSala = useCallback(() => {
+        if (salas !== []) {
             var nomSala =
                 document.getElementById("select-room").selectedOptions[0]
                     .innerText;
@@ -169,7 +110,7 @@ function InsTiempoEmpresaSala(props) {
                 }
             }
         }
-    }
+    }, [salas]);
 
     //FUNCION PARA AÑADIR FILA AL TIMER
 
@@ -244,7 +185,16 @@ function InsTiempoEmpresaSala(props) {
 
             aniadeFilaSalas(celdaTiempo.innerText);
         } else {
-            console.log("Inserta hora de inicio");
+            toast.warn("Inserta hora de inicio", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         }
     }
 
@@ -262,7 +212,7 @@ function InsTiempoEmpresaSala(props) {
 
             var celdaSelect = document.createElement("td");
 
-            var selector = document.createElement("select");
+            let selector = document.createElement("select");
             selector.classList.add("select-room");
 
             empresas.forEach((empresa) => {
@@ -284,20 +234,133 @@ function InsTiempoEmpresaSala(props) {
             document.getElementById("timer-table").childNodes[1].childNodes;
 
         if (tbodyTimer.length > 1) {
-            tbodyTimer[tbodyTimer.length - 1].remove();
+            if (adminSocket) {
+                adminSocket.emit(
+                    "delete tiempo_empresa_sala",
+                    "empresa X",
+                    (res) => {
+                        console.log(res);
+                    }
+                );
 
-            var tablasSala = document.getElementsByClassName("div-table-room");
+                tbodyTimer[tbodyTimer.length - 1].remove();
 
-            for (var i = 0; i < tablasSala.length; i++) {
-                var tbodySala =
-                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
-                tbodySala[tbodySala.length - 1].remove();
+                var tablasSala =
+                    document.getElementsByClassName("div-table-room");
+
+                for (var i = 0; i < tablasSala.length; i++) {
+                    var tbodySala =
+                        tablasSala[i].childNodes[0].childNodes[1].childNodes;
+                    tbodySala[tbodySala.length - 1].remove();
+                }
             }
+        } else {
+            toast.warn("Debe de haber al menos un timer", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
         }
     }
 
+    //USE EFFECT DE LOS SOCKETS
+
+    useEffect(() => {
+        if (adminSocket) {
+            adminSocket.emit("categorias", (categorias) => {
+                if (categorias) {
+                    setCategorias(categorias);
+                } else {
+                    console.log("error getting categorias");
+                }
+            });
+            adminSocket.emit("salas", (salas) => {
+                if (salas) {
+                    setSalas(salas);
+                } else {
+                    console.log("error getting salas");
+                }
+            });
+            adminSocket.emit("empresas", (empresas) => {
+                if (empresas) {
+                    setEmpresas(empresas);
+                } else {
+                    console.log("error getting empresas");
+                }
+            });
+        }
+    }, [adminSocket]);
+
+    //USE EFFECTS PARA CADA ELEMENTO NECESARIO
+
+    useEffect(() => {
+        var tablasSala = document.getElementsByClassName("div-table-room");
+        if (tablasSala.length > 0) {
+            cambiaTablaSala();
+        }
+    }, [salas, cambiaTablaSala]);
+
+    useEffect(() => {
+        console.log(props);
+        if (
+            props.tiempoinicial !== "Invalid Date" &&
+            props.tiempoinicial !== ""
+        ) {
+            console.log(props.tiempoInicial);
+            var tiempo = props.tiempoinicial.toLocaleTimeString().split(":");
+            if (parseInt(tiempo[0]) < 10) {
+                tiempo[0] = "0" + tiempo[0];
+            }
+            setTiempoInicial(tiempo[0] + ":" + tiempo[1]);
+        } else {
+            setTiempoInicial("Sin hora");
+        }
+    }, [props]);
+
+    useEffect(() => {
+        console.log(tiempoInicial);
+        if (
+            tiempoInicial !== "Invalid Date" &&
+            tiempoInicial !== "" &&
+            tiempoInicial !== "Sin hora"
+        ) {
+            ajustaTiempo();
+        }
+    }, [tiempoInicial, ajustaTiempo]);
+
+    useEffect(() => {
+        const arrayFiltered = tiemposEventos.filter(
+            (tiempoEvento) => tiempoEvento.idEvento === eventoSelected.idEvento
+        );
+
+        const filteredArrayByIdTimer = arrayFiltered.reduce((acc, current) => {
+            const x = acc.find((item) => item.idTimer === current.idTimer);
+            if (!x) {
+                return acc.concat([current]);
+            } else {
+                return acc;
+            }
+        }, []);
+
+        setCleanedArrayTimers(
+            filteredArrayByIdTimer.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+            )
+        );
+        setTiemposEventosFiltered(
+            arrayFiltered.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+            )
+        );
+    }, [tiemposEventos, eventoSelected]);
+
     return (
-        <div style={{ marginTop: "10px" }}>
+        <>
             <table className="tabla-tes" id="timer-table" width="100%">
                 <thead>
                     <tr>
@@ -306,49 +369,66 @@ function InsTiempoEmpresaSala(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="hora">{tiempoInicial}</td>
-                        <td>
-                            <select
-                                onChange={ajustaTiempo}
-                                className="select-category"
-                            >
-                                {categorias.map((categoria, index) => {
-                                    return (
-                                        <option value={categoria.duracion}>
-                                            {categoria.categoria +
-                                                " - " +
-                                                categoria.duracion +
-                                                " min"}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </td>
-                    </tr>
+                    {cleanedArrayTimers.map((tiempoEvento) => (
+                        <tr>
+                            <td className="hora">
+                                {new Date(tiempoEvento.inicioTimer)
+                                    .toTimeString()
+                                    .substring(0, 5)}
+                            </td>
+                            <td>
+                                <select
+                                    onChange={ajustaTiempo}
+                                    className="select-category"
+                                >
+                                    {categorias.map((categoria, index) => {
+                                        return (
+                                            <option
+                                                key={index}
+                                                value={categoria.duracion}
+                                                idCategoria={
+                                                    categoria.idCategoria
+                                                }
+                                                selected={
+                                                    tiempoEvento.idCategoria ===
+                                                    categoria.idCategoria
+                                                }
+                                            >
+                                                {categoria.categoria +
+                                                    " - " +
+                                                    categoria.duracion +
+                                                    " min"}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            <div className="button-add-timer">
-                <button className="p-2 w-100" onClick={eliminaFila}>
-                    Eliminar Ultimo Tiempo
+            <div className="d-flex">
+                <button
+                    className="btn btn-sm btn-outline-danger rounded-0 w-50"
+                    onClick={eliminaFila}
+                    title="Eliminar último timer"
+                >
+                    -
+                </button>
+                <button
+                    className="btn btn-sm btn-outline-success rounded-0 w-50"
+                    onClick={aniadeFilaTimer}
+                    title="Añadir timer"
+                >
+                    +
                 </button>
             </div>
-            <div className="mt-4 text-center">
-                <AddButton clickHandler={aniadeFilaTimer} />
-            </div>
-            <div>
-                <h6>Salas</h6>
+            <div className="mt-4">
+                <h6 className="text-center main-card-title">SALAS</h6>
                 <select
-                    className="my-3"
+                    className="form-control text-center rounded-0 border-bottom-0"
                     id="select-room"
                     onChange={() => cambiaTablaSala()}
-                    style={{
-                        width: "100%",
-                        textAlign: "center",
-                        outline: "none",
-                        padding: "7px",
-                        borderRadius: "100px",
-                    }}
                 >
                     {salas.map((sala, index) => {
                         return (
@@ -366,10 +446,11 @@ function InsTiempoEmpresaSala(props) {
                         sala={sala}
                         tiempoInicial={tiempoInicial}
                         empresas={empresas}
+                        tiemposEventosFiltered={tiemposEventosFiltered}
                     />
                 );
             })}
-        </div>
+        </>
     );
 }
 export default InsTiempoEmpresaSala;
