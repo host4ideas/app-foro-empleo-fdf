@@ -10,8 +10,14 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 import "./timer.css";
 
 export default function Timer(props) {
-
+    // Initial timer time set by the admin
+    const [initialTimerTime, setInitialTimerTime] = useState(0);
+    // Timer time
     const [timer, setTimer] = useState("00:00");
+    // Clock time
+    const [actualClockTime, setActualClockTime] = useState("");
+    // Timer play state
+
     var prueba = 0;
 
     const [actualTime, setActualTime] = useState("");
@@ -19,7 +25,7 @@ export default function Timer(props) {
     // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
-    /* const synchronizeTimer = (time) => {
+    const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
     };
@@ -30,7 +36,7 @@ export default function Timer(props) {
             adminSocket.emit("resume timer");
         }
 
-        // timerCounter.start(10000);
+        timerCounter.start(10000);
         setPlay(true);
     };
 
@@ -43,7 +49,7 @@ export default function Timer(props) {
 
     timerCounter.on("tick", () => {
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
-    }); */
+    });
 
     const showClockTime = () => {
         let myDate = new Date();
@@ -57,87 +63,79 @@ export default function Timer(props) {
     };
 
     const compruebaInicio = () => {
-
-        if (props.timerev[0] != undefined){
-
-            var ahora = Math.trunc(new Date(2023,0,18,8,59,prueba).getTime()/1000)
+        if (props.timerev[0] !== undefined) {
+            var ahora = Math.trunc(
+                new Date(2023, 0, 18, 8, 59, prueba).getTime() / 1000
+            );
             /* var ahora = Math.trunc(new Date().getTime()/1000) */
-            var inicio = Math.trunc(props.timerev[0].horaInicio.getTime()/1000)
+            var inicio = Math.trunc(
+                props.timerev[0].horaInicio.getTime() / 1000
+            );
 
-            if ((ahora - inicio) >= 0){
-                calculaDuracion(ahora)
-            }else{
-                console.log("Aun no empezo")
+            if (ahora - inicio >= 0) {
+                calculaDuracion(ahora);
+            } else {
+                console.log("Aun no empezo");
             }
         }
-    }
+    };
 
     const calculaDuracion = (fechaactual) => {
-
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
 
-        while (!(finalizado)) {
-            
+        while (!finalizado) {
             var timerSeleccionado = props.timerev[indiceTiempoEvento];
-            
-            if (props.timerev.length > indiceTiempoEvento) {
 
-                var tiempoSig = Math.trunc(timerSeleccionado.horaInicio.getTime()/1000 + timerSeleccionado.duracion*60)
-                
-                if (fechaactual >= tiempoSig){
+            if (props.timerev.length > indiceTiempoEvento) {
+                var tiempoSig = Math.trunc(
+                    timerSeleccionado.horaInicio.getTime() / 1000 +
+                        timerSeleccionado.duracion * 60
+                );
+
+                if (fechaactual >= tiempoSig) {
                     indiceTiempoEvento++;
-                }else{
-                    duracionSeg = (tiempoSig - fechaactual)
+                } else {
+                    duracionSeg = tiempoSig - fechaactual;
                     finalizado = true;
                 }
 
-                props.metodoact(indiceTiempoEvento)
-            }else{
+                props.metodoact(indiceTiempoEvento);
+            } else {
                 finalizado = true;
             }
-            
         }
 
-        preparaTimer(duracionSeg)
-
-    }
+        preparaTimer(duracionSeg);
+    };
 
     const preparaTimer = (duracion) => {
-
-        var minutos = Math.trunc(duracion/60)
-        if (minutos < 10){
-            minutos = "0"+minutos
+        var minutos = Math.trunc(duracion / 60);
+        if (minutos < 10) {
+            minutos = "0" + minutos;
         }
 
         var segundos = duracion % 60;
-        if (segundos < 10){
-            segundos = "0"+segundos
+        if (segundos < 10) {
+            segundos = "0" + segundos;
         }
-        
-        setTimer(minutos+":"+segundos)
 
-    }
+        setTimer(minutos + ":" + segundos);
+    };
 
     //HORA ACTUAL
     useEffect(() => {
+        const actualClockTime = setInterval(() => {
+            showClockTime();
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount (stop clock)
+            clearInterval(actualClockTime);
+        };
+    }, []);
 
-        const timeActual = setInterval(() => {
-            
-            if (props.timerev != []){
-                showTime();
-                prueba++
-                compruebaInicio()
-            }
-            
-        },1000);
-
-        return () => clearInterval(timeActual);
-
-    }, [props.timerev]);
-
-   /*  // Client timer functionality
+    // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)
@@ -164,7 +162,7 @@ export default function Timer(props) {
                 setTimer("00:00:00");
             });
         }
-    }, [clientSocket]); */
+    }, [clientSocket]);
 
     return (
         <div className="row mt-4">
@@ -182,10 +180,10 @@ export default function Timer(props) {
                                     <FaCog className="menuBtn animation" />
                                     <FaTimes className="closeBtn" />
                                 </div>
-                                <div className="btn-menu">
+                                <div className="btn-menu" onClick={startTimer}>
                                     <FaPlay className="icon-menu" />
                                 </div>
-                                <div className="btn-menu">
+                                <div className="btn-menu" onClick={pauseTimer}>
                                     <FaPause className="icon-menu" />
                                 </div>
                             </>

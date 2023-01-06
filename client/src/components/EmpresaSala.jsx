@@ -16,7 +16,7 @@ export default function EmpresaSala({
             (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
         );
         setTiemposEventosBySala(arrayFiltered);
-    }, [tiemposEventosFiltered, tiemposEventosBySala]);
+    }, [tiemposEventosFiltered, tiemposEventosBySala.idSala]);
 
     return (
         <div className={"div-table-room room-" + sala.nombreSala}>
@@ -33,8 +33,8 @@ export default function EmpresaSala({
                             (tiempoEvento) =>
                                 tiempoEvento.idSala === sala.idSala
                         )
-                        .map((tiempoEvento) => (
-                            <tr>
+                        .map((tiempoEvento, index) => (
+                            <tr key={index}>
                                 <td className="hora">
                                     {new Date(tiempoEvento.inicioTimer)
                                         .toTimeString()
