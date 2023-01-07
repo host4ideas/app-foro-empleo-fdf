@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useEventoContext } from "../contexts/eventoContext";
 
 export default function EmpresaSala({
     sala,
@@ -7,6 +8,7 @@ export default function EmpresaSala({
     primerTiempo,
 }) {
     const [tiemposEventosBySala, setTiemposEventosBySala] = useState([]);
+    const { tiemposEmpresasSalas } = useEventoContext();
 
     useEffect(() => {
         const arrayFiltered = tiemposEventosFiltered.filter(
@@ -17,7 +19,7 @@ export default function EmpresaSala({
             (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
         );
         setTiemposEventosBySala(arrayFiltered);
-    }, [tiemposEventosFiltered, tiemposEventosBySala.idSala]);
+    }, [tiemposEventosFiltered, tiemposEventosBySala.idSala, tiemposEmpresasSalas]);
 
     return (
         <div className={"div-table-room room-" + sala.nombreSala}>

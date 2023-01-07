@@ -330,7 +330,6 @@ function InsTiempoEmpresaSala({
                 }
             }
             setTiempoInicial(tiempo[0] + ":" + tiempo[1]);
-        } else {
         }
     }, [primerTiempo, cleanedArrayTimers]);
 

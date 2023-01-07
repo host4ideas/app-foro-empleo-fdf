@@ -40,7 +40,7 @@ function InsCategoria() {
                     if (result) {
                         // Notificacion acierto
                         // Recargamos las categorias
-                        adminSocket.emit("create categoria", (categorias) => {
+                        adminSocket.emit("categorias", (categorias) => {
                             setCategorias(categorias);
                         });
                     } else {

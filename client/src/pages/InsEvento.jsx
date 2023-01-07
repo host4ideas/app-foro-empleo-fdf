@@ -1,18 +1,17 @@
 // React
 import { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 // Components
-import InsCategoria from "./InsCategoria";
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
 import BackButton from "../components/BackButton";
-// Icons
-import { GoArrowLeft } from "react-icons/go";
 // Styles
 import "./InsEvento.css";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 import { useEventoContext } from "../contexts/eventoContext";
+// Utils
+import deepDiffMapper from "../lib/deepDiffMapper";
 
 function InsEvento() {
     const datePicker = useRef(null);
@@ -54,6 +53,78 @@ function InsEvento() {
         };
         setFechas(fechaState);
     }
+
+    const handleClickUpdate = () => {
+        // Coger el tiempos empresas salas originales del evento
+        // Comparar los timers originales con los nuevos
+        // Actualizar
+
+        const tESDiff = deepDiffMapper
+            .map
+            // tiemposEmpresasSalasOriginales,
+            // tiemposEmpresasSalasNew
+            ();
+
+        const tESDKeys = Object.keys(tESDiff);
+
+        tESDKeys.forEach((key) => {
+            const resultTimer = tESDiff[key];
+
+            if (resultTimer.type) {
+                console.log(resultTimer.type);
+            } else {
+                // Unchanged or updated properties
+                const propertiesKeys = Object.keys(resultTimer);
+
+                propertiesKeys.forEach((key) => {
+                    const property = resultTimer[key];
+
+                    if (property.type === "unchanged") {
+                        console.log("Property unchanged");
+                    } else if (resultTimer[key] === "updated") {
+                        console.log("Property updatedunchanged");
+                    }
+                });
+            }
+        });
+
+        // Coger los timers originales del evento
+        // Comparar los timers originales con los nuevos
+        // Actualizar
+
+        const timersDiff = deepDiffMapper
+            .map
+            // timersOriginales,
+            // timersNew
+            ();
+
+        const temporizadoresKeys = Object.keys(timersDiff);
+
+        temporizadoresKeys.forEach((key) => {
+            const resultTimer = timersDiff[key];
+
+            if (resultTimer.type) {
+                if (resultTimer.type === "created") {
+                    console.log("Created");
+                } else if (resultTimer.type === "deleted") {
+                    console.log("Deleted");
+                }
+            } else {
+                // Unchanged or updated properties
+                const propertiesKeys = Object.keys(resultTimer);
+
+                propertiesKeys.forEach((key) => {
+                    const property = resultTimer[key];
+
+                    if (property.type === "unchanged") {
+                        console.log("Property unchanged");
+                    } else if (resultTimer[key] === "updated") {
+                        console.log("Property updatedunchanged");
+                    }
+                });
+            }
+        });
+    };
 
     useEffect(() => {
         if (adminSocket) {
@@ -245,7 +316,9 @@ function InsEvento() {
             </div>
             <div>
                 <BackButton path={"/"} />
-                <button className="btn btn-primary">ACTUALIZAR</button>
+                <button className="btn btn-primary" onClick={handleClickUpdate}>
+                    ACTUALIZAR
+                </button>
             </div>
         </div>
     );

@@ -30,11 +30,12 @@ const ioServerConfig = {
     cors: {
         origin: process.env.FRONT_DEV,
     },
+    perMessageDeflate: false,
 };
 
 if (app.get("env") === "production") {
     // Serve secure cookies, requires HTTPS
-    sessionOptions.cookie.secure = true;
+    // sessionOptions.cookie.secure = true;
     corsConfig.origin = process.env.FRONT_PROD;
     // Accept connections from another URL
     ioServerConfig.cors.origin = process.env.FRONT_PROD;
