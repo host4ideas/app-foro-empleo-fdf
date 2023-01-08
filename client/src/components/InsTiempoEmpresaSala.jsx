@@ -46,6 +46,12 @@ function InsTiempoEmpresaSala({
                                 .selectedOptions[0].value
                         );
 
+                        const tiempoMS = duracion * 60 * 1000;
+                        new Date(horaCelda.value + tiempoMS).getMinutes();
+                        new Date(horaCelda.value + tiempoMS).getHours();
+                        
+                        
+
                         if (i === 0) {
                             hora[1] = hora[1] + duracion;
                         } else {
@@ -241,26 +247,25 @@ function InsTiempoEmpresaSala({
             document.getElementById("timer-table").childNodes[1].childNodes;
 
         if (tbodyTimer.length > 1) {
-            if (adminSocket) {
-                adminSocket.emit(
-                    "delete tiempo_empresa_sala",
-                    "empresa X",
-                    (res) => {
-                        console.log(res);
-                    }
-                );
+            // if (adminSocket) {
+            //     adminSocket.emit(
+            //         "delete tiempo_empresa_sala",
+            //         "empresa X",
+            //         (res) => {
+            //             console.log(res);
+            //         }
+            //     );
 
-                tbodyTimer[tbodyTimer.length - 1].remove();
+            tbodyTimer[tbodyTimer.length - 1].remove();
 
-                var tablasSala =
-                    document.getElementsByClassName("div-table-room");
+            var tablasSala = document.getElementsByClassName("div-table-room");
 
-                for (var i = 0; i < tablasSala.length; i++) {
-                    var tbodySala =
-                        tablasSala[i].childNodes[0].childNodes[1].childNodes;
-                    tbodySala[tbodySala.length - 1].remove();
-                }
+            for (var i = 0; i < tablasSala.length; i++) {
+                var tbodySala =
+                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
+                tbodySala[tbodySala.length - 1].remove();
             }
+            // }
         } else {
             toast.warn("Debe de haber al menos un timer", {
                 position: "top-right",
@@ -360,7 +365,22 @@ function InsTiempoEmpresaSala({
                 <tbody>
                     {cleanedArrayTimers.map((tiempoEvento) => (
                         <tr>
-                            <td className="hora">{tiempoInicial}</td>
+                            <td
+                                className="hora"
+                                value={() => {
+                                    const tiempos = tiempoInicial.split(":");
+                                    const horas = tiempos[0];
+                                    const minutos = tiempos[1];
+
+                                    const tiempoMS =
+                                        horas * 3600 * 1000 +
+                                        minutos * 60 * 1000;
+
+                                    return tiempoMS;
+                                }}
+                            >
+                                {tiempoInicial}
+                            </td>
                             <td>
                                 <select
                                     onChange={ajustaTiempo}
@@ -397,6 +417,7 @@ function InsTiempoEmpresaSala({
                     className="btn btn-sm btn-outline-danger rounded-0 w-50"
                     onClick={eliminaFila}
                     title="Eliminar último timer"
+                    type="button"
                 >
                     -
                 </button>
@@ -404,6 +425,7 @@ function InsTiempoEmpresaSala({
                     className="btn btn-sm btn-outline-success rounded-0 w-50"
                     onClick={aniadeFilaTimer}
                     title="Añadir timer"
+                    type="button"
                 >
                     +
                 </button>
