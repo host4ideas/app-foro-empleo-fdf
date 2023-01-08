@@ -7,8 +7,12 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
     const [tiemposEmpresasSalasBySala, setTiemposEmpresasSalasBySala] =
         useState([]);
 
-    const { tiemposEmpresasSalas, setUpdatedEvento, originalEvento } =
-        useEventoContext();
+    const {
+        tiemposEmpresasSalas,
+        setUpdatedEvento,
+        originalEvento,
+        tiemposEventosFiltered,
+    } = useEventoContext();
 
     useEffect(() => {
         const arrayFiltered = originalEvento.tiemposEmpresasSalas.filter(
@@ -53,7 +57,12 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
                 <tbody
                     className={`tbody-${sala.nombreSala} ${style.tableBody}`}
                 >
-                    {tiemposEventosBySala.map((tiempoEvento, index) => (
+                    {tiemposEmpresasSalas
+                        .filter(
+                            (tiempoEvento) =>
+                                tiempoEvento.idSala === sala.idSala
+                        )
+                        .map((tiempoEvento, index) => (
                         <tr key={index}>
                             <td className="hora fw-bold">
                                 {new Date(tiempoEvento.inicioTimer)
