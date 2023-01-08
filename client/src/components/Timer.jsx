@@ -87,8 +87,7 @@ export default function Timer(props) {
                 );
 
                 var tiempoSig = Math.trunc(timerSeleccionado.getTime()/1000 + timers[indiceTiempoEvento].duracion*60)
-                
-                if (fechaactual >= tiempoSig){
+                if (fechaactual >= tiempoSig) {
                     indiceTiempoEvento++;
                 }else{
                     duracionSeg = (tiempoSig - fechaactual)
@@ -101,10 +100,8 @@ export default function Timer(props) {
             }
             
         }
-        
-        preparaTimer(duracionSeg)
-
-    }
+        preparaTimer(duracionSeg);
+    };
 
     const preparaTimer = (duracion) => {
 
