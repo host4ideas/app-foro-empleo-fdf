@@ -22,19 +22,12 @@ import "./ActionsEvento.css";
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
-    const { changeEvento, eventoSelected, setTiemposEventos } =
-        useEventoContext();
+    const { changeEvento, eventoSelected } = useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
-            adminSocket.emit("timereventos", (eventos) => {
-                if (eventos) {
-                    setTiemposEventos(eventos);
-                } else {
-                    console.log("error getting eventos");
-                }
-            });
+            console.log("test");
             adminSocket.emit("eventos", (eventos) => {
                 if (eventos) {
                     setEventos(eventos);
@@ -43,7 +36,7 @@ export default function ActionsEvento() {
                 }
             });
         }
-    }, [adminSocket, setTiemposEventos]);
+    }, [adminSocket]);
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
