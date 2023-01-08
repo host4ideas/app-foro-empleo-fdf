@@ -47,7 +47,7 @@
 }
 .card-title p {
     position: absolute;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .card-times {
@@ -94,8 +94,7 @@
 
 .btn-add-event {
     position: absolute;
-    bottom: 0;
-    margin: -20px;
-    left: 50%;
+    bottom: -20px;
+    left: 46%;
     z-index: 2;
 }

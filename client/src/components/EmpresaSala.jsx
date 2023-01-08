@@ -63,32 +63,34 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
                                 tiempoEvento.idSala === sala.idSala
                         )
                         .map((tiempoEvento, index) => (
-                            <tr key={index}>
-                                <td className="hora fw-bold">
-                                    {new Date(tiempoEvento.inicioTimer)
-                                        .toTimeString()
-                                        .substring(0, 5)}
-                                </td>
-                                <td>
-                                    <select className="select-room">
-                                        {empresas.map((empresa, index) => {
-                                            return (
-                                                <option
-                                                    key={index}
-                                                    value={empresa.idEmpresa}
-                                                    selected={
-                                                        tiempoEvento.idEmpresa ===
-                                                        empresa.idEmpresa
-                                                    }
-                                                >
-                                                    {empresa.nombreEmpresa}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                </td>
-                            </tr>
-                        ))}
+                        <tr key={index}>
+                            <td className="hora fw-bold">
+                                {new Date(tiempoEvento.inicioTimer)
+                                    .toTimeString()
+                                    .substring(0, 5)}
+                            </td>
+                            <td>
+                                <select
+                                    className={`select-room ${style.tableSelect}`}
+                                >
+                                    {empresas.map((empresa, index) => {
+                                        return (
+                                            <option
+                                                key={index}
+                                                value={empresa.idEmpresa}
+                                                selected={
+                                                    tiempoEvento.idEmpresa ===
+                                                    empresa.idEmpresa
+                                                }
+                                            >
+                                                {empresa.nombreEmpresa}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
