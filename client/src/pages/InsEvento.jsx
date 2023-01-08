@@ -202,12 +202,13 @@ function InsEvento() {
     useEffect(() => {
         if (fechas.fechaInicio) {
             // Remove other eventos
-            const arrayFiltered = tiemposEventos.filter(
+            const currentEventTimers = tiemposEventos.filter(
                 (tiempoEvento) =>
                     tiempoEvento.idEvento === eventoSelected.idEvento
             );
-            // Remove duplicated timers
-            const filteredArrayByIdTimer = arrayFiltered.reduce(
+            /* WITHOUT DUPLICATED TIMERS */
+            // Remove duplicated timers from tiempos eventos
+            const filteredArrayWithoutDuplicated = currentEventTimers.reduce(
                 (acc, current) => {
                     const x = acc.find(
                         (item) => item.idTimer === current.idTimer
@@ -220,27 +221,28 @@ function InsEvento() {
                 },
                 []
             );
-            // Sort
+            // Sort timers from tiempos eventos of the current event without duplicated timers
             setCleanedArrayTimers(
-                filteredArrayByIdTimer.sort(
+                filteredArrayWithoutDuplicated.sort(
                     (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
                 )
             );
-            // Sort
-            setTiemposEventosFiltered(
-                arrayFiltered.sort(
-                    (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-                )
+            /* DUPLICATED TIMERS */
+            // Sort tiempos eventos with duplicated timers
+            const sortedCurrentEventTimers = currentEventTimers.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
             );
-            // Change first inicioTimer to fechaInicio
-            setTiemposEventosFiltered((tiemposEventosFiltered) =>
-                tiemposEventosFiltered.filter((tiempoEvento, index) => {
+            const eventTimersFirstChanged = sortedCurrentEventTimers.filter(
+                (tiempoEvento, index) => {
                     if (index === 0) {
                         tiempoEvento.inicioTimer = fechas.fechaInicio;
                     }
                     return true;
-                })
+                }
             );
+
+            setTiemposEventosFiltered(eventTimersFirstChanged);
+
             datePicker.current.valueAsDate = new Date(
                 eventoSelected.inicioEvento
             );
@@ -268,6 +270,8 @@ function InsEvento() {
             evento: {
                 inicioEvento: eventoSelected.inicioEvento,
                 nombreEvento: eventoSelected.nombreEvento,
+                finEvento: eventoSelected.finEvento,
+                idEvento: eventoSelected.idEvento,
             },
         }));
         setOriginalEvento((originalEvento) => ({
@@ -280,14 +284,16 @@ function InsEvento() {
             evento: {
                 inicioEvento: eventoSelected.inicioEvento,
                 nombreEvento: eventoSelected.nombreEvento,
+                finEvento: eventoSelected.finEvento,
+                idEvento: eventoSelected.idEvento,
             },
         }));
     }, [
+        eventoSelected,
         setOriginalEvento,
         setUpdatedEvento,
-        tiemposEventosFiltered,
-        eventoSelected,
         tiemposEmpresasSalas,
+        tiemposEventosFiltered,
     ]);
 
     // Update updatedEvento
@@ -295,7 +301,7 @@ function InsEvento() {
         setUpdatedEvento((updatedEvento) => ({
             ...updatedEvento,
             evento: {
-                inicioEvento: fechaInicial,
+                inicioEvento: fechaInicial, // solo fecha -> UTC fecha + hora -> hora: hh:mm -> fecha: UTC
                 nombreEvento: nombreEvento,
             },
         }));
@@ -336,98 +342,98 @@ function InsEvento() {
                     </Link>
                 </div>
                 <div>
-                    <button className="icon-container working">
+                    <button
+                        className="icon-container working"
+                        onClick={handleClickUpdate}
+                    >
                         <FaCheck className="icon" />
                     </button>
                 </div>
             </div>
+
             <div className="container-card mb-3">
                 <div className="start-hour">
-                    <h6 className="main-card-title my-2">Inicio</h6>
+                    <h6 className="main-card-title main-card-title-left">
+                        FECHA Y HORA DEL EVENTO
+                    </h6>
+                    <div className="card-flex">
+                        <div className="card-input-50">
+                            <input
+                                id="fechaI"
+                                type="date"
+                                onChange={(e) => {
+                                    setFechaInicial(e.target.value);
+                                    cambiaHoraTotal();
+                                }}
+                                value={fechaInicial}
+                                ref={datePicker}
+                            />
+                        </div>
+                        <div className="card-input-50">
+                            <input
+                                id="horaI"
+                                type="time"
+                                onChange={(e) => {
+                                    setTiempoInicial(e.target.value);
+                                    cambiaHoraTotal();
+                                }}
+                                value={tiempoInicial}
+                                ref={timePicker}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="container-card mb-3">
+                <h6 className="main-card-title main-card-title-left">
+                    NOMBRE DEL EVENTO
+                </h6>
+                <div className="card-input">
                     <input
-                        id="fechaI"
-                        type="date"
+                        className="form-control rounded-0"
+                        type="text"
+                        required
+                        autoComplete="off"
                         onChange={(e) => {
-                            setFechaInicial(e.target.value);
-                            cambiaHoraTotal();
+                            setNombreEvento(e.target.value);
                         }}
-                        value={fechaInicial}
-                        ref={datePicker}
-                    />
-                    <input
-                        id="horaI"
-                        type="time"
-                        onChange={(e) => {
-                            setTiempoInicial(e.target.value);
-                            cambiaHoraTotal();
-                        }}
-                        value={tiempoInicial}
-                        ref={timePicker}
                     />
                 </div>
             </div>
-            <div className="event-name">
-                <h6 className="main-card-title">NOMBRE DEL EVENTO</h6>
-                <input
-                    className="form-control rounded-0"
-                    type="text"
-                    required
-                    onChange={(e) => {
-                        setNombreEvento(e.target.value);
-                    }}
-                />
+
+            <div className="container-links mb-3">
+                <Link className="card-link" to={"/" + PRIVATE + "/" + INSSALAS}>
+                    <span className="link">
+                        <b>SALAS</b> ({longSal})
+                    </span>
+                </Link>
+                <Link
+                    className="card-link "
+                    to={"/" + PRIVATE + "/" + INSEMPRESA}
+                >
+                    <span className="link">
+                        <b>EMPRESAS</b> ({longEmp})
+                    </span>
+                </Link>
+                <Link
+                    className="card-link"
+                    to={"/" + PRIVATE + "/" + INSCATEGORIA}
+                >
+                    <span className="link">
+                        <b>CATEGORIAS</b> ({longCat})
+                    </span>
+                </Link>
             </div>
-            <div className="company-room-show">
-                <div className="room-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSSALAS}
-                    >
-                        SALAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longSal} salas)
-                        </span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSEMPRESA}
-                    >
-                        EMPRESAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longEmp} empresas)
-                        </span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSCATEGORIA}
-                    >
-                        CATEGORÍAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longCat} categorias)
-                        </span>
-                    </NavLink>
-                </div>
-            </div>
-            <div className="organization-zone">
-                <h6 className="text-center main-card-title">ORGANIZACIÓN</h6>
+
+            <div className="container-card mb-3">
+                <h6 className="main-card-title main-card-title-left">
+                    ORGANIZACIÓN
+                </h6>
                 <InsTiempoEmpresaSala
                     primerTiempo={fechas.fechaInicio}
                     cleanedArrayTimers={cleanedArrayTimers}
                 />
-                {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}
-            </div>
-            <div>
-                <BackButton path={"/"} />
-                <button className="btn btn-primary" onClick={handleClickUpdate}>
-                    ACTUALIZAR
-                </button>
             </div>
         </div>
     );
