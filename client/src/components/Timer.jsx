@@ -6,16 +6,15 @@ import { useAuthContext } from "../contexts/authContext";
 import { useEventoContext } from "../contexts/eventoContext";
 // Timer
 import timerCounter from "../lib/tiny-timer";
-import { msToMinutesSecondsAndHours } from "../utils/utils";
+import { msToMinutesSecondsAndHours, pushNotification } from "../utils/utils";
 // Styles
 import "./timer.css";
 
 export default function Timer(props) {
     const [timer, setTimer] = useState("00:00");
-    var prueba = 0;
-
     const [clockTime, setClockTime] = useState("");
     const [play, setPlay] = useState(false);
+
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
     const { eventoSelected, tiemposEventos } = useEventoContext();
 
@@ -55,10 +54,7 @@ export default function Timer(props) {
 
     const compruebaInicio = () => {
         if (eventoSelected.inicioEvento !== undefined) {
-            var ahora = Math.trunc(
-                new Date(2023, 0, 18, 8, 59, prueba).getTime() / 1000
-            );
-            /* var ahora = Math.trunc(new Date().getTime()/1000) */
+            var ahora = Math.trunc(new Date().getTime() / 1000);
             var inicio = Math.trunc(
                 new Date(eventoSelected.inicioEvento).getTime() / 1000
             );
@@ -120,12 +116,28 @@ export default function Timer(props) {
         setTimer(minutos + ":" + segundos);
     };
 
+    const comprobarTimer = () => {
+        if (timer === "00:10") {
+            navigator.vibrate([
+                500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                500, 500, 500, 500, 500, 500, 500,
+            ]);
+            pushNotification(
+                "Quedan 10 segundos para que se acabe el tiempo!!",
+                0,
+                5
+            );
+        } else if (timer === "00:00") {
+            navigator.vibrate(0);
+        }
+    };
+
     //HORA ACTUAL
     useEffect(() => {
         const actualClockTime = setInterval(() => {
             showClockTime();
             compruebaInicio();
-            prueba++;
+            comprobarTimer();
         }, 1000);
         return () => {
             // Return callback to run on unmount (stop clock)
@@ -164,7 +176,11 @@ export default function Timer(props) {
 
     return (
         <div className="mt-4 ">
-            <div className={`timer ${play ? "working" : "stop"}`}>
+            <div
+                className={`timer ${
+                    timer === "00:10" ? "danger" : "principal"
+                }`}
+            >
                 {/* <div className="timer-menu">
                     <input
                         className="toggle-check"
