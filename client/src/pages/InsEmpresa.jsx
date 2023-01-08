@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { MdCancel } from "react-icons/md"
-import { AiFillPlusCircle } from "react-icons/ai"
-import { FaTrash } from "react-icons/fa"
+import { MdCancel } from "react-icons/md";
+import { AiFillPlusCircle } from "react-icons/ai";
+import { FaTrash } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { useAuthContext } from "../contexts/authContext";
-import './InsEmpresa.css'
+import "./InsEmpresa.css";
 
 function InsEmpresa() {
-
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     const [listaEmpresas, setListaEmpresas] = useState([]);
@@ -16,7 +15,7 @@ function InsEmpresa() {
     function getListaEmpresas() {
         adminSocket.emit("empresas", (empresas) => {
             if (empresas) {
-                setListaEmpresas(empresas)
+                setListaEmpresas(empresas);
                 console.log(empresas);
             } else {
                 console.log("error getting empresas");
@@ -29,40 +28,45 @@ function InsEmpresa() {
     }
 
     function createEmpresa() {
-        adminSocket.emit("create empresa",empresa,(result) => {
+        adminSocket.emit("create empresa", empresa, (result) => {
             if (result) {
                 //Notificacion acierto
-                getListaEmpresas()
-            }else{
+                getListaEmpresas();
+            } else {
                 //Notificacion error
             }
-        })
+        });
     }
 
     function eliminaEmpresa(id) {
-        adminSocket.emit("delete empresa",id,(result) => {
+        adminSocket.emit("delete empresa", id, (result) => {
             if (result) {
                 //Notificacion acierto
-                getListaEmpresas()
-            }else{
+                getListaEmpresas();
+            } else {
                 //Notificacion error
             }
-        })
+        });
     }
 
     useEffect(() => {
-       getListaEmpresas()
+        getListaEmpresas();
     }, []);
 
     return (
         <div className="div-company">
-
             <div className="button-zone">
                 <div className="cancel-button">
-                    <NavLink to="/public/insevento"><button><MdCancel/></button></NavLink>
+                    <NavLink to="/public/insevento">
+                        <button>
+                            <MdCancel />
+                        </button>
+                    </NavLink>
                 </div>
                 <div className="add-button">
-                    <button onClick={() => createEmpresa()}><AiFillPlusCircle/></button>
+                    <button onClick={() => createEmpresa()}>
+                        <AiFillPlusCircle />
+                    </button>
                 </div>
             </div>
 
@@ -77,26 +81,36 @@ function InsEmpresa() {
                             onChange={() => cambiaEmpresa()}
                         />
                     </div>
-                    <div className="check-room" style={{"width":"15%","textAlign":"end"}}>
-                        <input
-                            type="checkbox"
-                            required
-                        />
+                    <div
+                        className="check-room"
+                        style={{ width: "15%", textAlign: "end" }}
+                    >
+                        <input type="checkbox" required />
                     </div>
                 </div>
             </div>
-            
+
             <div className="show-all-company">
                 <h6>Empresas Registradas</h6>
                 <div className="scroll-company">
-                {
-                    listaEmpresas.map((empresa,index)=>{
-                        return <div key={index} className="show-name">
-                            <div className="name-company"><h5>{empresa.nombreEmpresa}</h5></div>
-                            <div className="delete-company-icon"><button onClick={() => eliminaEmpresa(empresa.idEmpresa)}><FaTrash/></button></div>
-                        </div>
-                    })
-                }
+                    {listaEmpresas.map((empresa, index) => {
+                        return (
+                            <div key={index} className="show-name">
+                                <div className="name-company">
+                                    <h5>{empresa.nombreEmpresa}</h5>
+                                </div>
+                                <div className="delete-company-icon">
+                                    <button
+                                        onClick={() =>
+                                            eliminaEmpresa(empresa.idEmpresa)
+                                        }
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

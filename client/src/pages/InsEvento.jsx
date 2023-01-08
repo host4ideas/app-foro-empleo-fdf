@@ -18,7 +18,15 @@ function InsEvento() {
     const timePicker = useRef(null);
 
     const { adminSocket } = useAuthContext();
-    const { tiemposEventos, eventoSelected } = useEventoContext();
+    const {
+        tiemposEventos,
+        eventoSelected,
+        updatedEvento,
+        originalEvento,
+        setUpdatedEvento,
+        setOriginalEvento,
+        tiemposEmpresasSalas,
+    } = useEventoContext();
 
     const [fechas, setFechas] = useState({ fechaInicio: "" });
     const [longEmp, setLongEmp] = useState(0);
@@ -30,6 +38,7 @@ function InsEvento() {
 
     const [tiempoInicial, setTiempoInicial] = useState();
     const [fechaInicial, setFechaInicial] = useState();
+    const [nombreEvento, setNombreEvento] = useState();
 
     function cambiaHoraTotal() {
         let fechaInicioInput = datePicker.current.valueAsDate
@@ -55,15 +64,50 @@ function InsEvento() {
     }
 
     const handleClickUpdate = () => {
+        // Coger el evento (idEvento, nombreEvento, inicioEvento, finEvento)
+        // Comparar el evento original con el actualizado
+        // Actualizar
+
+        const eventoDiff = deepDiffMapper.map(
+            originalEvento.evento,
+            updatedEvento.evento
+        );
+
+        const eventoDifFKeys = Object.keys(eventoDiff);
+
+        eventoDifFKeys.forEach((key) => {
+            const resultTimer = tESDiff[key];
+
+            if (resultTimer.type) {
+                if (resultTimer.type === "created") {
+                    console.log("Created");
+                } else if (resultTimer.type === "deleted") {
+                    console.log("Deleted");
+                }
+            } else {
+                // Unchanged or updated properties
+                const propertiesKeys = Object.keys(resultTimer);
+
+                propertiesKeys.forEach((key) => {
+                    const property = resultTimer[key];
+
+                    if (property.type === "unchanged") {
+                        console.log("Property unchanged");
+                    } else if (resultTimer[key] === "updated") {
+                        console.log("Property updatedunchanged");
+                    }
+                });
+            }
+        });
+
         // Coger el tiempos empresas salas originales del evento
         // Comparar los timers originales con los nuevos
         // Actualizar
 
-        const tESDiff = deepDiffMapper
-            .map
-            // tiemposEmpresasSalasOriginales,
-            // tiemposEmpresasSalasNew
-            ();
+        const tESDiff = deepDiffMapper.map(
+            originalEvento.tiemposEmpresasSalas,
+            updatedEvento.tiemposEmpresasSalas
+        );
 
         const tESDKeys = Object.keys(tESDiff);
 
@@ -71,7 +115,11 @@ function InsEvento() {
             const resultTimer = tESDiff[key];
 
             if (resultTimer.type) {
-                console.log(resultTimer.type);
+                if (resultTimer.type === "created") {
+                    console.log("Created");
+                } else if (resultTimer.type === "deleted") {
+                    console.log("Deleted");
+                }
             } else {
                 // Unchanged or updated properties
                 const propertiesKeys = Object.keys(resultTimer);
@@ -92,11 +140,10 @@ function InsEvento() {
         // Comparar los timers originales con los nuevos
         // Actualizar
 
-        const timersDiff = deepDiffMapper
-            .map
-            // timersOriginales,
-            // timersNew
-            ();
+        const timersDiff = deepDiffMapper.map(
+            originalEvento.temporizadores,
+            updatedEvento.temporizadores
+        );
 
         const temporizadoresKeys = Object.keys(timersDiff);
 
@@ -154,11 +201,12 @@ function InsEvento() {
 
     useEffect(() => {
         if (fechas.fechaInicio) {
+            // Remove other eventos
             const arrayFiltered = tiemposEventos.filter(
                 (tiempoEvento) =>
                     tiempoEvento.idEvento === eventoSelected.idEvento
             );
-
+            // Remove duplicated timers
             const filteredArrayByIdTimer = arrayFiltered.reduce(
                 (acc, current) => {
                     const x = acc.find(
@@ -172,21 +220,22 @@ function InsEvento() {
                 },
                 []
             );
-
+            // Sort
             setCleanedArrayTimers(
                 filteredArrayByIdTimer.sort(
                     (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
                 )
             );
+            // Sort
             setTiemposEventosFiltered(
                 arrayFiltered.sort(
                     (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
                 )
             );
-
+            // Change first inicioTimer to fechaInicio
             setTiemposEventosFiltered((tiemposEventosFiltered) =>
                 tiemposEventosFiltered.filter((tiempoEvento, index) => {
-                    if (index === 10) {
+                    if (index === 0) {
                         tiempoEvento.inicioTimer = fechas.fechaInicio;
                     }
                     return true;
@@ -199,12 +248,58 @@ function InsEvento() {
                 eventoSelected.inicioEvento
             );
         }
-    }, [tiemposEventos, eventoSelected, fechas.fechaInicio]);
+    }, [
+        tiemposEventos,
+        eventoSelected,
+        fechas.fechaInicio,
+        updatedEvento.evento,
+        setUpdatedEvento,
+    ]);
 
+    // Creation of updatedEvento and originalEvento
     useEffect(() => {
-        console.log(fechas.fechaInicio);
-        console.log(tiemposEventosFiltered);
-    }, [fechas.fechaInicio, tiemposEventosFiltered]);
+        setUpdatedEvento((updatedEvento) => ({
+            ...updatedEvento,
+            temporizadores: tiemposEventosFiltered,
+            tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
+                (tiempoEmpresaSala) =>
+                    tiempoEmpresaSala.idEvento === eventoSelected.idEvento
+            ),
+            evento: {
+                inicioEvento: eventoSelected.inicioEvento,
+                nombreEvento: eventoSelected.nombreEvento,
+            },
+        }));
+        setOriginalEvento((originalEvento) => ({
+            ...originalEvento,
+            temporizadores: tiemposEventosFiltered,
+            tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
+                (tiempoEmpresaSala) =>
+                    tiempoEmpresaSala.idEvento === eventoSelected.idEvento
+            ),
+            evento: {
+                inicioEvento: eventoSelected.inicioEvento,
+                nombreEvento: eventoSelected.nombreEvento,
+            },
+        }));
+    }, [
+        setOriginalEvento,
+        setUpdatedEvento,
+        tiemposEventosFiltered,
+        eventoSelected,
+        tiemposEmpresasSalas,
+    ]);
+
+    // Update updatedEvento
+    useEffect(() => {
+        setUpdatedEvento((updatedEvento) => ({
+            ...updatedEvento,
+            evento: {
+                inicioEvento: fechaInicial,
+                nombreEvento: nombreEvento,
+            },
+        }));
+    }, [setUpdatedEvento, nombreEvento, fechaInicial]);
 
     useEffect(() => {
         const initialTime = new Date(eventoSelected.inicioEvento);
@@ -265,6 +360,9 @@ function InsEvento() {
                     className="form-control rounded-0"
                     type="text"
                     required
+                    onChange={(e) => {
+                        setNombreEvento(e.target.value);
+                    }}
                 />
             </div>
             <div className="company-room-show">
@@ -309,7 +407,6 @@ function InsEvento() {
                 <h6 className="text-center main-card-title">ORGANIZACIÓN</h6>
                 <InsTiempoEmpresaSala
                     primerTiempo={fechas.fechaInicio}
-                    tiemposEventosFiltered={tiemposEventosFiltered}
                     cleanedArrayTimers={cleanedArrayTimers}
                 />
                 {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}

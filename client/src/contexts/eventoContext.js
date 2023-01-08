@@ -1,9 +1,9 @@
 import {
     createContext,
-    useCallback,
     useContext,
     useMemo,
     useState,
+    useEffect
 } from "react";
 import PropTypes from "prop-types";
 
@@ -13,33 +13,33 @@ export default function EventoContextProvider({ children }) {
     const [eventoSelected, setEventoSelected] = useState(null);
     const [tiemposEventos, setTiemposEventos] = useState([]);
     const [tiemposEmpresasSalas, setTiemposEmpresasSalas] = useState([]);
-
-    /**
-     * Changes the actual selected event
-     */
-    const changeEvento = useCallback(
-        (newEventSelected) => {
-            setEventoSelected(newEventSelected);
-        },
-        [setEventoSelected]
-    );
+    const [updatedEvento, setUpdatedEvento] = useState([]);
+    const [originalEvento, setOriginalEvento] = useState([]);
 
     const value = useMemo(
         () => ({
             eventoSelected: eventoSelected,
-            changeEvento: changeEvento,
+            setEventoSelected: setEventoSelected,
             setTiemposEventos: setTiemposEventos,
             tiemposEventos: tiemposEventos,
             tiemposEmpresasSalas: tiemposEmpresasSalas,
             setTiemposEmpresasSalas: setTiemposEmpresasSalas,
+            updatedEvento: updatedEvento,
+            setUpdatedEvento: setUpdatedEvento,
+            originalEvento: originalEvento,
+            setOriginalEvento: setOriginalEvento,
         }),
         [
             eventoSelected,
             tiemposEventos,
             setTiemposEventos,
-            changeEvento,
+            setEventoSelected,
             tiemposEmpresasSalas,
             setTiemposEmpresasSalas,
+            updatedEvento,
+            setUpdatedEvento,
+            originalEvento,
+            setOriginalEvento,
         ]
     );
 

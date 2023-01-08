@@ -23,7 +23,7 @@ export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
     const {
-        changeEvento,
+        setEventoSelected,
         eventoSelected,
         setTiemposEventos,
         setTiemposEmpresasSalas,
@@ -137,8 +137,7 @@ export default function ActionsEvento() {
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
-                                    changeEvento(event);
-                                    console.log(event);
+                                    setEventoSelected(event);
                                 }}
                             >
                                 <div className="card-title">

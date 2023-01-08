@@ -6,6 +6,8 @@ import { useAuthContext } from "../contexts/authContext";
 import AddButton from "../components/AddButton";
 // Styles
 import styles from "./InsCategoria.module.css";
+// Notifications
+import { toast } from "react-toastify";
 
 function InsCategoria() {
     const [tiempo, setTiempo] = useState("");
@@ -45,15 +47,51 @@ function InsCategoria() {
                         });
                     } else {
                         // Notificacion error
+                        toast.warn("No se pudo crear la catregoria", {
+                            position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
                     }
                 }
             );
         }
     }
 
-    function handleUseCategory() {
-        console.timeLog("clicked");
-    }
+    const deleteCategoria = (categoria) => {
+        if (adminSocket && nombre && nombre !== "" && tiempo && tiempo > 0) {
+            adminSocket.emit(
+                "delete categoria",
+                categoria.idCategoria,
+                (result) => {
+                    if (result) {
+                        // Notificacion acierto
+                        // Recargamos las categorias
+                        adminSocket.emit("categorias", (categorias) => {
+                            setCategorias(categorias);
+                        });
+                    } else {
+                        // Notificacion error
+                        toast.warn("No se pudo borrar la catregoria", {
+                            position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
+                    }
+                }
+            );
+        }
+    };
 
     return (
         <div className={styles.divCategory}>
@@ -63,8 +101,11 @@ function InsCategoria() {
             <form>
                 {categorias.map((categoria, index) => {
                     return (
-                        <div key={index} className={styles.inputsZone}>
-                            <div className={styles.nameInput}>
+                        <div
+                            key={index}
+                            className="d-flex justify-content-center align-items-center"
+                        >
+                            <div className="w-100 mx-1">
                                 <label className="detail-card-title">
                                     Nombre:
                                 </label>
@@ -77,7 +118,7 @@ function InsCategoria() {
                                     required
                                 />
                             </div>
-                            <div className={styles.minuteInput}>
+                            <div className="w-100 mx-1">
                                 <label className="detail-card-title">
                                     Duracion (Minutos):
                                 </label>
@@ -90,21 +131,13 @@ function InsCategoria() {
                                     required
                                 />
                             </div>
-                            <div class="form-check">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    value=""
-                                    id="flexCheckDefault"
-                                    onClick={handleUseCategory}
-                                />
-                                <label
-                                    class="form-check-label"
-                                    for="flexCheckDefault"
-                                >
-                                    Utilizar esta categoria
-                                </label>
-                            </div>
+                            <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger position-relative mt-4"
+                                onClick={() => deleteCategoria(categoria)}
+                            >
+                                🗑
+                            </button>
                         </div>
                     );
                 })}
