@@ -22,7 +22,12 @@ import "./ActionsEvento.css";
 export default function ActionsEvento() {
     const [eventos, setEventos] = useState([]);
     const { isAuthenticated, adminSocket } = useAuthContext();
-    const { changeEvento, eventoSelected } = useEventoContext();
+    const {
+        setEventoSelected,
+        eventoSelected,
+        setTiemposEventos,
+        setTiemposEmpresasSalas,
+    } = useEventoContext();
 
     //SOCKET GET EVENTOS
     useEffect(() => {
@@ -35,8 +40,18 @@ export default function ActionsEvento() {
                     console.log("error getting eventos");
                 }
             });
+            adminSocket.emit(
+                "tiempos_empresas_salas",
+                (tiemposEmpresasSalas) => {
+                    if (tiemposEmpresasSalas) {
+                        setTiemposEmpresasSalas(tiemposEmpresasSalas);
+                    } else {
+                        console.log("error getting eventos");
+                    }
+                }
+            );
         }
-    }, [adminSocket]);
+    }, [adminSocket, setTiemposEventos, setTiemposEmpresasSalas]);
 
     const parseFechaToMinutesAndHours = (fecha) => {
         var fechaparse = Date.parse(fecha);
@@ -116,7 +131,7 @@ export default function ActionsEvento() {
                                 }`}
                                 key={event.idEvento}
                                 onClick={() => {
-                                    changeEvento(event);
+                                    setEventoSelected(event);
                                 }}
                             >
                                 <div className="card-title">

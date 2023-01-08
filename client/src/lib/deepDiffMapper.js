@@ -6,7 +6,9 @@ const deepDiffMapper = (function () {
         VALUE_UNCHANGED: "unchanged",
         map: function (obj1, obj2) {
             if (this.isFunction(obj1) || this.isFunction(obj2)) {
-                throw "Invalid argument. Function given, object expected.";
+                throw new Error(
+                    "Invalid argument. Function given, object expected."
+                );
             }
             if (this.isValue(obj1) || this.isValue(obj2)) {
                 return {
@@ -28,7 +30,7 @@ const deepDiffMapper = (function () {
 
                 diff[key] = this.map(obj1[key], value2);
             }
-            for (var key in obj2) {
+            for (let key in obj2) {
                 if (this.isFunction(obj2[key]) || diff[key] !== undefined) {
                     continue;
                 }

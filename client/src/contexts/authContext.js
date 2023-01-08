@@ -104,13 +104,6 @@ export default function AuthContextProvider({ children }) {
         checkLoggedUser();
     }, [checkLoggedUser]);
 
-    // Initialize clientSocket once
-    useEffect(() => {
-        if (!clientSocket) {
-            setClientSocket(io("/"));
-        }
-    }, [clientSocket]);
-
     // Check for socket listeners
     useEffect(() => {
         // Admin socket listeners
@@ -131,6 +124,19 @@ export default function AuthContextProvider({ children }) {
                 console.warn("client socket connection disconnected")
             );
         }
+
+        if (!clientSocket) {
+            setClientSocket(io("/"));
+        }
+
+        return () => {
+            if (clientSocket) {
+                clientSocket.disconnect();
+            }
+            if (adminSocket) {
+                adminSocket.disconnect();
+            }
+        };
     }, [clientSocket, adminSocket]);
 
     const value = useMemo(

@@ -1,9 +1,9 @@
 import {
     createContext,
-    useCallback,
     useContext,
     useMemo,
     useState,
+    useEffect
 } from "react";
 import PropTypes from "prop-types";
 
@@ -11,52 +11,35 @@ export const EventoContext = createContext();
 
 export default function EventoContextProvider({ children }) {
     const [eventoSelected, setEventoSelected] = useState(null);
-    const [newEvento, setNewEvento] = useState({});
     const [tiemposEventos, setTiemposEventos] = useState([]);
-
-    /**
-     * Changes the actual selected event
-     */
-    const changeEvento = useCallback(
-        (newEventSelected) => {
-            setEventoSelected(newEventSelected);
-        },
-        [setEventoSelected]
-    );
-
-    const addPropertiesEvento = useCallback(
-        (newProperties) => {
-            const updatedEvento = { ...newEvento, newProperties };
-            setNewEvento(updatedEvento);
-        },
-        [setNewEvento, newEvento]
-    );
-
-    const checkNewEvento = useCallback(() => {
-        Object.keys(newEvento).forEach((key) => {
-            if (!newEvento[key]) {
-                throw new Error("Propiedad " + key + " falta");
-            }
-        });
-        return true;
-    }, [newEvento]);
+    const [tiemposEmpresasSalas, setTiemposEmpresasSalas] = useState([]);
+    const [updatedEvento, setUpdatedEvento] = useState([]);
+    const [originalEvento, setOriginalEvento] = useState([]);
 
     const value = useMemo(
         () => ({
             eventoSelected: eventoSelected,
-            changeEvento: changeEvento,
-            addPropertiesEvento: addPropertiesEvento,
-            checkNewEvento: checkNewEvento,
+            setEventoSelected: setEventoSelected,
             setTiemposEventos: setTiemposEventos,
             tiemposEventos: tiemposEventos,
+            tiemposEmpresasSalas: tiemposEmpresasSalas,
+            setTiemposEmpresasSalas: setTiemposEmpresasSalas,
+            updatedEvento: updatedEvento,
+            setUpdatedEvento: setUpdatedEvento,
+            originalEvento: originalEvento,
+            setOriginalEvento: setOriginalEvento,
         }),
         [
             eventoSelected,
-            changeEvento,
-            addPropertiesEvento,
-            checkNewEvento,
             tiemposEventos,
             setTiemposEventos,
+            setEventoSelected,
+            tiemposEmpresasSalas,
+            setTiemposEmpresasSalas,
+            updatedEvento,
+            setUpdatedEvento,
+            originalEvento,
+            setOriginalEvento,
         ]
     );
 

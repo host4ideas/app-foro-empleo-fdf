@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaPause, FaPlay, FaTimes, FaCog } from "react-icons/fa";
 // Contexts
 import { useAuthContext } from "../contexts/authContext";
+import { useEventoContext } from "../contexts/eventoContext";
 // Timer
 import timerCounter from "../lib/tiny-timer";
 import { msToMinutesSecondsAndHours } from "../utils/utils";
@@ -17,6 +18,7 @@ export default function Timer(props) {
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
+    const { eventoSelected, tiemposEventos } = useEventoContext();
 
     /* const synchronizeTimer = (time) => {
         timerCounter.stop();
@@ -53,32 +55,58 @@ export default function Timer(props) {
     };
 
     const compruebaInicio = () => {
-
-        if (props.timerev[0] != undefined){
-
-            var ahora = Math.trunc(new Date(2023,0,18,8,59,prueba).getTime()/1000)
+        if (eventoSelected.inicioEvento !== undefined) {
+            var ahora = Math.trunc(
+                new Date(2023, 0, 18, 8, 59, prueba).getTime() / 1000
+            );
             /* var ahora = Math.trunc(new Date().getTime()/1000) */
-            var inicio = Math.trunc(props.timerev[0].horaInicio.getTime()/1000)
+            var inicio = Math.trunc(
+                new Date(eventoSelected.inicioEvento).getTime() / 1000
+            );
 
-            if ((ahora - inicio) >= 0){
-                calculaDuracion(ahora)
-            }else{
-                console.log("Aun no empezo")
+            if (ahora - inicio >= 0) {
+                // Remove other eventos
+                const arrayFiltered = tiemposEventos.filter(
+                    (tiempoEvento) =>
+                        tiempoEvento.idEvento === eventoSelected.idEvento
+                );
+
+                // Remove duplicated timers
+                const timers = arrayFiltered.reduce((acc, current) => {
+                    const x = acc.find(
+                        (item) => item.idTimer === current.idTimer
+                    );
+                    if (!x) {
+                        return acc.concat([current]);
+                    } else {
+                        return acc;
+                    }
+                }, []);
+
+                const filteredArrayByIdTimer = timers.sort(
+                    (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+                );
+
+                calculaDuracion(ahora, filteredArrayByIdTimer);
+            } else {
+                console.log("Aun no empezo");
             }
         }
     }
 
-    const calculaDuracion = (fechaactual) => {
-
+    const calculaDuracion = (fechaactual, timers) => {
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
 
-        while (!(finalizado)) {
-            
-            var timerSeleccionado = props.timerev[indiceTiempoEvento];
-            
-            if (props.timerev.length > indiceTiempoEvento) {
+        while (!finalizado) {
+            var timerSeleccionado = timers[indiceTiempoEvento];
+
+            if (timers.length > indiceTiempoEvento) {
+                var tiempoSig = Math.trunc(
+                    timerSeleccionado.horaInicio.getTime() / 1000 +
+                        timerSeleccionado.duracion * 60
+                );
 
                 var tiempoSig = Math.trunc(timerSeleccionado.horaInicio.getTime()/1000 + timerSeleccionado.duracion*60)
                 
@@ -118,22 +146,17 @@ export default function Timer(props) {
 
     //HORA ACTUAL
     useEffect(() => {
+        const actualClockTime = setInterval(() => {
+            showClockTime();
+            compruebaInicio();
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount (stop clock)
+            clearInterval(actualClockTime);
+        };
+    }, []);
 
-        const timeActual = setInterval(() => {
-            
-            if (props.timerev != []){
-                showTime();
-                prueba++
-                compruebaInicio()
-            }
-            
-        },1000);
-
-        return () => clearInterval(timeActual);
-
-    }, [props.timerev]);
-
-   /*  // Client timer functionality
+    // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)

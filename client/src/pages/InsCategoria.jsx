@@ -5,7 +5,8 @@ import { useAuthContext } from "../contexts/authContext";
 // Components
 import { FaTrash, FaTimes, FaPlus, FaEdit, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-// Styles
+// Notifications
+import { toast } from "react-toastify";
 import { INSEVENTO, PRIVATE } from "../utils/paths";
 
 function InsCategoria() {
@@ -37,13 +38,21 @@ function InsCategoria() {
                 },
                 (result) => {
                     if (result) {
-                        // Notificacion acierto
-                        // Recargamos las categorias
                         getListaCategorias();
                         setNombre("");
                         setTiempo("");
                     } else {
                         // Notificacion error
+                        toast.warn("No se pudo crear la catregoria", {
+                            position: "top-right",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
                     }
                 }
             );
@@ -56,7 +65,17 @@ function InsCategoria() {
                 //NOTIFICACION CORRECTO
                 getListaCategorias();
             } else {
-                //NOTIFICACION ERROR
+                // Notificacion error
+                toast.warn("No se pudo borrar la catregoria", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             }
         });
     }
@@ -75,7 +94,17 @@ function InsCategoria() {
                 setNombre("");
                 setTiempo("");
             } else {
-                //NOTIFICACION ERROR
+                // Notificacion error
+                toast.warn("No se pudo borrar la catregoria", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             }
         });
         setEdit(false);

@@ -9,7 +9,6 @@ const {
 module.exports = function (socket) {
     socket.on("tiempos_empresas_salas", (cb) => {
         const token = socket.request.user.token;
-        cb("Response");
         getTiempoEmpresaSalas(token).then((res) => cb(res));
     });
     socket.on("update tiempos_empresas_salas", (tiempoEmpresaSala, cb) => {
