@@ -5,8 +5,6 @@ import { useAuthContext } from "../contexts/authContext";
 // Components
 import { FaTrash, FaTimes, FaPlus, FaEdit, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
-// Styles
-import styles from "./InsCategoria.module.css";
 // Notifications
 import { toast } from "react-toastify";
 import { INSEVENTO, PRIVATE } from "../utils/paths";

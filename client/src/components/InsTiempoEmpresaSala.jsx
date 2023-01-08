@@ -3,12 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
 // Components
-
-import { FaTrash, FaPlus } from "react-icons/fa";
-
 // Styles
 import style from "./InsTiempoEmpresaSala.module.css";
-
 import EmpresaSala from "./EmpresaSala";
 // React notifications
 import { toast } from "react-toastify";

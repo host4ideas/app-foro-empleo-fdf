@@ -1,11 +1,10 @@
 // React
 import { useState, useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 // Components
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
 import BackButton from "../components/BackButton";
 // Styles
-import "./InsEvento.css";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
