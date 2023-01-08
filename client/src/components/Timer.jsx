@@ -11,7 +11,6 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 import "./timer.css";
 
 export default function Timer(props) {
-
     const [timer, setTimer] = useState("00:00");
     var prueba = 0;
 
@@ -20,7 +19,7 @@ export default function Timer(props) {
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
     const { eventoSelected, tiemposEventos } = useEventoContext();
 
-    /* const synchronizeTimer = (time) => {
+    const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
     };
@@ -41,7 +40,7 @@ export default function Timer(props) {
     timerCounter.on("tick", () => {
         console.log("test " + timerCounter.time);
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
-    }); */
+    });
 
     const showClockTime = () => {
         var myDate = new Date();
@@ -71,61 +70,62 @@ export default function Timer(props) {
                 console.log("Aun no empezo");
             }
         }
-    }
+    };
 
     const calculaDuracion = (fechaactual, timers) => {
-
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
-        
+
         while (!finalizado) {
-            var timerSeleccionado = new Date(timers[indiceTiempoEvento].inicioTimer);
+            var timerSeleccionado = new Date(
+                timers[indiceTiempoEvento].inicioTimer
+            );
             if (timers.length > indiceTiempoEvento) {
                 var tiempoSig = Math.trunc(
                     timerSeleccionado.getTime() / 1000 +
                         timerSeleccionado.duracion * 60
                 );
 
-                var tiempoSig = Math.trunc(timerSeleccionado.getTime()/1000 + timers[indiceTiempoEvento].duracion*60)
+                var tiempoSig = Math.trunc(
+                    timerSeleccionado.getTime() / 1000 +
+                        timers[indiceTiempoEvento].duracion * 60
+                );
                 if (fechaactual >= tiempoSig) {
                     indiceTiempoEvento++;
-                }else{
-                    duracionSeg = (tiempoSig - fechaactual)
+                } else {
+                    duracionSeg = tiempoSig - fechaactual;
                     finalizado = true;
                 }
 
-                props.metodoact(indiceTiempoEvento)
-            }else{
+                props.metodoact(indiceTiempoEvento);
+            } else {
                 finalizado = true;
             }
-            
         }
         preparaTimer(duracionSeg);
     };
 
     const preparaTimer = (duracion) => {
-
-        var minutos = Math.trunc(duracion/60)
-        if (minutos < 10){
-            minutos = "0"+minutos
+        var minutos = Math.trunc(duracion / 60);
+        if (minutos < 10) {
+            minutos = "0" + minutos;
         }
 
         var segundos = duracion % 60;
-        if (segundos < 10){
-            segundos = "0"+segundos
+        if (segundos < 10) {
+            segundos = "0" + segundos;
         }
-        
-        setTimer(minutos+":"+segundos)
 
-    }
+        setTimer(minutos + ":" + segundos);
+    };
 
     //HORA ACTUAL
     useEffect(() => {
         const actualClockTime = setInterval(() => {
             showClockTime();
             compruebaInicio();
-            prueba++
+            prueba++;
         }, 1000);
         return () => {
             // Return callback to run on unmount (stop clock)
@@ -133,7 +133,7 @@ export default function Timer(props) {
         };
     }, []);
 
-    /* // Client timer functionality
+    // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)
@@ -160,7 +160,7 @@ export default function Timer(props) {
                 setTimer("00:00:00");
             });
         }
-    }, [clientSocket]); */
+    }, [clientSocket]);
 
     return (
         <div className="mt-4 ">
@@ -187,7 +187,7 @@ export default function Timer(props) {
                             </>
                         ) : null}
                     </label>
-                </div> */}
+                </div>  */}
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
