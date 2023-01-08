@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import { LOGIN, PUBLIC } from "../utils/paths";
 
 export default function DetallesEvento() {
-
     const { logout } = useAuthContext();
     const { isAuthenticated, adminSocket } = useAuthContext();
     const [salas, setSalas] = useState([]);
@@ -19,39 +18,38 @@ export default function DetallesEvento() {
     let { idevento } = useParams();
 
     function filtraTimer(arrayTiemposEvento) {
+        var arrayIdTimers = [];
+        var arrayDatos = [];
 
-        var arrayIdTimers = []
-        var arrayDatos = []
-
-        for (var i=0; i < arrayTiemposEvento.length; i++) {
-            
+        for (var i = 0; i < arrayTiemposEvento.length; i++) {
             if (idevento == arrayTiemposEvento[i].idEvento) {
-
                 /* console.log(arrayTiemposEvento[i].idTimer) */
-                if (!(arrayIdTimers.includes(arrayTiemposEvento[i].idTimer))){
-                    arrayIdTimers.push(arrayTiemposEvento[i].idTimer)
-                    arrayDatos.push({"horaInicio":new Date(arrayTiemposEvento[i].inicioTimer),"categoria":arrayTiemposEvento[i].categoria,"duracion":arrayTiemposEvento[i].duracion})
+                if (!arrayIdTimers.includes(arrayTiemposEvento[i].idTimer)) {
+                    arrayIdTimers.push(arrayTiemposEvento[i].idTimer);
+                    arrayDatos.push({
+                        horaInicio: new Date(arrayTiemposEvento[i].inicioTimer),
+                        categoria: arrayTiemposEvento[i].categoria,
+                        duracion: arrayTiemposEvento[i].duracion,
+                    });
                 }
-
             }
-
         }
 
-        arrayDatos.sort((a,b) => a.horaInicio - b.horaInicio)
-        setTimerEventos(arrayDatos)
+        arrayDatos.sort((a, b) => a.horaInicio - b.horaInicio);
+        setTimerEventos(arrayDatos);
     }
 
     function cambiaActivo(indice) {
-        var filaTimers = document.getElementsByClassName("row-time")
-        for (var i=0; i < filaTimers.length; i++){
-            if (filaTimers[i].classList.contains("time-"+indice)){
-                filaTimers[i].classList.add("working")
-            }else{
-                filaTimers[i].classList.remove("working")
+        var filaTimers = document.getElementsByClassName("row-time");
+        for (var i = 0; i < filaTimers.length; i++) {
+            if (filaTimers[i].classList.contains("time-" + indice)) {
+                filaTimers[i].classList.add("working");
+            } else {
+                filaTimers[i].classList.remove("working");
             }
         }
     }
-    
+
     useEffect(() => {
         if (adminSocket) {
             adminSocket.emit("salas", (salas) => {
@@ -61,13 +59,13 @@ export default function DetallesEvento() {
                     console.log("error getting salas");
                 }
             });
-            adminSocket.emit("timereventos",(tEventos) => {
+            adminSocket.emit("timereventos", (tEventos) => {
                 if (tEventos) {
-                    filtraTimer(tEventos)
-                }else{
-                    console.log("error getting timer eventos")
+                    filtraTimer(tEventos);
+                } else {
+                    console.log("error getting timer eventos");
                 }
-            })
+            });
         }
     }, [adminSocket]);
 
@@ -86,7 +84,7 @@ export default function DetallesEvento() {
                     isAuthenticated ? (
                         <div>
                             {/* ICON LOGOUT */}
-                            <div className="icon-container logout">
+                            <div className="icon-container danger">
                                 <FaSignOutAlt
                                     className="icon"
                                     onClick={() => logout()}
@@ -96,7 +94,7 @@ export default function DetallesEvento() {
                     ) : (
                         <div>
                             {/* ICON LOGIN */}
-                            <div className="icon-container blue">
+                            <div className="icon-container principal">
                                 <Link to={"/" + PUBLIC + "/" + LOGIN}>
                                     <FaSignInAlt className="icon" />
                                 </Link>
@@ -106,7 +104,7 @@ export default function DetallesEvento() {
                 }
             </div>
 
-            <Timer timerev={timerEventos} metodoact={cambiaActivo}/>
+            <Timer timerev={timerEventos} metodoact={cambiaActivo} />
 
             <div className="table-container">
                 <div className="table-header">
@@ -114,26 +112,26 @@ export default function DetallesEvento() {
                     <h2>CATEGORIA</h2>
                 </div>
                 <div className="table-body">
-                    {
-                        timerEventos.map((timer,index) => {
-                            return <div key={index} className={"table-row row-time time-"+index}>
-                                <h3>{timer.horaInicio.toTimeString().substring(0,5)}</h3>
+                    {timerEventos.map((timer, index) => {
+                        return (
+                            <div
+                                key={index}
+                                className={"table-row row-time time-" + index}
+                            >
+                                <h3>
+                                    {timer.horaInicio
+                                        .toTimeString()
+                                        .substring(0, 5)}
+                                </h3>
                                 <h3>{timer.categoria}</h3>
                             </div>
-                        })
-                    }
+                        );
+                    })}
                 </div>
             </div>
-
             <div className="salas-container mt-4">
                 {salas.map((sala, index) => {
-                    return (
-                        <Sala
-                            sala={sala}
-                            idevento={idevento}
-                            key={index}
-                        />
-                    );
+                    return <Sala sala={sala} idevento={idevento} key={index} />;
                 })}
             </div>
         </div>

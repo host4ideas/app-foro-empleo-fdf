@@ -18,54 +18,44 @@ export default function InstallPWA() {
     return (
         <Modal isOpen centered>
             <Card>
-                <img
-                    className="mx-auto"
-                    style={{
-                        borderTopRightRadius: "50%",
-                        borderTopLeftRadius: "50%",
-                        backgroundColor: "#fff",
-                        marginTop: "-50px",
-                    }}
-                    width="100px"
-                    src="content/images/appIcon-transparent.png"
-                    alt="Icon"
-                />
                 <CardBody>
-                    <CardTitle className="text-center">
-                        <h3>Install App</h3>
-                    </CardTitle>
                     {iosInstallPrompt && (
                         <>
                             <CardText className="text-center">
-                                Tap
+                                To install this web app on your phone: Open from
+                                Safari the share menu
                                 <img
-                                    src="content/images/Navigation_Action_2x.png"
+                                    src="https://cdn.icon-icons.com/icons2/1097/PNG/512/1485477094-upload_78598.png"
                                     style={{ margin: "auto 8px 8px" }}
-                                    className=""
                                     alt="Add to homescreen"
-                                    width="20"
+                                    width="30"
                                 />
                                 then &quot;Add to Home Screen&quot;
                             </CardText>
                             <div className="d-flex justify-content-center">
                                 <Button onClick={handleIOSInstallDeclined}>
-                                    Close
+                                    Cancelar
                                 </Button>
                             </div>
                         </>
                     )}
                     {webInstallPrompt && (
-                        <div className="d-flex justify-content-around">
-                            <Button
-                                color="primary"
-                                onClick={handleWebInstallAccepted}
-                            >
-                                Install
-                            </Button>
-                            <Button onClick={handleWebInstallDeclined}>
-                                Close
-                            </Button>
-                        </div>
+                        <>
+                            <CardText className="text-center">
+                                Do you want to install this app?
+                            </CardText>
+                            <div className="d-flex justify-content-around">
+                                <Button
+                                    color="success"
+                                    onClick={handleWebInstallAccepted}
+                                >
+                                    Instalar
+                                </Button>
+                                <Button onClick={handleWebInstallDeclined}>
+                                    Cancelar
+                                </Button>
+                            </div>
+                        </>
                     )}
                 </CardBody>
             </Card>
