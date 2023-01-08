@@ -150,7 +150,14 @@ export default function ActionsEvento() {
                             </div>
                         );
                     })}
+                    <Link
+                        to={"/" + PRIVATE + "/" + INSEVENTO}
+                        className="icon-container principal btn-add-event"
+                    >
+                        <FaPlus className="icon" />
+                    </Link>
                 </div>
+
                 <div className="card-event bottom">
                     {!eventoSelected ? (
                         <h1>Seleccione un evento</h1>

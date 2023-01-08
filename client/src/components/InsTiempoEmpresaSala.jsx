@@ -137,7 +137,6 @@ function InsTiempoEmpresaSala(props) {
             }
 
             //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
-
             var tablasSala = document.getElementsByClassName("div-table-room");
 
             for (var i = 0; i < tablasSala.length; i++) {
@@ -312,7 +311,7 @@ function InsTiempoEmpresaSala(props) {
                 </thead>
                 <tbody className={style.tableBody}>
                     <tr>
-                        <td className="fw-bold">{tiempoInicial}</td>
+                        <td className="fw-bold hora">{tiempoInicial}</td>
                         <td>
                             <select
                                 onChange={ajustaTiempo}

@@ -16,9 +16,7 @@
     z-index: 1;
 }
 .container-events {
-    height: 80vh;
-    overflow: hidden;
-    overflow-y: scroll;
+    position: relative;
 }
 
 .card-event {
@@ -36,7 +34,6 @@
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 20%);
 
     overflow: hidden;
-    z-index: 2;
 }
 .card-title {
     width: 60%;
@@ -93,4 +90,12 @@
 
 .active {
     background-color: var(--primary-opacity-color);
+}
+
+.btn-add-event {
+    position: absolute;
+    bottom: 0;
+    margin: -20px;
+    left: 50%;
+    z-index: 2;
 }
