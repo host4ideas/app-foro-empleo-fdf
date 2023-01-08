@@ -202,12 +202,13 @@ function InsEvento() {
     useEffect(() => {
         if (fechas.fechaInicio) {
             // Remove other eventos
-            const arrayFiltered = tiemposEventos.filter(
+            const currentEventTimers = tiemposEventos.filter(
                 (tiempoEvento) =>
                     tiempoEvento.idEvento === eventoSelected.idEvento
             );
-            // Remove duplicated timers
-            const filteredArrayByIdTimer = arrayFiltered.reduce(
+            /* WITHOUT DUPLICATED TIMERS */
+            // Remove duplicated timers from tiempos eventos
+            const filteredArrayWithoutDuplicated = currentEventTimers.reduce(
                 (acc, current) => {
                     const x = acc.find(
                         (item) => item.idTimer === current.idTimer
@@ -220,27 +221,28 @@ function InsEvento() {
                 },
                 []
             );
-            // Sort
+            // Sort timers from tiempos eventos of the current event without duplicated timers
             setCleanedArrayTimers(
-                filteredArrayByIdTimer.sort(
+                filteredArrayWithoutDuplicated.sort(
                     (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
                 )
             );
-            // Sort
-            setTiemposEventosFiltered(
-                arrayFiltered.sort(
-                    (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-                )
+            /* DUPLICATED TIMERS */
+            // Sort tiempos eventos with duplicated timers
+            const sortedCurrentEventTimers = currentEventTimers.sort(
+                (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
             );
-            // Change first inicioTimer to fechaInicio
-            setTiemposEventosFiltered((tiemposEventosFiltered) =>
-                tiemposEventosFiltered.filter((tiempoEvento, index) => {
+            const eventTimersFirstChanged = sortedCurrentEventTimers.filter(
+                (tiempoEvento, index) => {
                     if (index === 0) {
                         tiempoEvento.inicioTimer = fechas.fechaInicio;
                     }
                     return true;
-                })
+                }
             );
+
+            setTiemposEventosFiltered(eventTimersFirstChanged);
+
             datePicker.current.valueAsDate = new Date(
                 eventoSelected.inicioEvento
             );
@@ -268,6 +270,8 @@ function InsEvento() {
             evento: {
                 inicioEvento: eventoSelected.inicioEvento,
                 nombreEvento: eventoSelected.nombreEvento,
+                finEvento: eventoSelected.finEvento,
+                idEvento: eventoSelected.idEvento,
             },
         }));
         setOriginalEvento((originalEvento) => ({
@@ -280,14 +284,16 @@ function InsEvento() {
             evento: {
                 inicioEvento: eventoSelected.inicioEvento,
                 nombreEvento: eventoSelected.nombreEvento,
+                finEvento: eventoSelected.finEvento,
+                idEvento: eventoSelected.idEvento,
             },
         }));
     }, [
+        eventoSelected,
         setOriginalEvento,
         setUpdatedEvento,
-        tiemposEventosFiltered,
-        eventoSelected,
         tiemposEmpresasSalas,
+        tiemposEventosFiltered,
     ]);
 
     // Update updatedEvento
@@ -295,7 +301,7 @@ function InsEvento() {
         setUpdatedEvento((updatedEvento) => ({
             ...updatedEvento,
             evento: {
-                inicioEvento: fechaInicial,
+                inicioEvento: fechaInicial, // solo fecha -> UTC fecha + hora -> hora: hh:mm -> fecha: UTC
                 nombreEvento: nombreEvento,
             },
         }));
