@@ -11,47 +11,57 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 import "./timer.css";
 
 export default function Timer(props) {
-
+    // Initial timer time set by the admin
+    const [initialTimerTime, setInitialTimerTime] = useState(0);
+    // Timer time
     const [timer, setTimer] = useState("00:00");
+    // Clock time
+    const [actualClockTime, setActualClockTime] = useState("");
+    // Timer play state
+
     var prueba = 0;
 
     const [clockTime, setClockTime] = useState("");
     const [play, setPlay] = useState(false);
+    // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
     const { eventoSelected, tiemposEventos } = useEventoContext();
 
-    /* const synchronizeTimer = (time) => {
+    const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
     };
+
     // Admin timer functionality
     const startTimer = () => {
         if (adminSocket) {
             adminSocket.emit("resume timer");
         }
-        // timerCounter.start(10000);
+
+        timerCounter.start(10000);
         setPlay(true);
     };
+
     const pauseTimer = () => {
         if (adminSocket) {
             adminSocket.emit("pause timer");
         }
         setPlay(false);
     };
+
     timerCounter.on("tick", () => {
-        console.log("test " + timerCounter.time);
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
-    }); */
+    });
 
     const showClockTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
+        let myDate = new Date();
+        let hours = myDate.getHours();
+        let minutes = myDate.getMinutes();
+        let seconds = myDate.getSeconds();
         if (hours < 10) hours = 0 + hours;
         if (minutes < 10) minutes = "0" + minutes;
         if (seconds < 10) seconds = "0" + seconds;
-        setClockTime(hours + ":" + minutes + ":" + seconds);
+        setActualClockTime(hours + ":" + minutes + ":" + seconds);
     };
 
     const compruebaInicio = () => {
@@ -71,7 +81,7 @@ export default function Timer(props) {
                 console.log("Aun no empezo");
             }
         }
-    }
+    };
 
     const calculaDuracion = (fechaactual, timers) => {
 
@@ -87,40 +97,34 @@ export default function Timer(props) {
                 );
 
                 var tiempoSig = Math.trunc(timerSeleccionado.getTime()/1000 + timers[indiceTiempoEvento].duracion*60)
-                
-                if (fechaactual >= tiempoSig){
+                if (fechaactual >= tiempoSig) {
                     indiceTiempoEvento++;
-                }else{
-                    duracionSeg = (tiempoSig - fechaactual)
+                } else {
+                    duracionSeg = tiempoSig - fechaactual;
                     finalizado = true;
                 }
 
-                props.metodoact(indiceTiempoEvento)
-            }else{
+                props.metodoact(indiceTiempoEvento);
+            } else {
                 finalizado = true;
             }
-            
         }
-        
-        preparaTimer(duracionSeg)
-
-    }
+        preparaTimer(duracionSeg);
+    };
 
     const preparaTimer = (duracion) => {
-
-        var minutos = Math.trunc(duracion/60)
-        if (minutos < 10){
-            minutos = "0"+minutos
+        var minutos = Math.trunc(duracion / 60);
+        if (minutos < 10) {
+            minutos = "0" + minutos;
         }
 
         var segundos = duracion % 60;
-        if (segundos < 10){
-            segundos = "0"+segundos
+        if (segundos < 10) {
+            segundos = "0" + segundos;
         }
-        
-        setTimer(minutos+":"+segundos)
 
-    }
+        setTimer(minutos + ":" + segundos);
+    };
 
     //HORA ACTUAL
     useEffect(() => {
@@ -162,7 +166,7 @@ export default function Timer(props) {
                 setTimer("00:00:00");
             });
         }
-    }, [clientSocket]); */
+    }, [clientSocket]);
 
     return (
         <div className="mt-4 ">
@@ -180,10 +184,10 @@ export default function Timer(props) {
                                     <FaCog className="menuBtn animation" />
                                     <FaTimes className="closeBtn" />
                                 </div>
-                                <div className="btn-menu">
+                                <div className="btn-menu" onClick={startTimer}>
                                     <FaPlay className="icon-menu" />
                                 </div>
-                                <div className="btn-menu">
+                                <div className="btn-menu" onClick={pauseTimer}>
                                     <FaPause className="icon-menu" />
                                 </div>
                             </>
@@ -193,8 +197,8 @@ export default function Timer(props) {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                {clockTime ? (
-                    <p className="fst-italic">{clockTime}</p>
+                {actualClockTime ? (
+                    <p className="fst-italic">{actualClockTime}</p>
                 ) : (
                     <p className="fst-italic">Loading...</p>
                 )}

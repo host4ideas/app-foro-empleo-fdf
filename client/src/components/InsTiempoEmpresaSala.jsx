@@ -46,6 +46,10 @@ function InsTiempoEmpresaSala({
                                 .selectedOptions[0].value
                         );
 
+                        const tiempoMS = duracion * 60 * 1000;
+                        new Date(horaCelda.value + tiempoMS).getMinutes();
+                        new Date(horaCelda.value + tiempoMS).getHours();
+
                         if (i === 0) {
                             hora[1] = hora[1] + duracion;
                         } else {
@@ -215,12 +219,14 @@ function InsTiempoEmpresaSala({
 
             var celdaTiempo = document.createElement("td");
             celdaTiempo.classList.add("hora");
+
             celdaTiempo.innerText = hora;
 
             var celdaSelect = document.createElement("td");
 
             let selector = document.createElement("select");
             selector.classList.add("select-room");
+            selector.classList.add(style.tableSelect);
 
             empresas.forEach((empresa) => {
                 var opcion = document.createElement("option");
@@ -241,26 +247,25 @@ function InsTiempoEmpresaSala({
             document.getElementById("timer-table").childNodes[1].childNodes;
 
         if (tbodyTimer.length > 1) {
-            if (adminSocket) {
-                adminSocket.emit(
-                    "delete tiempo_empresa_sala",
-                    "empresa X",
-                    (res) => {
-                        console.log(res);
-                    }
-                );
+            // if (adminSocket) {
+            //     adminSocket.emit(
+            //         "delete tiempo_empresa_sala",
+            //         "empresa X",
+            //         (res) => {
+            //             console.log(res);
+            //         }
+            //     );
 
-                tbodyTimer[tbodyTimer.length - 1].remove();
+            tbodyTimer[tbodyTimer.length - 1].remove();
 
-                var tablasSala =
-                    document.getElementsByClassName("div-table-room");
+            var tablasSala = document.getElementsByClassName("div-table-room");
 
-                for (var i = 0; i < tablasSala.length; i++) {
-                    var tbodySala =
-                        tablasSala[i].childNodes[0].childNodes[1].childNodes;
-                    tbodySala[tbodySala.length - 1].remove();
-                }
+            for (var i = 0; i < tablasSala.length; i++) {
+                var tbodySala =
+                    tablasSala[i].childNodes[0].childNodes[1].childNodes;
+                tbodySala[tbodySala.length - 1].remove();
             }
+            // }
         } else {
             toast.warn("Debe de haber al menos un timer", {
                 position: "top-right",
@@ -351,20 +356,20 @@ function InsTiempoEmpresaSala({
                 id="timer-table"
                 width="100%"
             >
-                <thead>
+                <thead className={style.tableHead}>
                     <tr>
                         <th>INICIO</th>
                         <th>CATEGORIA</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className={style.tableBody}>
                     {cleanedArrayTimers.map((tiempoEvento) => (
                         <tr>
-                            <td className="hora">{tiempoInicial}</td>
+                            <td className="hora fw-bold">{tiempoInicial}</td>
                             <td>
                                 <select
                                     onChange={ajustaTiempo}
-                                    className="select-category"
+                                    className={`select-category ${style.tableSelect}`}
                                 >
                                     {categorias.map((categoria, index) => {
                                         return (
@@ -397,6 +402,7 @@ function InsTiempoEmpresaSala({
                     className="btn btn-sm btn-outline-danger rounded-0 w-50"
                     onClick={eliminaFila}
                     title="Eliminar último timer"
+                    type="button"
                 >
                     -
                 </button>
@@ -404,14 +410,15 @@ function InsTiempoEmpresaSala({
                     className="btn btn-sm btn-outline-success rounded-0 w-50"
                     onClick={aniadeFilaTimer}
                     title="Añadir timer"
+                    type="button"
                 >
                     +
                 </button>
             </div>
             <div className="mt-4">
-                <h6 className="text-center main-card-title">SALAS</h6>
+                <h6 className="main-card-title text-center">SALAS</h6>
                 <select
-                    className="form-control text-center rounded-0 border-bottom-0"
+                    className={style.select}
                     id="select-room"
                     onChange={() => cambiaTablaSala()}
                 >
