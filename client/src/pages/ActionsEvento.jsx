@@ -32,13 +32,7 @@ export default function ActionsEvento() {
     //SOCKET GET EVENTOS
     useEffect(() => {
         if (adminSocket) {
-            adminSocket.emit("timereventos", (eventos) => {
-                if (eventos) {
-                    setTiemposEventos(eventos);
-                } else {
-                    console.log("error getting eventos");
-                }
-            });
+            console.log("test");
             adminSocket.emit("eventos", (eventos) => {
                 if (eventos) {
                     setEventos(eventos);
