@@ -15,7 +15,7 @@ export default function Timer(props) {
     const [timer, setTimer] = useState("00:00");
     var prueba = 0;
 
-    const [actualTime, setActualTime] = useState("");
+    const [clockTime, setClockTime] = useState("");
     const [play, setPlay] = useState(false);
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
     const { eventoSelected, tiemposEventos } = useEventoContext();
@@ -43,7 +43,7 @@ export default function Timer(props) {
         setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
     }); */
 
-    const showTime = () => {
+    const showClockTime = () => {
         var myDate = new Date();
         var hours = myDate.getHours();
         var minutes = myDate.getMinutes();
@@ -51,7 +51,7 @@ export default function Timer(props) {
         if (hours < 10) hours = 0 + hours;
         if (minutes < 10) minutes = "0" + minutes;
         if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
+        setClockTime(hours + ":" + minutes + ":" + seconds);
     };
 
     const compruebaInicio = () => {
@@ -66,28 +66,7 @@ export default function Timer(props) {
 
             if (ahora - inicio >= 0) {
                 // Remove other eventos
-                const arrayFiltered = tiemposEventos.filter(
-                    (tiempoEvento) =>
-                        tiempoEvento.idEvento === eventoSelected.idEvento
-                );
-
-                // Remove duplicated timers
-                const timers = arrayFiltered.reduce((acc, current) => {
-                    const x = acc.find(
-                        (item) => item.idTimer === current.idTimer
-                    );
-                    if (!x) {
-                        return acc.concat([current]);
-                    } else {
-                        return acc;
-                    }
-                }, []);
-
-                const filteredArrayByIdTimer = timers.sort(
-                    (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-                );
-
-                calculaDuracion(ahora, filteredArrayByIdTimer);
+                calculaDuracion(ahora, tiemposEventos);
             } else {
                 console.log("Aun no empezo");
             }
@@ -95,20 +74,19 @@ export default function Timer(props) {
     }
 
     const calculaDuracion = (fechaactual, timers) => {
+
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
-
         while (!finalizado) {
-            var timerSeleccionado = timers[indiceTiempoEvento];
-
+            var timerSeleccionado = new Date(timers[indiceTiempoEvento].inicioTimer);
             if (timers.length > indiceTiempoEvento) {
                 var tiempoSig = Math.trunc(
-                    timerSeleccionado.horaInicio.getTime() / 1000 +
+                    timerSeleccionado.getTime() / 1000 +
                         timerSeleccionado.duracion * 60
                 );
 
-                var tiempoSig = Math.trunc(timerSeleccionado.horaInicio.getTime()/1000 + timerSeleccionado.duracion*60)
+                var tiempoSig = Math.trunc(timerSeleccionado.getTime()/1000 + timers[indiceTiempoEvento].duracion*60)
                 
                 if (fechaactual >= tiempoSig){
                     indiceTiempoEvento++;
@@ -123,7 +101,7 @@ export default function Timer(props) {
             }
             
         }
-
+        
         preparaTimer(duracionSeg)
 
     }
@@ -149,6 +127,7 @@ export default function Timer(props) {
         const actualClockTime = setInterval(() => {
             showClockTime();
             compruebaInicio();
+            prueba++
         }, 1000);
         return () => {
             // Return callback to run on unmount (stop clock)
@@ -156,7 +135,7 @@ export default function Timer(props) {
         };
     }, []);
 
-    // Client timer functionality
+    /* // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)
@@ -214,8 +193,8 @@ export default function Timer(props) {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                {actualTime ? (
-                    <p className="fst-italic">{actualTime}</p>
+                {clockTime ? (
+                    <p className="fst-italic">{clockTime}</p>
                 ) : (
                     <p className="fst-italic">Loading...</p>
                 )}
