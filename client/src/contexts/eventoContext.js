@@ -72,7 +72,7 @@ export default function EventoContextProvider({ children }) {
 
                 setTiemposEventos(filteredArrayByIdTimer)
             } else {
-                console.log("error getting timer eventos");
+                console.log("error getting timer eventoss");
             }
         });
     },[eventoSelected])
