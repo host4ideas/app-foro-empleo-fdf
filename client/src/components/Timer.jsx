@@ -78,6 +78,7 @@ export default function Timer(props) {
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
+        
         while (!finalizado) {
             var timerSeleccionado = new Date(timers[indiceTiempoEvento].inicioTimer);
             if (timers.length > indiceTiempoEvento) {
