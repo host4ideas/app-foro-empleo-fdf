@@ -38,21 +38,35 @@ function InsCategoria() {
                 },
                 (result) => {
                     if (result) {
-                        getListaCategorias();
-                        setNombre("");
-                        setTiempo("");
-                    } else {
-                        // Notificacion error
-                        toast.warn("No se pudo crear la catregoria", {
+                        toast.success("Categoria añadida correctamente", {
                             position: "top-right",
-                            autoClose: 3000,
+                            autoClose: 2000,
                             hideProgressBar: false,
+                            newestOnTop: false,
                             closeOnClick: true,
                             pauseOnHover: true,
                             draggable: true,
                             progress: undefined,
                             theme: "dark",
                         });
+                        getListaCategorias();
+                        setNombre("");
+                        setTiempo("");
+                    } else {
+                        // Notificacion error
+                        toast.error(
+                            "Hubo un error al intentar añadir la categoria",
+                            {
+                                position: "top-right",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "dark",
+                            }
+                        );
                     }
                 }
             );
@@ -63,10 +77,21 @@ function InsCategoria() {
         adminSocket.emit("delete categoria", id, (result) => {
             if (result) {
                 //NOTIFICACION CORRECTO
+                toast.success("Empresa eliminada correctamente", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    newestOnTop: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
                 getListaCategorias();
             } else {
                 // Notificacion error
-                toast.warn("No se pudo borrar la catregoria", {
+                toast.error("Hubo un error al intentar eliminar la categoria", {
                     position: "top-right",
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -90,28 +115,38 @@ function InsCategoria() {
         adminSocket.emit("update categoria", uCategoria, (result) => {
             if (result) {
                 //NOTIFICACION CORRECTO
-                getListaCategorias();
-                setNombre("");
-                setTiempo("");
-            } else {
-                // Notificacion error
-                toast.warn("No se pudo borrar la catregoria", {
+                toast.success("Categoria actualizada correctamente", {
                     position: "top-right",
-                    autoClose: 3000,
+                    autoClose: 2000,
                     hideProgressBar: false,
+                    newestOnTop: false,
                     closeOnClick: true,
                     pauseOnHover: true,
                     draggable: true,
                     progress: undefined,
                     theme: "dark",
                 });
+                getListaCategorias();
+                setNombre("");
+                setTiempo("");
+            } else {
+                // Notificacion error
+                toast.warn(
+                    "Hubo un error al intentar editar la" + categoria.categoria,
+                    {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    }
+                );
             }
         });
         setEdit(false);
-    }
-
-    function handleUseCategory() {
-        console.timeLog("clicked");
     }
 
     function handleInputChangeN(e) {
