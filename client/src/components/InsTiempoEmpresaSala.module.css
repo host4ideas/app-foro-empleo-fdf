@@ -1,0 +1,45 @@
+.table {
+    position: relative;
+}
+.tableHead {
+    background-color: var(--primary-color);
+    height: 30px;
+}
+.tableHead th {
+    font-size: 1em;
+}
+.tableBody td {
+    font-size: 14px;
+}
+.tableSelect {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+.tableAddButton {
+    position: absolute;
+    left: 0;
+    margin: -15px !important;
+    bottom: 0px;
+    width: 30px !important;
+    height: 30px !important;
+}
+.tableDeleteButton {
+    position: absolute;
+    right: 0;
+    margin: -15px !important;
+    bottom: 0px;
+    width: 30px !important;
+    height: 30px !important;
+}
+.containerSelect {
+    width: 80%;
+    margin: auto;
+}
+.select {
+    width: 100%;
+    text-align: center;
+    border-radius: 50px;
+    height: 30px;
+    outline: none;
+}

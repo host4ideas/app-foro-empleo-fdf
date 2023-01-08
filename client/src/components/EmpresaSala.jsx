@@ -1,3 +1,4 @@
+import style from "./InsTiempoEmpresaSala.module.css";
 import React, { useEffect, useState } from "react";
 
 export default function EmpresaSala({
@@ -19,15 +20,19 @@ export default function EmpresaSala({
     }, [tiemposEventosFiltered, tiemposEventosBySala.idSala]);
 
     return (
-        <div className={"div-table-room room-" + sala.nombreSala}>
-            <table className={"tabla-tes"} width="100%">
-                <thead>
+        <div className={"mt-2 div-table-room room-" + sala.nombreSala}>
+            <table
+                className={`table table-bordered table-striped text-center ${style.table}`}
+            >
+                <thead className={style.tableHead}>
                     <tr>
                         <th>INICIO</th>
-                        <th>EMPRESA {sala.nombreSala}</th>
+                        <th>EMPRESA</th>
                     </tr>
                 </thead>
-                <tbody className={"tbody-" + sala.nombreSala}>
+                <tbody
+                    className={`tbody-${sala.nombreSala} ${style.tableBody}`}
+                >
                     {tiemposEventosFiltered
                         .filter(
                             (tiempoEvento) =>
@@ -35,7 +40,7 @@ export default function EmpresaSala({
                         )
                         .map((tiempoEvento, index) => (
                             <tr key={index}>
-                                <td className="hora">
+                                <td className="hora fw-bold">
                                     {new Date(tiempoEvento.inicioTimer)
                                         .toTimeString()
                                         .substring(0, 5)}

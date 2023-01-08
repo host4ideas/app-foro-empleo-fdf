@@ -17,7 +17,11 @@ export function msToMinutesSecondsAndHours(milliseconds, format) {
     const result = [];
 
     for (let i = 0; i < partes.length; i++) {
-        result.push(tiempos[i]);
+        let parte = tiempos[i];
+        if (parte < 10) {
+            parte = "0" + parte;
+        }
+        result.push(parte);
     }
 
     return result.join(":");

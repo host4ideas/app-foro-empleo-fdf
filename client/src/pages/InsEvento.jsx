@@ -1,14 +1,9 @@
 // React
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 // Components
-import InsCategoria from "./InsCategoria";
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
-import BackButton from "../components/BackButton";
-// Icons
-import { GoArrowLeft } from "react-icons/go";
-// Styles
-import "./InsEvento.css";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
@@ -40,7 +35,7 @@ function InsEvento() {
 
         setFechas(fechaState);
     }
-    
+
     useEffect(() => {
         if (adminSocket) {
             adminSocket.emit("categorias", (categorias) => {
@@ -68,68 +63,73 @@ function InsEvento() {
     }, [adminSocket]);
 
     return (
-        <div className="div-events text-center">
-            <div className="hour-zone text-center">
+        <div className="container">
+            <div className="d-flex justify-content-between">
+                <div>
+                    <Link to="/" className="icon-container principal">
+                        <FaArrowLeft className="icon" />
+                    </Link>
+                </div>
+                <div>
+                    <button className="icon-container working">
+                        <FaCheck className="icon" />
+                    </button>
+                </div>
+            </div>
+            <div className="container-card mb-3">
                 <div className="start-hour">
-                    <h6 className="main-card-title my-2">Inicio</h6>
+                    <h6 className="main-card-title main-card-title-left">
+                        FECHA Y HORA DEL EVENTO
+                    </h6>
                     <input id="fechaI" onChange={cambiaHoraTotal} type="date" />
                     <input id="horaI" onChange={cambiaHoraTotal} type="time" />
                 </div>
             </div>
-            <div className="event-name">
-                <h6 className="main-card-title">NOMBRE DEL EVENTO</h6>
-                <input
-                    className="form-control rounded-0"
-                    type="text"
-                    required
-                />
-            </div>
-            <div className="company-room-show">
-                <div className="room-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSSALAS}
-                    >
-                        SALAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longSal} salas)
-                        </span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSEMPRESA}
-                    >
-                        EMPRESAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longEmp} empresas)
-                        </span>
-                    </NavLink>
-                </div>
-                <div className="company-show">
-                    <NavLink
-                        className="detail-card-title black-link"
-                        to={"/" + PRIVATE + "/" + INSCATEGORIA}
-                    >
-                        CATEGORÍAS{" "}
-                        <span className="text-secondary">
-                            {" "}
-                            - ({longCat} categorias)
-                        </span>
-                    </NavLink>
+
+            <div className="container-card mb-3">
+                <h6 className="main-card-title main-card-title-left">
+                    NOMBRE DEL EVENTO
+                </h6>
+                <div className="card-input">
+                    <input type="text" required autoComplete="off" />
                 </div>
             </div>
-            <div className="organization-zone">
-                <h6 className="text-center main-card-title">ORGANIZACIÓN</h6>
+
+            <div className="container-links mb-3">
+                <Link className="card-link" to={"/" + PRIVATE + "/" + INSSALAS}>
+                    <span className="link">
+                        <b>SALAS</b> ({longSal})
+                    </span>
+                </Link>
+
+                <Link
+                    className="card-link "
+                    to={"/" + PRIVATE + "/" + INSEMPRESA}
+                >
+                    <span className="link">
+                        <b>EMPRESAS</b> ({longEmp})
+                    </span>
+                </Link>
+
+                <Link
+                    className="card-link"
+                    to={"/" + PRIVATE + "/" + INSCATEGORIA}
+                >
+                    <span className="link">
+                        <b>CATEGORIAS</b> ({longCat})
+                    </span>
+                </Link>
+            </div>
+
+            <div className="container-card mb-3">
+                <h6 className="main-card-title main-card-title-left">
+                    ORGANIZACIÓN TIMERS
+                </h6>
                 <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
-                {/*<InsTiempoEmpresaSala tiempoinicial='valorinputhorainicio' categorias='stateCategorias'/>*/}
             </div>
             <div>
-                <BackButton path={"/"} />
-                <button className="btn btn-primary">ACTUALIZAR</button>
+                {/* <BackButton path={"/"} /> */}
+                <button className="btn btn-primary">ACTUALIZAR</button>{" "}
             </div>
         </div>
     );
