@@ -126,7 +126,7 @@ function InsEvento() {
 
             <div className="container-card mb-3">
                 <h6 className="main-card-title main-card-title-left">
-                    ORGANIZACIÓN
+                    ORGANIZACIÓN TIMERS
                 </h6>
                 <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
             </div>

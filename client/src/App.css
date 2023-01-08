@@ -56,13 +56,13 @@
     font-size: 18px;
 }
 .principal {
-    background-color: var(--primary-color);
+    background-color: var(--primary-color) !important;
 }
 .danger {
-    background-color: var(--red-color);
+    background-color: var(--red-color) !important;
 }
 .warning {
-    background-color: var(--orange-color);
+    background-color: var(--orange-color) !important;
 }
 .icon-black {
     color: black;

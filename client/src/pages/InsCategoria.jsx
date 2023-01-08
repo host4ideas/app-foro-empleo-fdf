@@ -26,28 +26,22 @@ function InsCategoria() {
         });
     }
 
-    function handleInputChangeN(e) {
-        setNombre(e.target.value);
-    }
-
-    function handleInputChangeT(e) {
-        setTiempo(e.target.value);
-    }
-
-    function handleClick(e) {
-        e.preventDefault();
-
+    function createCategoria() {
         if (adminSocket && nombre && nombre !== "" && tiempo && tiempo > 0) {
             adminSocket.emit(
                 "create categoria",
-                { categoria: nombre, duracion: tiempo },
+                {
+                    categoria: nombre,
+                    duracion: tiempo,
+                    idCategoria: 0,
+                },
                 (result) => {
                     if (result) {
                         // Notificacion acierto
                         // Recargamos las categorias
-                        adminSocket.emit("create categoria", (categorias) => {
-                            setCategorias(categorias);
-                        });
+                        getListaCategorias();
+                        setNombre("");
+                        setTiempo("");
                     } else {
                         // Notificacion error
                     }
@@ -56,14 +50,54 @@ function InsCategoria() {
         }
     }
 
-    function deleteCategoria(id) {}
+    function deleteCategoria(id) {
+        adminSocket.emit("delete categoria", id, (result) => {
+            if (result) {
+                //NOTIFICACION CORRECTO
+                getListaCategorias();
+            } else {
+                //NOTIFICACION ERROR
+            }
+        });
+    }
 
     function updateCategoria() {
+        const uCategoria = {
+            categoria: nombre,
+            duracion: tiempo,
+            idCategoria: categoria.idCategoria,
+        };
+
+        adminSocket.emit("update categoria", uCategoria, (result) => {
+            if (result) {
+                //NOTIFICACION CORRECTO
+                getListaCategorias();
+                setNombre("");
+                setTiempo("");
+            } else {
+                //NOTIFICACION ERROR
+            }
+        });
         setEdit(false);
     }
 
     function handleUseCategory() {
         console.timeLog("clicked");
+    }
+
+    function handleInputChangeN(e) {
+        setNombre(e.target.value.toUpperCase());
+    }
+
+    function handleInputChangeT(e) {
+        setTiempo(e.target.value.toUpperCase());
+    }
+
+    function handleUpdate(categoria) {
+        setEdit(true);
+        setCategoria(categoria);
+        setNombre(categoria.categoria);
+        setTiempo(categoria.duracion);
     }
 
     useEffect(() => {
@@ -101,9 +135,9 @@ function InsCategoria() {
                         <input
                             type="text"
                             required
-                            value={!edit ? nombre : categoria.categoria}
+                            value={nombre}
                             onChange={handleInputChangeN}
-                            autocomplete="off"
+                            autoComplete="off"
                             placeholder="Nombre"
                         />
                     </div>
@@ -111,9 +145,9 @@ function InsCategoria() {
                         <input
                             type="number"
                             required
-                            value={!edit ? tiempo : categoria.duracion}
+                            value={tiempo}
                             onChange={handleInputChangeT}
-                            autocomplete="off"
+                            autoComplete="off"
                             placeholder="Duración (min)"
                             min={1}
                         />
@@ -131,13 +165,13 @@ function InsCategoria() {
                         </button>
                     </div>
                 ) : (
-                    <div className="icon-container principal add">
-                        <FaPlus
-                            className="icon"
-                            onClick={() => {
-                                console.log("generar otra categoria");
-                            }}
-                        />
+                    <div
+                        onClick={() => {
+                            createCategoria();
+                        }}
+                        className="icon-container principal add"
+                    >
+                        <FaPlus className="icon" />
                     </div>
                 )}
             </div>
@@ -165,8 +199,7 @@ function InsCategoria() {
                                         <button
                                             className="icon-container warning"
                                             onClick={() => {
-                                                setEdit(true);
-                                                setCategoria(categoria);
+                                                handleUpdate(categoria);
                                             }}
                                         >
                                             <FaEdit className="icon" />

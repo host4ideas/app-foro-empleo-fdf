@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
 // Components
-import AddButton from "./AddButton";
+
+import { FaTrash, FaPlus } from "react-icons/fa";
+
 // Styles
 import style from "./InsTiempoEmpresaSala.module.css";
 
@@ -299,7 +301,7 @@ function InsTiempoEmpresaSala(props) {
     return (
         <div>
             <table
-                className="table table-bordered table-striped text-center"
+                className={`table table-bordered table-striped text-center ${style.table}`}
                 id="timer-table"
             >
                 <thead className={style.tableHead}>
@@ -308,7 +310,7 @@ function InsTiempoEmpresaSala(props) {
                         <th>CATEGORIA</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className={style.tableBody}>
                     <tr>
                         <td className="fw-bold">{tiempoInicial}</td>
                         <td>
@@ -318,7 +320,10 @@ function InsTiempoEmpresaSala(props) {
                             >
                                 {categorias.map((categoria, index) => {
                                     return (
-                                        <option value={categoria.duracion}>
+                                        <option
+                                            value={categoria.duracion}
+                                            key={categoria.categoria + index}
+                                        >
                                             {categoria.categoria +
                                                 " - " +
                                                 categoria.duracion +
@@ -329,26 +334,31 @@ function InsTiempoEmpresaSala(props) {
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <td
+                            onClick={eliminaFila}
+                            className={`icon-container danger ${style.tableDeleteButton}`}
+                        >
+                            <FaTrash className="icon" />
+                        </td>
+                        <td
+                            onClick={aniadeFilaTimer}
+                            className={`icon-container principal ${style.tableAddButton}`}
+                        >
+                            <FaPlus className="icon" />
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <div className={style.tableButtons}>
-                <button onClick={eliminaFila}>Eliminar Ultimo Tiempo</button>
-                <AddButton clickHandler={aniadeFilaTimer} />
-            </div>
 
-            <div>
-                <h6>Salas</h6>
+            <h6 className="main-card-title main-card-title-left mt-4">
+                ORGANIZACIÓN EMPRESAS
+            </h6>
+            <div className={style.containerSelect}>
                 <select
-                    className="my-3"
+                    className={style.select}
                     id="select-room"
                     onChange={() => cambiaTablaSala()}
-                    style={{
-                        width: "100%",
-                        textAlign: "center",
-                        outline: "none",
-                        padding: "7px",
-                        borderRadius: "100px",
-                    }}
                 >
                     {salas.map((sala, index) => {
                         return (

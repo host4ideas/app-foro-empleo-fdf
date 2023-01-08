@@ -1,20 +1,25 @@
 import React from "react";
+import style from "./InsTiempoEmpresaSala.module.css";
 
 export default function EmpresaSala({ sala, tiempoInicial, empresas }) {
     return (
-        <div className={"div-table-room room-" + sala.nombreSala}>
-            <table className={"tabla-tes"} width="100%">
-                <thead>
+        <div className={"mt-2 div-table-room room-" + sala.nombreSala}>
+            <table
+                className={`table table-bordered table-striped text-center ${style.table}`}
+            >
+                <thead className={style.tableHead}>
                     <tr>
                         <th>INICIO</th>
-                        <th>EMPRESA {sala.nombreSala}</th>
+                        <th>EMPRESA</th>
                     </tr>
                 </thead>
-                <tbody className={"tbody-" + sala.nombreSala}>
+                <tbody
+                    className={`tbody-${sala.nombreSala} ${style.tableBody}`}
+                >
                     <tr>
-                        <td className="hora">{tiempoInicial}</td>
+                        <td className="fw-bold">{tiempoInicial}</td>
                         <td>
-                            <select className="select-room">
+                            <select className={style.tableSelect}>
                                 {empresas.map((empresa, index) => {
                                     return (
                                         <option
