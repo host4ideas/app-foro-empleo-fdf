@@ -5,6 +5,7 @@ import { FaTrash, FaTimes, FaPlus, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "./InsStyles.css";
 import { INSEVENTO, PRIVATE } from "../utils/paths";
+import { toast } from "react-toastify";
 
 function InsEmpresa() {
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
@@ -29,10 +30,32 @@ function InsEmpresa() {
             adminSocket.emit("create empresa", empresa, (result) => {
                 if (result) {
                     //Notificacion acierto
+                    toast.success("Empresa añadida correctamente", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        newestOnTop: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
                     getListaEmpresas();
                     setEmpresa("");
                 } else {
                     //Notificacion error
+                    toast.error("Hubo un error al intentar añadir la empresa", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        newestOnTop: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
                 }
             });
         }
@@ -42,9 +65,31 @@ function InsEmpresa() {
         adminSocket.emit("delete empresa", id, (result) => {
             if (result) {
                 //Notificacion acierto
+                toast.success("Empresa eliminada correctamente", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    newestOnTop: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
                 getListaEmpresas();
             } else {
                 //Notificacion error
+                toast.warn("Hubo un error al intentar eliminar la empresa", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    newestOnTop: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             }
         });
     }

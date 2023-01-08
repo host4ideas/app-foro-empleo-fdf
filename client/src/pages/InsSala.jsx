@@ -6,6 +6,7 @@ import "./InsStyles.css";
 import { INSEVENTO, PRIVATE } from "../utils/paths";
 
 import Loading from "../components/Loading";
+import { toast } from "react-toastify";
 
 function InsSala() {
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
@@ -33,10 +34,32 @@ function InsSala() {
             adminSocket.emit("create sala", sala, (result) => {
                 if (result) {
                     //Notificacion acierto
+                    toast.success("Sala añadida correctamente", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        newestOnTop: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
                     getListaSalas();
                     setSala("");
                 } else {
                     //Notificacion error
+                    toast.error("Hubo un error al intentar añadir una sala", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        newestOnTop: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
                     console.log("error");
                 }
             });
@@ -47,9 +70,31 @@ function InsSala() {
         adminSocket.emit("delete sala", id, (result) => {
             if (result) {
                 //Notificacion acierto
+                toast.success("Sala eliminada correctamente", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    newestOnTop: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
                 getListaSalas();
             } else {
                 //Notificacion error
+                toast.error("Hubo un error al intentar eliminar una sala", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    newestOnTop: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
             }
         });
     }
