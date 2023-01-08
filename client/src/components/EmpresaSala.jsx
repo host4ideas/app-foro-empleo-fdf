@@ -36,12 +36,12 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
         tiemposEmpresasSalas,
     ]);
 
-    useEffect(() => {
+    /* useEffect(() => {
         setUpdatedEvento((updatedEvento) => ({
             ...updatedEvento,
             tiemposEmpresasSalas: tiemposEmpresasSalasBySala,
         }));
-    }, [tiemposEmpresasSalasBySala, setUpdatedEvento]);
+    }, [tiemposEmpresasSalasBySala, setUpdatedEvento]); */
 
     return (
         <div className={"mt-2 div-table-room room-" + sala.nombreSala}>
@@ -65,7 +65,7 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
                         .map((tiempoEvento, index) => (
                         <tr key={index}>
                             <td className="hora fw-bold">
-                                {new Date(tiempoEvento.inicioTimer)
+                                {new Date(primerTiempo)
                                     .toTimeString()
                                     .substring(0, 5)}
                             </td>

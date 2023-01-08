@@ -56,7 +56,7 @@ function InsEvento() {
                 fechaInicioInput[0],
                 parseInt(fechaInicioInput[1]) - 1,
                 fechaInicioInput[2],
-                parseInt(horaInicioInput[0]) + 1,
+                parseInt(horaInicioInput[0]),
                 horaInicioInput[1]
             ),
         };
@@ -246,7 +246,9 @@ function InsEvento() {
                 eventoSelected.inicioEvento
             );
             timePicker.current.valueAsDate = new Date(
-                eventoSelected.inicioEvento
+                new Date(eventoSelected.inicioEvento).setHours(
+                    new Date(eventoSelected.inicioEvento).getHours() + 1
+                )
             );
         }
     }, [
@@ -259,8 +261,20 @@ function InsEvento() {
 
     // Creation of updatedEvento and originalEvento
     useEffect(() => {
-        setUpdatedEvento((updatedEvento) => ({
-            ...updatedEvento,
+        setUpdatedEvento({
+            temporizadores: tiemposEventosFiltered.current,
+            tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
+                (tiempoEmpresaSala) =>
+                    tiempoEmpresaSala.idEvento === eventoSelected.idEvento
+            ),
+            evento: {
+                inicioEvento: eventoSelected.inicioEvento,
+                nombreEvento: nombreEvento,
+                finEvento: eventoSelected.finEvento,
+                idEvento: eventoSelected.idEvento,
+            },
+        });
+        setOriginalEvento({
             temporizadores: tiemposEventosFiltered.current,
             tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
                 (tiempoEmpresaSala) =>
@@ -272,27 +286,14 @@ function InsEvento() {
                 finEvento: eventoSelected.finEvento,
                 idEvento: eventoSelected.idEvento,
             },
-        }));
-        setOriginalEvento((originalEvento) => ({
-            ...originalEvento,
-            temporizadores: tiemposEventosFiltered.current,
-            tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
-                (tiempoEmpresaSala) =>
-                    tiempoEmpresaSala.idEvento === eventoSelected.idEvento
-            ),
-            evento: {
-                inicioEvento: eventoSelected.inicioEvento,
-                nombreEvento: eventoSelected.nombreEvento,
-                finEvento: eventoSelected.finEvento,
-                idEvento: eventoSelected.idEvento,
-            },
-        }));
+        });
     }, [
         eventoSelected,
         setOriginalEvento,
         setUpdatedEvento,
         tiemposEmpresasSalas,
         tiemposEventosFiltered,
+        nombreEvento
     ]);
 
     // Update updatedEvento
@@ -307,6 +308,7 @@ function InsEvento() {
     }, [setUpdatedEvento, nombreEvento, fechaInicial]);
 
     useEffect(() => {
+        setNombreEvento(eventoSelected.nombreEvento)
         const initialTime = new Date(eventoSelected.inicioEvento);
 
         let fechaInicioInput = initialTime
@@ -324,13 +326,13 @@ function InsEvento() {
                 fechaInicioInput[0],
                 parseInt(fechaInicioInput[1]) - 1,
                 fechaInicioInput[2],
-                horaInicioInput[0],
+                parseInt(horaInicioInput[0]) + 1,
                 horaInicioInput[1]
             ),
         };
 
         setFechas(fechaState);
-    }, [eventoSelected.inicioEvento]);
+    }, [eventoSelected, setNombreEvento]);
 
     return (
         <div className="container">
@@ -394,6 +396,7 @@ function InsEvento() {
                         type="text"
                         required
                         autoComplete="off"
+                        defaultValue={eventoSelected.nombreEvento}
                         onChange={(e) => {
                             setNombreEvento(e.target.value);
                         }}
