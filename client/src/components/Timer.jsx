@@ -21,7 +21,7 @@ export default function Timer(props) {
 
     var prueba = 0;
 
-    const [actualTime, setActualTime] = useState("");
+    const [clockTime, setClockTime] = useState("");
     const [play, setPlay] = useState(false);
     // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
@@ -76,28 +76,7 @@ export default function Timer(props) {
 
             if (ahora - inicio >= 0) {
                 // Remove other eventos
-                const arrayFiltered = tiemposEventos.filter(
-                    (tiempoEvento) =>
-                        tiempoEvento.idEvento === eventoSelected.idEvento
-                );
-
-                // Remove duplicated timers
-                const timers = arrayFiltered.reduce((acc, current) => {
-                    const x = acc.find(
-                        (item) => item.idTimer === current.idTimer
-                    );
-                    if (!x) {
-                        return acc.concat([current]);
-                    } else {
-                        return acc;
-                    }
-                }, []);
-
-                const filteredArrayByIdTimer = timers.sort(
-                    (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
-                );
-
-                calculaDuracion(ahora, filteredArrayByIdTimer);
+                calculaDuracion(ahora, tiemposEventos);
             } else {
                 console.log("Aun no empezo");
             }
@@ -105,19 +84,19 @@ export default function Timer(props) {
     };
 
     const calculaDuracion = (fechaactual, timers) => {
+
         var indiceTiempoEvento = 0;
         var finalizado = false;
         var duracionSeg = 0;
-
         while (!finalizado) {
-            var timerSeleccionado = timers[indiceTiempoEvento];
-
+            var timerSeleccionado = new Date(timers[indiceTiempoEvento].inicioTimer);
             if (timers.length > indiceTiempoEvento) {
                 var tiempoSig = Math.trunc(
-                    timerSeleccionado.horaInicio.getTime() / 1000 +
+                    timerSeleccionado.getTime() / 1000 +
                         timerSeleccionado.duracion * 60
                 );
 
+                var tiempoSig = Math.trunc(timerSeleccionado.getTime()/1000 + timers[indiceTiempoEvento].duracion*60)
                 if (fechaactual >= tiempoSig) {
                     indiceTiempoEvento++;
                 } else {
@@ -130,7 +109,6 @@ export default function Timer(props) {
                 finalizado = true;
             }
         }
-
         preparaTimer(duracionSeg);
     };
 
@@ -153,6 +131,7 @@ export default function Timer(props) {
         const actualClockTime = setInterval(() => {
             showClockTime();
             compruebaInicio();
+            prueba++
         }, 1000);
         return () => {
             // Return callback to run on unmount (stop clock)
@@ -160,7 +139,7 @@ export default function Timer(props) {
         };
     }, []);
 
-    // Client timer functionality
+    /* // Client timer functionality
     useEffect(() => {
         if (clientSocket) {
             // Initialize timer (check if the server's timer is running)
