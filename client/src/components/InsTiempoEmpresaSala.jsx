@@ -5,6 +5,7 @@ import { useAuthContext } from "../contexts/authContext";
 // Components
 // Styles
 import style from "./InsTiempoEmpresaSala.module.css";
+import { useEventoContext } from "../contexts/eventoContext";
 import EmpresaSala from "./EmpresaSala";
 // React notifications
 import { toast } from "react-toastify";
@@ -16,93 +17,20 @@ function InsTiempoEmpresaSala({
 }) {
     const { adminSocket } = useAuthContext();
 
+    const {
+        tiemposEventos,
+        eventoSelected,
+        updatedEvento,
+        originalEvento,
+        setUpdatedEvento,
+        setOriginalEvento,
+        tiemposEmpresasSalas,
+    } = useEventoContext();
+
     const [empresas, setEmpresas] = useState([]);
     const [salas, setSalas] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [tiempoInicial, setTiempoInicial] = useState([]);
-
-    //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
-
-    const ajustaTiempo = useCallback(() => {
-        if (typeof tiempoInicial === "string") {
-            var tbodyTimer =
-                document.getElementById("timer-table").childNodes[1].childNodes;
-            var hora = tiempoInicial.split(":");
-            hora[0] = parseInt(hora[0]);
-            hora[1] = parseInt(hora[1]);
-            var arrayHoras = [];
-
-            if (tbodyTimer.length > 0) {
-                //CAMBIO DE HORAS EN LA TABLA DE TIMER
-
-                for (let i = 0; i < tbodyTimer.length; i++) {
-                    if (
-                        tbodyTimer[i].childNodes[1].childNodes[0]
-                            .selectedOptions[0]
-                    ) {
-                        var horaCelda = tbodyTimer[i].childNodes[0];
-                        var duracion = parseInt(
-                            tbodyTimer[i].childNodes[1].childNodes[0]
-                                .selectedOptions[0].value
-                        );
-
-                        const tiempoMS = duracion * 60 * 1000;
-                        new Date(horaCelda.value + tiempoMS).getMinutes();
-                        new Date(horaCelda.value + tiempoMS).getHours();
-
-                        if (i === 0) {
-                            hora[1] = hora[1] + duracion;
-                        } else {
-                            if (hora[1] < 10 && hora[0] < 10) {
-                                horaCelda.innerText =
-                                    "0" + hora[0] + ":0" + hora[1];
-                                arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
-                            } else if (hora[1] < 10 && hora[0] >= 10) {
-                                horaCelda.innerText = hora[0] + ":0" + hora[1];
-                                arrayHoras.push(hora[0] + ":0" + hora[1]);
-                            } else if (hora[1] >= 10 && hora[0] < 10) {
-                                horaCelda.innerText =
-                                    "0" + hora[0] + ":" + hora[1];
-                                arrayHoras.push("0" + hora[0] + ":" + hora[1]);
-                            } else {
-                                horaCelda.innerText = hora[0] + ":" + hora[1];
-                                arrayHoras.push(hora[0] + ":" + hora[1]);
-                            }
-
-                            hora[1] = hora[1] + duracion;
-                        }
-
-                        if (hora[1] >= 60) {
-                            hora[0]++;
-                            hora[1] = hora[1] - 60;
-                        }
-
-                        if (hora[0] >= 24) {
-                            hora[0] = hora[0] - 24;
-                        }
-                    }
-
-                    //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
-
-                    var tablasSala =
-                        document.getElementsByClassName("div-table-room");
-
-                    for (let i = 0; i < tablasSala.length; i++) {
-                        var tbodySala =
-                            tablasSala[i].childNodes[0].childNodes[1]
-                                .childNodes;
-
-                        for (var j = 0; j < tbodySala.length; j++) {
-                            if (j !== 0) {
-                                tbodySala[j].childNodes[0].innerText =
-                                    arrayHoras[j - 1];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }, [tiempoInicial]);
 
     //FUNCION PARA CAMBIAR LA TABLA DE CADA SALA
 
@@ -207,11 +135,28 @@ function InsTiempoEmpresaSala({
                 theme: "dark",
             });
         }
+
     }
 
     //FUNCION PARA AÑADIR FILA DE LA HORA
     function aniadeFilaSalas(hora) {
+
+        var splitHora = hora.split(":");
         var tablasSala = document.getElementsByClassName("div-table-room");
+
+        setUpdatedEvento({...updatedEvento,temporizadores:
+            [...updatedEvento.temporizadores,{
+            idTemporizador: null,
+            inicioTimer: new Date(Math.trunc(new Date(primerTiempo).setHours(parseInt(splitHora[0])+1,parseInt(splitHora[1])))).toISOString(),
+            idCategoria: categorias[0].idCategoria,
+            pausa: true
+        }],
+
+        
+
+        });
+        
+        console.log(updatedEvento);
 
         for (var i = 0; i < tablasSala.length; i++) {
             var tbody = tablasSala[i].childNodes[0].childNodes[1];
@@ -239,6 +184,102 @@ function InsTiempoEmpresaSala({
             fila.append(celdaTiempo);
             fila.append(celdaSelect);
             tbody.append(fila);
+
+            setUpdatedEvento({...updatedEvento,tiemposEmpresasSalas:
+                [...updatedEvento.tiemposEmpresasSalas,{
+                id: null,
+                idTimer: null,
+                idEmpresa: empresas[0].idEmpresa,
+                idSala: salas[i].idSala,
+                idEvento: eventoSelected.idEvento
+            }],
+    
+            })
+
+            
+        }
+    }
+
+    //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
+
+    function ajustaTiempo() {
+
+        if (typeof tiempoInicial === "string") {
+            var tbodyTimer = document.getElementById("timer-table").childNodes[1].childNodes;
+            var hora = tiempoInicial.split(":");
+            hora[0] = parseInt(hora[0]);
+            hora[1] = parseInt(hora[1]);
+            var arrayHoras = [];
+
+            if (tbodyTimer.length > 0) {
+                //CAMBIO DE HORAS EN LA TABLA DE TIMER
+
+                for (let i = 0; i < tbodyTimer.length; i++) {
+                    if (
+                        tbodyTimer[i].childNodes[1].childNodes[0]
+                            .selectedOptions[0]
+                    ) {
+                        var horaCelda = tbodyTimer[i].childNodes[0];
+                        var duracion = parseInt(
+                            tbodyTimer[i].childNodes[1].childNodes[0]
+                                .selectedOptions[0].value
+                        );
+
+                        const tiempoMS = duracion * 60 * 1000;
+                        new Date(horaCelda.value + tiempoMS).getMinutes();
+                        new Date(horaCelda.value + tiempoMS).getHours();
+
+                        if (i === 0) {
+                            hora[1] = hora[1] + duracion;
+                        } else {
+                            if (hora[1] < 10 && hora[0] < 10) {
+                                horaCelda.innerText =
+                                    "0" + hora[0] + ":0" + hora[1];
+                                arrayHoras.push("0" + hora[0] + ":0" + hora[1]);
+                            } else if (hora[1] < 10 && hora[0] >= 10) {
+                                horaCelda.innerText = hora[0] + ":0" + hora[1];
+                                arrayHoras.push(hora[0] + ":0" + hora[1]);
+                            } else if (hora[1] >= 10 && hora[0] < 10) {
+                                horaCelda.innerText =
+                                    "0" + hora[0] + ":" + hora[1];
+                                arrayHoras.push("0" + hora[0] + ":" + hora[1]);
+                            } else {
+                                horaCelda.innerText = hora[0] + ":" + hora[1];
+                                arrayHoras.push(hora[0] + ":" + hora[1]);
+                            }
+
+                            hora[1] = hora[1] + duracion;
+                        }
+
+                        if (hora[1] >= 60) {
+                            hora[0]++;
+                            hora[1] = hora[1] - 60;
+                        }
+
+                        if (hora[0] >= 24) {
+                            hora[0] = hora[0] - 24;
+                        }
+                    }
+
+                    //CAMBIO DE HORAS EN LA TABLAS DE CADA SALA
+
+                    var tablasSala =
+                        document.getElementsByClassName("div-table-room");
+
+                    for (let i = 0; i < tablasSala.length; i++) {
+                        var tbodySala =
+                            tablasSala[i].childNodes[0].childNodes[1]
+                                .childNodes;
+
+                        for (var j = 0; j < tbodySala.length; j++) {
+                            if (j !== 0) {
+                                tbodySala[j].childNodes[0].innerText =
+                                    arrayHoras[j - 1];
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -265,6 +306,7 @@ function InsTiempoEmpresaSala({
                     tablasSala[i].childNodes[0].childNodes[1].childNodes;
                 tbodySala[tbodySala.length - 1].remove();
             }
+
             // }
         } else {
             toast.warn("Debe de haber al menos un timer", {
@@ -308,6 +350,10 @@ function InsTiempoEmpresaSala({
         }
     }, [adminSocket]);
 
+    useEffect(() => {
+        console.log(updatedEvento,originalEvento)
+    },[updatedEvento,originalEvento])
+
     //USE EFFECTS PARA CADA ELEMENTO NECESARIO
 
     useEffect(() => {
@@ -348,6 +394,21 @@ function InsTiempoEmpresaSala({
             ajustaTiempo();
         }
     }, [primerTiempo, ajustaTiempo]);
+
+    /* setUpdatedEvento((updatedEvento) => ({
+        ...updatedEvento,
+        temporizadores: tiemposEventosFiltered.current,
+        tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
+            (tiempoEmpresaSala) =>
+                tiempoEmpresaSala.idEvento === eventoSelected.idEvento
+        ),
+        evento: {
+            inicioEvento: eventoSelected.inicioEvento,
+            nombreEvento: eventoSelected.nombreEvento,
+            finEvento: eventoSelected.finEvento,
+            idEvento: eventoSelected.idEvento,
+        },
+    })); */
 
     return (
         <>

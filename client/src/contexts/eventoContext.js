@@ -43,6 +43,7 @@ export default function EventoContextProvider({ children }) {
         if (adminSocket && eventoSelected) {
             adminSocket.emit("timereventos", (tEventos) => {
                 if (tEventos) {
+                    setTiemposEmpresasSalas(tEventos)
                     const arrayFiltered = tEventos.filter(
                         (tiempoEvento) =>
                             tiempoEvento.idEvento === eventoSelected.idEvento
