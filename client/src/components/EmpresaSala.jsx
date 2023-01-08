@@ -1,3 +1,4 @@
+import style from "./InsTiempoEmpresaSala.module.css";
 import React, { useEffect, useState } from "react";
 import { useEventoContext } from "../contexts/eventoContext";
 
@@ -6,11 +7,8 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
     const [tiemposEmpresasSalasBySala, setTiemposEmpresasSalasBySala] =
         useState([]);
 
-    const {
-        tiemposEmpresasSalas,
-        setUpdatedEvento,
-        originalEvento,
-    } = useEventoContext();
+    const { tiemposEmpresasSalas, setUpdatedEvento, originalEvento } =
+        useEventoContext();
 
     useEffect(() => {
         const arrayFiltered = originalEvento.tiemposEmpresasSalas.filter(
@@ -28,7 +26,11 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
                     tiempoEvento.idSala === tiemposEventosBySala.idSala
             )
         );
-    }, [originalEvento.tiemposEmpresasSalas, tiemposEventosBySala.idSala, tiemposEmpresasSalas]);
+    }, [
+        originalEvento.tiemposEmpresasSalas,
+        tiemposEventosBySala.idSala,
+        tiemposEmpresasSalas,
+    ]);
 
     useEffect(() => {
         setUpdatedEvento((updatedEvento) => ({
@@ -38,25 +40,25 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
     }, [tiemposEmpresasSalasBySala, setUpdatedEvento]);
 
     return (
-        <div className={"div-table-room room-" + sala.nombreSala}>
-            <table className={"tabla-tes"} width="100%">
-                <thead>
+        <div className={"mt-2 div-table-room room-" + sala.nombreSala}>
+            <table
+                className={`table table-bordered table-striped text-center ${style.table}`}
+            >
+                <thead className={style.tableHead}>
                     <tr>
                         <th>INICIO</th>
-                        <th>EMPRESA {sala.nombreSala}</th>
+                        <th>EMPRESA</th>
                     </tr>
                 </thead>
-                <tbody className={"tbody-" + sala.nombreSala}>
+                <tbody
+                    className={`tbody-${sala.nombreSala} ${style.tableBody}`}
+                >
                     {tiemposEventosBySala.map((tiempoEvento, index) => (
                         <tr key={index}>
-                            <td className="hora">
-                                {index === 0
-                                    ? primerTiempo
-                                          .toTimeString()
-                                          .substring(0, 5)
-                                    : new Date(tiempoEvento.inicioTimer)
-                                          .toTimeString()
-                                          .substring(0, 5)}
+                            <td className="hora fw-bold">
+                                {new Date(tiempoEvento.inicioTimer)
+                                    .toTimeString()
+                                    .substring(0, 5)}
                             </td>
                             <td>
                                 <select className="select-room">

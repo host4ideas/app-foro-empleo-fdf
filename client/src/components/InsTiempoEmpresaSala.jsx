@@ -3,9 +3,13 @@ import { useState, useEffect, useCallback } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
 // Components
-import EmpresaSala from "./EmpresaSala";
+
+import { FaTrash, FaPlus } from "react-icons/fa";
+
 // Styles
-import "./InsTiempoEmpresaSala.css";
+import style from "./InsTiempoEmpresaSala.module.css";
+
+import EmpresaSala from "./EmpresaSala";
 // React notifications
 import { toast } from "react-toastify";
 
@@ -120,7 +124,6 @@ function InsTiempoEmpresaSala({
     }, [salas]);
 
     //FUNCION PARA AÑADIR FILA AL TIMER
-
     function aniadeFilaTimer() {
         if (
             tiempoInicial !== "Invalid Date" &&
@@ -165,12 +168,13 @@ function InsTiempoEmpresaSala({
             var fila = document.createElement("tr");
 
             var celdaTiempo = document.createElement("td");
-            celdaTiempo.classList.add("hora");
+            celdaTiempo.classList.add("fw-bold");
             celdaTiempo.innerText = hora[0] + ":" + hora[1];
 
             var celdaSelect = document.createElement("td");
 
             var selector = document.createElement("select");
+            selector.classList.add(style.tableSelect);
             selector.classList.add("select-category");
             selector.addEventListener("change", ajustaTiempo);
 
@@ -346,11 +350,15 @@ function InsTiempoEmpresaSala({
 
     return (
         <>
-            <table className="tabla-tes" id="timer-table" width="100%">
+            <table
+                className={`table table-bordered table-striped text-center ${style.table}`}
+                id="timer-table"
+                width="100%"
+            >
                 <thead>
                     <tr>
-                        <th className="detail-card-title">INICIO</th>
-                        <th className="detail-card-title">CATEGORIA</th>
+                        <th>INICIO</th>
+                        <th>CATEGORIA</th>
                     </tr>
                 </thead>
                 <tbody>

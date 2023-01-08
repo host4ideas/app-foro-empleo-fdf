@@ -1,5 +1,5 @@
 .timer {
-    width: 60% !important;
+    width: 70% !important;
     margin: auto;
 
     border-radius: 5px;
@@ -7,7 +7,7 @@
     padding: 10px;
 }
 .timer h1 {
-    margin-top: 20px;
+    margin: 0px;
 }
 
 .timer-title {

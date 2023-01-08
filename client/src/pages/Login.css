@@ -6,7 +6,7 @@
     margin-bottom: 90px;
 }
 .container-form {
-    width: 85%;
+    width: 80%;
     height: 100px;
     margin-bottom: 90px;
 
@@ -28,6 +28,8 @@
     width: 90%;
     height: 100%;
     padding: 0px 0px 0px 20px;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
 }
 .form-input svg {
     width: 30px;
@@ -49,7 +51,7 @@
 .form-button {
     position: absolute;
     color: white;
-    left: 95%;
+    left: 93%;
     top: 31%;
 }
 

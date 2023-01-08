@@ -6,6 +6,7 @@ import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
 import BackButton from "../components/BackButton";
 // Styles
 import "./InsEvento.css";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 // Routes
 import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
@@ -328,8 +329,20 @@ function InsEvento() {
     }, [eventoSelected.inicioEvento]);
 
     return (
-        <div className="div-events text-center">
-            <div className="hour-zone text-center">
+        <div className="container">
+            <div className="d-flex justify-content-between">
+                <div>
+                    <Link to="/" className="icon-container principal">
+                        <FaArrowLeft className="icon" />
+                    </Link>
+                </div>
+                <div>
+                    <button className="icon-container working">
+                        <FaCheck className="icon" />
+                    </button>
+                </div>
+            </div>
+            <div className="container-card mb-3">
                 <div className="start-hour">
                     <h6 className="main-card-title my-2">Inicio</h6>
                     <input
