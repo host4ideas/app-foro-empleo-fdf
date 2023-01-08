@@ -16,6 +16,7 @@ import deepDiffMapper from "../lib/deepDiffMapper";
 function InsEvento() {
     const datePicker = useRef(null);
     const timePicker = useRef(null);
+    const tiemposEventosFiltered = useRef([]);
 
     const { adminSocket } = useAuthContext();
     const {
@@ -33,7 +34,6 @@ function InsEvento() {
     const [longSal, setLongSal] = useState(0);
     const [longCat, setLongCat] = useState(0);
 
-    const [tiemposEventosFiltered, setTiemposEventosFiltered] = useState([]);
     const [cleanedArrayTimers, setCleanedArrayTimers] = useState([]);
 
     const [tiempoInicial, setTiempoInicial] = useState();
@@ -232,7 +232,8 @@ function InsEvento() {
             const sortedCurrentEventTimers = currentEventTimers.sort(
                 (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
             );
-            const eventTimersFirstChanged = sortedCurrentEventTimers.filter(
+
+            tiemposEventosFiltered.current = sortedCurrentEventTimers.filter(
                 (tiempoEvento, index) => {
                     if (index === 0) {
                         tiempoEvento.inicioTimer = fechas.fechaInicio;
@@ -240,8 +241,6 @@ function InsEvento() {
                     return true;
                 }
             );
-
-            setTiemposEventosFiltered(eventTimersFirstChanged);
 
             datePicker.current.valueAsDate = new Date(
                 eventoSelected.inicioEvento
@@ -262,7 +261,7 @@ function InsEvento() {
     useEffect(() => {
         setUpdatedEvento((updatedEvento) => ({
             ...updatedEvento,
-            temporizadores: tiemposEventosFiltered,
+            temporizadores: tiemposEventosFiltered.current,
             tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
                 (tiempoEmpresaSala) =>
                     tiempoEmpresaSala.idEvento === eventoSelected.idEvento
@@ -276,7 +275,7 @@ function InsEvento() {
         }));
         setOriginalEvento((originalEvento) => ({
             ...originalEvento,
-            temporizadores: tiemposEventosFiltered,
+            temporizadores: tiemposEventosFiltered.current,
             tiemposEmpresasSalas: tiemposEmpresasSalas.filter(
                 (tiempoEmpresaSala) =>
                     tiempoEmpresaSala.idEvento === eventoSelected.idEvento
