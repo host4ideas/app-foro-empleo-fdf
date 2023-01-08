@@ -42,3 +42,56 @@ export function urlBase64ToUint8Array(base64String) {
 
     return outputArray;
 }
+
+// Notifications
+//payload  CONTENIDO
+//delay EL TIEMPO QUE TARDA EN MOSTRARSE,
+//ttl EL TIEMPO QUE ESTA VIVO,
+export function pushNotification(payload, delay, ttl) {
+    console.log(payload, delay, ttl);
+    navigator.serviceWorker.ready
+        .then((registration) => {
+            return registration.pushManager
+                .getSubscription()
+                .then(async (subscription) => {
+                    // registration part
+                    if (subscription) {
+                        return subscription;
+                    }
+
+                    const response = await fetch(
+                        "http://localhost:9000/vapidPublicKey"
+                    );
+                    const vapidPublicKey = await response.text();
+                    const convertedVapidKey =
+                        urlBase64ToUint8Array(vapidPublicKey);
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedVapidKey,
+                    });
+                });
+        })
+        .then((subscription) => {
+            // subscription part
+            fetch("http://localhost:9000/register", {
+                method: "post",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({ subscription }),
+            });
+
+            fetch("http://localhost:9000/sendNotification", {
+                method: "post",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                    subscription,
+                    payload,
+                    delay,
+                    ttl,
+                }),
+            });
+        });
+}

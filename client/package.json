@@ -36,7 +36,6 @@
         "Window.URL",
         "Streaming"
     ],
-
     "license": "MIT",
     "author": "@host4ideas, @fgarcia211, @DavidDominguez2",
     "eslintConfig": {
@@ -59,4 +58,3 @@
     },
     "proxy": "http://localhost:3001"
 }
-
