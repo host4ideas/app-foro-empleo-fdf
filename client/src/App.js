@@ -14,10 +14,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
     const notify = () => toast("Wow so easy!");
+
     return (
         <div className="App">
-            {/* <button onClick={notify}>Notify!</button>
-            <ToastContainer /> */}
+            {/* <button onClick={notify}>Notify!</button> */}
+            <ToastContainer />
             <InstallPWA />
             <AuthContextProvider>
                 <EventoContextProvider>

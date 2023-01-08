@@ -9,16 +9,131 @@ import { msToMinutesSecondsAndHours } from "../utils/utils";
 // Styles
 import "./timer.css";
 
-export default function Timer() {
-    const [timer, setTimer] = useState(0);
+export default function Timer(props) {
+    // Initial timer time set by the admin
+    const [initialTimerTime, setInitialTimerTime] = useState(0);
+    // Timer time
+    const [timer, setTimer] = useState("00:00");
+    // Clock time
+    const [actualClockTime, setActualClockTime] = useState("");
+    // Timer play state
+
+    var prueba = 0;
+
     const [actualTime, setActualTime] = useState("");
     const [play, setPlay] = useState(false);
+    // Auth context hook
     const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
 
     const synchronizeTimer = (time) => {
         timerCounter.stop();
         timerCounter.start(time);
     };
+
+    // Admin timer functionality
+    const startTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("resume timer");
+        }
+
+        timerCounter.start(10000);
+        setPlay(true);
+    };
+
+    const pauseTimer = () => {
+        if (adminSocket) {
+            adminSocket.emit("pause timer");
+        }
+        setPlay(false);
+    };
+
+    timerCounter.on("tick", () => {
+        setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
+    });
+
+    const showClockTime = () => {
+        let myDate = new Date();
+        let hours = myDate.getHours();
+        let minutes = myDate.getMinutes();
+        let seconds = myDate.getSeconds();
+        if (hours < 10) hours = 0 + hours;
+        if (minutes < 10) minutes = "0" + minutes;
+        if (seconds < 10) seconds = "0" + seconds;
+        setActualClockTime(hours + ":" + minutes + ":" + seconds);
+    };
+
+    const compruebaInicio = () => {
+        if (props.timerev[0] !== undefined) {
+            var ahora = Math.trunc(
+                new Date(2023, 0, 18, 8, 59, prueba).getTime() / 1000
+            );
+            /* var ahora = Math.trunc(new Date().getTime()/1000) */
+            var inicio = Math.trunc(
+                props.timerev[0].horaInicio.getTime() / 1000
+            );
+
+            if (ahora - inicio >= 0) {
+                calculaDuracion(ahora);
+            } else {
+                console.log("Aun no empezo");
+            }
+        }
+    };
+
+    const calculaDuracion = (fechaactual) => {
+        var indiceTiempoEvento = 0;
+        var finalizado = false;
+        var duracionSeg = 0;
+
+        while (!finalizado) {
+            var timerSeleccionado = props.timerev[indiceTiempoEvento];
+
+            if (props.timerev.length > indiceTiempoEvento) {
+                var tiempoSig = Math.trunc(
+                    timerSeleccionado.horaInicio.getTime() / 1000 +
+                        timerSeleccionado.duracion * 60
+                );
+
+                if (fechaactual >= tiempoSig) {
+                    indiceTiempoEvento++;
+                } else {
+                    duracionSeg = tiempoSig - fechaactual;
+                    finalizado = true;
+                }
+
+                props.metodoact(indiceTiempoEvento);
+            } else {
+                finalizado = true;
+            }
+        }
+
+        preparaTimer(duracionSeg);
+    };
+
+    const preparaTimer = (duracion) => {
+        var minutos = Math.trunc(duracion / 60);
+        if (minutos < 10) {
+            minutos = "0" + minutos;
+        }
+
+        var segundos = duracion % 60;
+        if (segundos < 10) {
+            segundos = "0" + segundos;
+        }
+
+        setTimer(minutos + ":" + segundos);
+    };
+
+    //HORA ACTUAL
+    useEffect(() => {
+        const actualClockTime = setInterval(() => {
+            showClockTime();
+        }, 1000);
+        return () => {
+            // Return callback to run on unmount (stop clock)
+            clearInterval(actualClockTime);
+        };
+    }, []);
 
     // Client timer functionality
     useEffect(() => {
@@ -49,53 +164,6 @@ export default function Timer() {
         }
     }, [clientSocket]);
 
-    // Admin timer functionality
-    const startTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("resume timer");
-        }
-
-        // timerCounter.start(10000);
-        setPlay(true);
-    };
-
-    const pauseTimer = () => {
-        if (adminSocket) {
-            adminSocket.emit("pause timer");
-        }
-        setPlay(false);
-    };
-
-    timerCounter.on("tick", () => {
-        console.log("test " + timerCounter.time);
-        setTimer(msToMinutesSecondsAndHours(timerCounter.time, "hh:mm:ss"));
-    });
-
-    //HORA ACTUAL
-    useEffect(() => {
-        const timer = setInterval(() => {
-            const timeActual = setInterval(() => {
-                showTime();
-            }, 1000);
-            return () => {
-                // Return callback to run on unmount.
-                clearInterval(timer);
-                clearInterval(timeActual);
-            };
-        });
-    }, []);
-
-    const showTime = () => {
-        var myDate = new Date();
-        var hours = myDate.getHours();
-        var minutes = myDate.getMinutes();
-        var seconds = myDate.getSeconds();
-        if (hours < 10) hours = 0 + hours;
-        if (minutes < 10) minutes = "0" + minutes;
-        if (seconds < 10) seconds = "0" + seconds;
-        setActualTime(hours + ":" + minutes + ":" + seconds);
-    };
-
     return (
         <div className="mt-4 ">
             <div className={`timer ${play ? "working" : "stop"}`}>
@@ -125,8 +193,8 @@ export default function Timer() {
                 <h1 className="timer-title">{timer}</h1>
             </div>
             <div className="col-md-6 offset-md-3">
-                {actualTime ? (
-                    <p className="fst-italic">{actualTime}</p>
+                {actualClockTime ? (
+                    <p className="fst-italic">{actualClockTime}</p>
                 ) : (
                     <p className="fst-italic">Loading...</p>
                 )}

@@ -1,6 +1,6 @@
 // React
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { FaArrowLeft, FaCheck } from "react-icons/fa";
 // Components
 import InsTiempoEmpresaSala from "../components/InsTiempoEmpresaSala";
@@ -9,14 +9,32 @@ import { INSCATEGORIA, INSEMPRESA, INSSALAS, PRIVATE } from "../utils/paths";
 import { useAuthContext } from "../contexts/authContext";
 
 function InsEvento() {
-    const { isAuthenticated, clientSocket, adminSocket } = useAuthContext();
-
+    const { adminSocket } = useAuthContext();
     const [fechas, setFechas] = useState({ fechaInicio: "" });
-    const [totalHora, setTotalHora] = useState("00:00");
-
     const [longEmp, setLongEmp] = useState(0);
     const [longSal, setLongSal] = useState(0);
     const [longCat, setLongCat] = useState(0);
+
+    function cambiaHoraTotal() {
+        var fechaInicioInput = document
+            .getElementById("fechaI")
+            .value.split("-", 3);
+        var horaInicioInput = document
+            .getElementById("horaI")
+            .value.split(":", 2);
+
+        var fechaState = {
+            fechaInicio: new Date(
+                fechaInicioInput[0],
+                fechaInicioInput[1],
+                fechaInicioInput[2],
+                horaInicioInput[0],
+                horaInicioInput[1]
+            ),
+        };
+
+        setFechas(fechaState);
+    }
 
     useEffect(() => {
         if (adminSocket) {
@@ -43,27 +61,6 @@ function InsEvento() {
             });
         }
     }, [adminSocket]);
-
-    function cambiaHoraTotal() {
-        var fechaInicioInput = document
-            .getElementById("fechaI")
-            .value.split("-", 3);
-        var horaInicioInput = document
-            .getElementById("horaI")
-            .value.split(":", 2);
-
-        var fechaState = {
-            fechaInicio: new Date(
-                fechaInicioInput[0],
-                fechaInicioInput[1],
-                fechaInicioInput[2],
-                horaInicioInput[0],
-                horaInicioInput[1]
-            ),
-        };
-
-        setFechas(fechaState);
-    }
 
     return (
         <div className="container">
@@ -129,6 +126,10 @@ function InsEvento() {
                     ORGANIZACIÓN TIMERS
                 </h6>
                 <InsTiempoEmpresaSala tiempoinicial={fechas.fechaInicio} />
+            </div>
+            <div>
+                {/* <BackButton path={"/"} /> */}
+                <button className="btn btn-primary">ACTUALIZAR</button>{" "}
             </div>
         </div>
     );

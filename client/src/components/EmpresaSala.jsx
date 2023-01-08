@@ -1,7 +1,24 @@
-import React from "react";
 import style from "./InsTiempoEmpresaSala.module.css";
+import React, { useEffect, useState } from "react";
 
-export default function EmpresaSala({ sala, tiempoInicial, empresas }) {
+export default function EmpresaSala({
+    sala,
+    empresas,
+    tiemposEventosFiltered,
+}) {
+    const [tiemposEventosBySala, setTiemposEventosBySala] = useState([]);
+
+    useEffect(() => {
+        const arrayFiltered = tiemposEventosFiltered.filter(
+            (tiempoEvento) =>
+                tiempoEvento.idSala === tiemposEventosBySala.idSala
+        );
+        arrayFiltered.sort(
+            (a, b) => new Date(a.inicioTimer) - new Date(b.inicioTimer)
+        );
+        setTiemposEventosBySala(arrayFiltered);
+    }, [tiemposEventosFiltered, tiemposEventosBySala.idSala]);
+
     return (
         <div className={"mt-2 div-table-room room-" + sala.nombreSala}>
             <table
@@ -16,23 +33,38 @@ export default function EmpresaSala({ sala, tiempoInicial, empresas }) {
                 <tbody
                     className={`tbody-${sala.nombreSala} ${style.tableBody}`}
                 >
-                    <tr>
-                        <td className="fw-bold">{tiempoInicial}</td>
-                        <td>
-                            <select className={style.tableSelect}>
-                                {empresas.map((empresa, index) => {
-                                    return (
-                                        <option
-                                            key={index}
-                                            value={empresa.idEmpresa}
-                                        >
-                                            {empresa.nombreEmpresa}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                        </td>
-                    </tr>
+                    {tiemposEventosFiltered
+                        .filter(
+                            (tiempoEvento) =>
+                                tiempoEvento.idSala === sala.idSala
+                        )
+                        .map((tiempoEvento, index) => (
+                            <tr key={index}>
+                                <td className="hora fw-bold">
+                                    {new Date(tiempoEvento.inicioTimer)
+                                        .toTimeString()
+                                        .substring(0, 5)}
+                                </td>
+                                <td>
+                                    <select className="select-room">
+                                        {empresas.map((empresa, index) => {
+                                            return (
+                                                <option
+                                                    key={index}
+                                                    value={empresa.idEmpresa}
+                                                    selected={
+                                                        tiempoEvento.idEmpresa ===
+                                                        empresa.idEmpresa
+                                                    }
+                                                >
+                                                    {empresa.nombreEmpresa}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>

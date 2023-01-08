@@ -12,24 +12,24 @@ export const EventoContext = createContext();
 export default function EventoContextProvider({ children }) {
     const [eventoSelected, setEventoSelected] = useState(null);
     const [newEvento, setNewEvento] = useState({});
+    const [tiemposEventos, setTiemposEventos] = useState([]);
 
     /**
-     * Checks if the user is logged by reaching the server, sets the isAuthenticated state
-     * accordingly {true | false}.
+     * Changes the actual selected event
      */
     const changeEvento = useCallback(
-        (newEvento) => {
-            setEventoSelected(newEvento);
+        (newEventSelected) => {
+            setEventoSelected(newEventSelected);
         },
         [setEventoSelected]
     );
 
     const addPropertiesEvento = useCallback(
         (newProperties) => {
-            const updatedEvento = { ...eventoSelected, newProperties };
+            const updatedEvento = { ...newEvento, newProperties };
             setNewEvento(updatedEvento);
         },
-        [setNewEvento, eventoSelected]
+        [setNewEvento, newEvento]
     );
 
     const checkNewEvento = useCallback(() => {
@@ -47,8 +47,17 @@ export default function EventoContextProvider({ children }) {
             changeEvento: changeEvento,
             addPropertiesEvento: addPropertiesEvento,
             checkNewEvento: checkNewEvento,
+            setTiemposEventos: setTiemposEventos,
+            tiemposEventos: tiemposEventos,
         }),
-        [eventoSelected, changeEvento, addPropertiesEvento, checkNewEvento]
+        [
+            eventoSelected,
+            changeEvento,
+            addPropertiesEvento,
+            checkNewEvento,
+            tiemposEventos,
+            setTiemposEventos,
+        ]
     );
 
     return (

@@ -70,18 +70,12 @@
 .main-card-title {
     font-size: 1rem;
     font-weight: 600;
-    font-family: "Space Mono", monospace;
-}
-.main-card-title-left {
-    text-align: start;
 }
 .detail-card-title {
     font-size: 0.8rem;
     font-weight: 600;
-    font-family: "Space Mono", monospace;
 }
 .card-content-text {
-    font-family: "Space Mono", monospace;
     font-weight: 300;
     font-size: 0.8rem;
 }

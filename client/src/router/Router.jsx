@@ -34,11 +34,11 @@ export default function Router() {
             <Routes>
                 <Route index element={<ActionsEvento />} />
                 <Route
-                    path={`${DETALLES_EVENTO}/:nombreevento`}
+                    path={`${DETALLES_EVENTO}/:idevento`}
                     element={<DetallesEvento />}
                 />
                 <Route
-                    path={`${DETALLES_SALA}/:nombre`}
+                    path={`${DETALLES_SALA}/:nombre/:idevento/:idsala`}
                     element={<DetallesSala />}
                 />
                 <Route
