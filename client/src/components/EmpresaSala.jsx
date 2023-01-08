@@ -61,7 +61,9 @@ export default function EmpresaSala({ sala, empresas, primerTiempo }) {
                                     .substring(0, 5)}
                             </td>
                             <td>
-                                <select className="select-room">
+                                <select
+                                    className={`select-room ${style.tableSelect}`}
+                                >
                                     {empresas.map((empresa, index) => {
                                         return (
                                             <option
