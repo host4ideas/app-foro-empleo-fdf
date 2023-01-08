@@ -215,12 +215,14 @@ function InsTiempoEmpresaSala({
 
             var celdaTiempo = document.createElement("td");
             celdaTiempo.classList.add("hora");
+
             celdaTiempo.innerText = hora;
 
             var celdaSelect = document.createElement("td");
 
             let selector = document.createElement("select");
             selector.classList.add("select-room");
+            selector.classList.add(style.tableSelect);
 
             empresas.forEach((empresa) => {
                 var opcion = document.createElement("option");
@@ -351,20 +353,20 @@ function InsTiempoEmpresaSala({
                 id="timer-table"
                 width="100%"
             >
-                <thead>
+                <thead className={style.tableHead}>
                     <tr>
                         <th>INICIO</th>
                         <th>CATEGORIA</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className={style.tableBody}>
                     {cleanedArrayTimers.map((tiempoEvento) => (
                         <tr>
-                            <td className="hora">{tiempoInicial}</td>
+                            <td className="hora fw-bold">{tiempoInicial}</td>
                             <td>
                                 <select
                                     onChange={ajustaTiempo}
-                                    className="select-category"
+                                    className={`select-category ${style.tableSelect}`}
                                 >
                                     {categorias.map((categoria, index) => {
                                         return (
@@ -409,9 +411,9 @@ function InsTiempoEmpresaSala({
                 </button>
             </div>
             <div className="mt-4">
-                <h6 className="text-center main-card-title">SALAS</h6>
+                <h6 className="main-card-title text-center">SALAS</h6>
                 <select
-                    className="form-control text-center rounded-0 border-bottom-0"
+                    className={style.select}
                     id="select-room"
                     onChange={() => cambiaTablaSala()}
                 >

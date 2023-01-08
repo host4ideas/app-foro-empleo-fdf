@@ -122,9 +122,12 @@ function InsEmpresa() {
                             })}
                         </div>
                         <div className="text-center">
-                            <button className="btn btn-success mt-2">
+                            <Link
+                                to={"/" + PRIVATE + "/" + INSEVENTO}
+                                className="btn btn-success mt-2"
+                            >
                                 Confirmar
-                            </button>
+                            </Link>
                         </div>
                     </>
                 )}
