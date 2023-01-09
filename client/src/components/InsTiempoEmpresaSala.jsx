@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 // Context
 import { useAuthContext } from "../contexts/authContext";
 // Components
@@ -108,7 +108,7 @@ function InsTiempoEmpresaSala({
 
             for (var i = 0; i < categorias.length; i++) {
                 var opcion = document.createElement("option");
-                opcion.value = categorias[i].duracion;
+                opcion.value = JSON.stringify(categorias[i]);
                 opcion.innerText =
                     categorias[i].categoria +
                     " - " +
@@ -135,27 +135,33 @@ function InsTiempoEmpresaSala({
                 theme: "dark",
             });
         }
-
     }
 
     //FUNCION PARA AÑADIR FILA DE LA HORA
     function aniadeFilaSalas(hora) {
-
         var splitHora = hora.split(":");
         var tablasSala = document.getElementsByClassName("div-table-room");
 
-        setUpdatedEvento({...updatedEvento,temporizadores:
-            [...updatedEvento.temporizadores,{
-            idTemporizador: null,
-            inicioTimer: new Date(Math.trunc(new Date(primerTiempo).setHours(parseInt(splitHora[0])+1,parseInt(splitHora[1])))).toISOString(),
-            idCategoria: categorias[0].idCategoria,
-            pausa: true
-        }],
-
-        
-
+        setUpdatedEvento({
+            ...updatedEvento,
+            temporizadores: [
+                ...updatedEvento.temporizadores,
+                {
+                    idTemporizador: null,
+                    inicioTimer: new Date(
+                        Math.trunc(
+                            new Date(primerTiempo).setHours(
+                                parseInt(splitHora[0]) + 1,
+                                parseInt(splitHora[1])
+                            )
+                        )
+                    ).toISOString(),
+                    idCategoria: categorias[0].idCategoria,
+                    pausa: true,
+                },
+            ],
         });
-        
+
         console.log(updatedEvento);
 
         for (var i = 0; i < tablasSala.length; i++) {
@@ -164,6 +170,7 @@ function InsTiempoEmpresaSala({
 
             var celdaTiempo = document.createElement("td");
             celdaTiempo.classList.add("hora");
+            celdaTiempo.classList.add("fw-bold");
 
             celdaTiempo.innerText = hora;
 
@@ -185,27 +192,43 @@ function InsTiempoEmpresaSala({
             fila.append(celdaSelect);
             tbody.append(fila);
 
-            setUpdatedEvento({...updatedEvento,tiemposEmpresasSalas:
-                [...updatedEvento.tiemposEmpresasSalas,{
-                id: null,
-                idTimer: null,
-                idEmpresa: empresas[0].idEmpresa,
-                idSala: salas[i].idSala,
-                idEvento: eventoSelected.idEvento
-            }],
-    
-            })
-
-            
+            setUpdatedEvento({
+                ...updatedEvento,
+                tiemposEmpresasSalas: [
+                    ...updatedEvento.tiemposEmpresasSalas,
+                    {
+                        id: null,
+                        idTimer: null,
+                        idEmpresa: empresas[0].idEmpresa,
+                        idSala: salas[i].idSala,
+                        idEvento: eventoSelected.idEvento,
+                    },
+                ],
+            });
         }
     }
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
 
-    function ajustaTiempo() {
+    const actualizarTimer = (tiempoEvento, index) => {
+        const select =
+            document.getElementsByClassName("select-category")[index];
 
+        const updatedArr = originalEvento.temporizadores.filter((timer) => {
+            if (timer.idTimer === tiempoEvento.idTimer) {
+                tiempoEvento.idCategoria = JSON.parse(select.value).idCategoria;
+            }
+            return true;
+        });
+        setUpdatedEvento(updatedArr);
+
+        
+    };
+
+    const ajustaTiempo = () => {
         if (typeof tiempoInicial === "string") {
-            var tbodyTimer = document.getElementById("timer-table").childNodes[1].childNodes;
+            var tbodyTimer =
+                document.getElementById("timer-table").childNodes[1].childNodes;
             var hora = tiempoInicial.split(":");
             hora[0] = parseInt(hora[0]);
             hora[1] = parseInt(hora[1]);
@@ -281,7 +304,7 @@ function InsTiempoEmpresaSala({
                 }
             }
         }
-    }
+    };
 
     function eliminaFila() {
         var tbodyTimer =
@@ -351,8 +374,8 @@ function InsTiempoEmpresaSala({
     }, [adminSocket]);
 
     useEffect(() => {
-        console.log(updatedEvento,originalEvento)
-    },[updatedEvento,originalEvento])
+        console.log(updatedEvento, originalEvento);
+    }, [updatedEvento, originalEvento]);
 
     //USE EFFECTS PARA CADA ELEMENTO NECESARIO
 
@@ -424,19 +447,24 @@ function InsTiempoEmpresaSala({
                     </tr>
                 </thead>
                 <tbody className={style.tableBody}>
-                    {cleanedArrayTimers.map((tiempoEvento) => (
+                    {cleanedArrayTimers.map((tiempoEvento, index) => (
                         <tr>
                             <td className="hora fw-bold">{tiempoInicial}</td>
                             <td>
                                 <select
-                                    onChange={ajustaTiempo}
+                                    onChange={() => {
+                                        actualizarTimer(tiempoEvento, index);
+                                        ajustaTiempo();
+                                    }}
                                     className={`select-category ${style.tableSelect}`}
                                 >
-                                    {categorias.map((categoria, index) => {
+                                    {categorias.map((categoria, index2) => {
                                         return (
                                             <option
-                                                key={index}
-                                                value={categoria.duracion}
+                                                key={index2}
+                                                value={JSON.stringify(
+                                                    categoria
+                                                )}
                                                 idCategoria={
                                                     categoria.idCategoria
                                                 }
