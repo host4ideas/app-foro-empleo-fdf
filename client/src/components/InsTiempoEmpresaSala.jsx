@@ -141,22 +141,10 @@ function InsTiempoEmpresaSala({
     //FUNCION PARA AÑADIR FILA DE LA HORA
     function aniadeFilaSalas(hora) {
 
+        var arrayPrueba = [];
+
         var splitHora = hora.split(":");
         var tablasSala = document.getElementsByClassName("div-table-room");
-
-        setUpdatedEvento({...updatedEvento,temporizadores:
-            [...updatedEvento.temporizadores,{
-            idTemporizador: null,
-            inicioTimer: new Date(Math.trunc(new Date(primerTiempo).setHours(parseInt(splitHora[0])+1,parseInt(splitHora[1])))).toISOString(),
-            idCategoria: categorias[0].idCategoria,
-            pausa: true
-        }],
-
-        
-
-        });
-        
-        console.log(updatedEvento);
 
         for (var i = 0; i < tablasSala.length; i++) {
             var tbody = tablasSala[i].childNodes[0].childNodes[1];
@@ -185,19 +173,27 @@ function InsTiempoEmpresaSala({
             fila.append(celdaSelect);
             tbody.append(fila);
 
-            setUpdatedEvento({...updatedEvento,tiemposEmpresasSalas:
-                [...updatedEvento.tiemposEmpresasSalas,{
+            arrayPrueba.push({
                 id: null,
                 idTimer: null,
                 idEmpresa: empresas[0].idEmpresa,
                 idSala: salas[i].idSala,
                 idEvento: eventoSelected.idEvento
-            }],
-    
-            })
+            });
 
-            
         }
+
+        setUpdatedEvento((updatedEvento) => ({
+            ...updatedEvento,
+            temporizadores: [...updatedEvento.temporizadores,{
+                idTemporizador: null,
+                inicioTimer: new Date(Math.trunc(new Date(primerTiempo).setHours(parseInt(splitHora[0])+1,parseInt(splitHora[1])))).toISOString(),
+                idCategoria: categorias[0].idCategoria,
+                pausa: true
+            }],
+            evento: {...updatedEvento.evento},
+            tiemposEmpresasSalas: [...updatedEvento.tiemposEmpresasSalas,...arrayPrueba],
+        }));
     }
 
     //FUNCION PARA AJUSTAR EL TIEMPO SI SE PRODUCE CAMBIO EN SELECT DE CATEGORIAS O EN HORA INICIAL
@@ -284,9 +280,10 @@ function InsTiempoEmpresaSala({
     }
 
     function eliminaFila() {
+
         var tbodyTimer =
             document.getElementById("timer-table").childNodes[1].childNodes;
-
+        
         if (tbodyTimer.length > 1) {
             // if (adminSocket) {
             //     adminSocket.emit(
@@ -320,6 +317,13 @@ function InsTiempoEmpresaSala({
                 theme: "dark",
             });
         }
+
+        setUpdatedEvento((updatedEvento) => ({
+            ...updatedEvento,
+            temporizadores: updatedEvento.temporizadores.splice(0,updatedEvento.temporizadores.length-1),
+            evento: {...updatedEvento.evento},
+            tiemposEmpresasSalas: updatedEvento.tiemposEmpresasSalas.splice(0,updatedEvento.tiemposEmpresasSalas.length-6),
+        }));
     }
 
     //USE EFFECT DE LOS SOCKETS
