@@ -27,13 +27,13 @@ export default function AuthContextProvider({ children }) {
         if (clientSocket) {
             clientSocket.disconnect();
         }
-        await axios.post("/logout");
+        await axios.post("http://localhost:3001/logout");
         setIsAuthenticated(false);
     }, [adminSocket, clientSocket]);
 
     const getSocketSession = () => {
         return new Promise((resolve) => {
-            const socketAdmin = io("/admin");
+            const socketAdmin = io("http://localhost:3001/admin");
 
             socketAdmin.on("connect", () => {
                 // console.log("test")
@@ -53,13 +53,14 @@ export default function AuthContextProvider({ children }) {
      */
     const checkLoggedUser = useCallback(() => {
         return axios
-            .get("/check-user")
+            .get("http://localhost:3001/check-user")
             .then((response) => {
                 console.log("user authenticated: " + response.data);
-                getSocketSession().then((socketAdmin) => {
-                    setAdminSocket(socketAdmin);
-                    setIsAuthenticated(response.data);
-                });
+                // getSocketSession().then((socketAdmin) => {
+                //     setAdminSocket(socketAdmin);
+                //     setIsAuthenticated(response.data);
+                // });
+                setIsAuthenticated(response.data);
             })
             .catch((error) => {
                 console.warn(error);
@@ -76,28 +77,29 @@ export default function AuthContextProvider({ children }) {
         const params = new URLSearchParams();
         params.append("username", username);
         params.append("password", password);
+        setIsAuthenticated(true);
 
-        try {
-            await axios.post("/login", params);
-            let count = 0;
+        // try {
+        //     await axios.post("http://localhost:3001/login", params);
+        //     let count = 0;
 
-            while (count < 6) {
-                const socketAdmin = await getSocketSession(count);
-                if (socketAdmin) {
-                    setAdminSocket(socketAdmin);
-                    setIsAuthenticated(true);
-                    break;
-                }
-                if (count === 5) {
-                    throw new Error(
-                        "Unable to connect with admin privileges. Please, try again."
-                    );
-                }
-                count++;
-            }
-        } catch (error) {
-            console.warn(error);
-        }
+        //     while (count < 6) {
+        //         const socketAdmin = await getSocketSession(count);
+        //         if (socketAdmin) {
+        //             setAdminSocket(socketAdmin);
+        //             setIsAuthenticated(true);
+        //             break;
+        //         }
+        //         if (count === 5) {
+        //             throw new Error(
+        //                 "Unable to connect with admin privileges. Please, try again."
+        //             );
+        //         }
+        //         count++;
+        //     }
+        // } catch (error) {
+        //     console.warn(error);
+        // }
     }, []);
 
     useEffect(() => {
@@ -126,7 +128,7 @@ export default function AuthContextProvider({ children }) {
         }
 
         if (!clientSocket) {
-            setClientSocket(io("/"));
+            setClientSocket(io("http://localhost:3001/"));
         }
 
         return () => {
