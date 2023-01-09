@@ -13,15 +13,15 @@ require("dotenv").config();
  * @param {string} token Authorization token
  * @returns {Promise<categoria[]> | null}
  */
-async function getCategorias(token) {
-    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
-    try {
-        const categorias = await getData(request, token);
-        return categorias;
-    } catch (error) {
-        console.warn(error);
-        return null;
-    }
+async function getCategorias() {
+  const request = process.env.API_TIMERS + "/api/CategoriasTimer";
+  try {
+    const categorias = await getData(request);
+    return categorias;
+  } catch (error) {
+    console.warn(error);
+    return null;
+  }
 }
 
 /**
@@ -30,16 +30,16 @@ async function getCategorias(token) {
  * @param {string} token Authorization token
  * @returns {Promise<categoria> | null}
  */
-async function findCategoria(idCategoria, token) {
-    const request =
-        process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
-    try {
-        const categoria = await getData(request, token);
-        return categoria;
-    } catch (error) {
-        console.warn(error);
-        return null;
-    }
+async function findCategoria(idCategoria) {
+  const request =
+    process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
+  try {
+    const categoria = await getData(request);
+    return categoria;
+  } catch (error) {
+    console.warn(error);
+    return null;
+  }
 }
 
 /**
@@ -48,15 +48,15 @@ async function findCategoria(idCategoria, token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function createCategoria(nuevaCategoria, token) {
-    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
-    try {
-        await postData(request, nuevaCategoria, token);
-        return true;
-    } catch (error) {
-        console.warn(error);
-        return false;
-    }
+async function createCategoria(nuevaCategoria) {
+  const request = process.env.API_TIMERS + "/api/CategoriasTimer";
+  try {
+    await postData(request, nuevaCategoria);
+    return true;
+  } catch (error) {
+    console.warn(error);
+    return false;
+  }
 }
 
 /**
@@ -65,15 +65,15 @@ async function createCategoria(nuevaCategoria, token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function updateCategoria(nuevaCategoria, token) {
-    const request = process.env.API_TIMERS + "/api/CategoriasTimer";
-    try {
-        await putData(request, nuevaCategoria, token);
-        return true;
-    } catch (error) {
-        console.warn(error);
-        return false;
-    }
+async function updateCategoria(nuevaCategoria) {
+  const request = process.env.API_TIMERS + "/api/CategoriasTimer";
+  try {
+    await putData(request, nuevaCategoria);
+    return true;
+  } catch (error) {
+    console.warn(error);
+    return false;
+  }
 }
 
 /**
@@ -82,22 +82,22 @@ async function updateCategoria(nuevaCategoria, token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function deleteCategoria(idCategoria, token) {
-    const request =
-        process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
-    try {
-        await deleteData(request, token);
-        return true;
-    } catch (error) {
-        console.warn(error);
-        return false;
-    }
+async function deleteCategoria(idCategoria) {
+  const request =
+    process.env.API_TIMERS + "/api/CategoriasTimer/" + idCategoria;
+  try {
+    await deleteData(request);
+    return true;
+  } catch (error) {
+    console.warn(error);
+    return false;
+  }
 }
 
 module.exports = {
-    getCategorias,
-    findCategoria,
-    createCategoria,
-    updateCategoria,
-    deleteCategoria,
+  getCategorias,
+  findCategoria,
+  createCategoria,
+  updateCategoria,
+  deleteCategoria,
 };

@@ -14,14 +14,14 @@ const urlApi = process.env.API_TIMERS;
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function deleteSala(idSala, token) {
-    var url = urlApi + "/api/salas/" + idSala;
-    try {
-        await deleteData(url, token);
-        return true;
-    } catch (e) {
-        return false;
-    }
+async function deleteSala(idSala) {
+  var url = urlApi + "/api/salas/" + idSala;
+  try {
+    await deleteData(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
@@ -30,14 +30,14 @@ async function deleteSala(idSala, token) {
  * @param {string} token Authorization token
  * @returns {Promise<sala> | null}
  */
-async function getSalaById(idSala, token) {
-    var url = urlApi + "/api/salas/" + idSala;
-    try {
-        const sala = await getData(url, token);
-        return sala;
-    } catch (e) {
-        return null;
-    }
+async function getSalaById(idSala) {
+  var url = urlApi + "/api/salas/" + idSala;
+  try {
+    const sala = await getData(url);
+    return sala;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -45,14 +45,14 @@ async function getSalaById(idSala, token) {
  * @param {string} token Authorization token
  * @returns {Promise<sala[]> | null}
  */
-async function getSalas(token) {
-    var url = urlApi + "/api/salas/";
-    try {
-        const salas = await getData(url, token);
-        return salas;
-    } catch (e) {
-        return null;
-    }
+async function getSalas() {
+  var url = urlApi + "/api/salas/";
+  try {
+    const salas = await getData(url);
+    return salas;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -61,19 +61,19 @@ async function getSalas(token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function newSala(nuevaSala, token) {
-    var url = urlApi + "/api/salas/createSala/"+nuevaSala;
-    try {
-        await postData(url, null, token);
-        return true;
-    } catch (e) {
-        return false;
-    }
+async function newSala(nuevaSala) {
+  var url = urlApi + "/api/salas/createSala/" + nuevaSala;
+  try {
+    await postData(url, null);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 module.exports = {
-    deleteSala,
-    getSalaById,
-    newSala,
-    getSalas
+  deleteSala,
+  getSalaById,
+  newSala,
+  getSalas,
 };

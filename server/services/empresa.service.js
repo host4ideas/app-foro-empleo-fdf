@@ -14,14 +14,14 @@ require("dotenv").config();
  * @param {string} token Authorization token
  * @returns {Promise<empresa[]> | null}
  */
-async function getEmpresas(token) {
-    const url = urlApi + "/api/empresas";
-    try {
-        const empresas = await getData(url, token);
-        return empresas;
-    } catch (e) {
-        return null;
-    }
+async function getEmpresas() {
+  const url = urlApi + "/api/empresas";
+  try {
+    const empresas = await getData(url);
+    return empresas;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -30,14 +30,14 @@ async function getEmpresas(token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function deleteEmpresa(idEmpresa, token) {
-    const url = urlApi + "/api/empresas/" + idEmpresa;
-    try {
-        await deleteData(url, token);
-        return true;
-    } catch (e) {
-        return false;
-    }
+async function deleteEmpresa(idEmpresa) {
+  const url = urlApi + "/api/empresas/" + idEmpresa;
+  try {
+    await deleteData(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
@@ -46,14 +46,14 @@ async function deleteEmpresa(idEmpresa, token) {
  * @param {string} token Authorization token
  * @returns {Promise<empresa> | null}
  */
-async function getEmpresaById(idEmpresa, token) {
-    const url = urlApi + "/api/empresas/" + idEmpresa;
-    try {
-        const empresa = await getData(url, token);
-        return empresa;
-    } catch (e) {
-        return null;
-    }
+async function getEmpresaById(idEmpresa) {
+  const url = urlApi + "/api/empresas/" + idEmpresa;
+  try {
+    const empresa = await getData(url);
+    return empresa;
+  } catch (e) {
+    return null;
+  }
 }
 
 /**
@@ -62,19 +62,19 @@ async function getEmpresaById(idEmpresa, token) {
  * @param {string} token Authorization token
  * @returns {boolean}
  */
-async function newEmpresa(nuevaEmpresa, token) {
-    const url = urlApi + "/api/empresas/createEmpresa/"+nuevaEmpresa;
-    try {
-        await postData(url, null, token);
-        return true;
-    } catch (e) {
-        return false;
-    }
+async function newEmpresa(nuevaEmpresa) {
+  const url = urlApi + "/api/empresas/createEmpresa/" + nuevaEmpresa;
+  try {
+    await postData(url, null);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 module.exports = {
-    deleteEmpresa,
-    getEmpresaById,
-    newEmpresa,
-    getEmpresas
+  deleteEmpresa,
+  getEmpresaById,
+  newEmpresa,
+  getEmpresas,
 };

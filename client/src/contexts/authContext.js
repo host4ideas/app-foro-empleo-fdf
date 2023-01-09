@@ -1,10 +1,10 @@
 import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -13,160 +13,106 @@ import io from "socket.io-client";
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [clientSocket, setClientSocket] = useState(null);
-    const [adminSocket, setAdminSocket] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [clientSocket, setClientSocket] = useState(null);
+  const [adminSocket, setAdminSocket] = useState(null);
 
-    /**
-     * Performs the logtout with the server. Updates isAutenticated.
-     */
-    const logout = useCallback(async () => {
-        if (adminSocket) {
-            adminSocket.disconnect();
+  /**
+   * Performs the logtout with the server. Updates isAutenticated.
+   */
+  const logout = useCallback(async () => {
+    if (adminSocket) {
+      adminSocket.disconnect();
+    }
+    if (clientSocket) {
+      clientSocket.disconnect();
+    }
+    await axios.post("http://localhost:3001/logout");
+    setIsAuthenticated(false);
+  }, [adminSocket, clientSocket]);
+
+  /**
+   * Tries to perform the login. Updated isAuthenticated state accordingly.
+   * @param {string} username
+   * @param {string} password
+   */
+  const login = useCallback(async (username, password) => {
+    try {
+      await axios.post("http://localhost:3001/login", {
+        user_name: username,
+        password: password,
+      });
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.warn(error);
+    }
+  }, []);
+
+  // Check for socket listeners
+  useEffect(() => {
+    // Admin socket listeners
+    if (adminSocket && typeof adminSocket === "object") {
+      adminSocket.on("connect", () =>
+        console.log("connected to admin socket: " + adminSocket.id)
+      );
+      adminSocket.on("disconnect", () =>
+        console.warn("admin socket connection disconnected")
+      );
+    }
+    // Client socket listenners
+    if (clientSocket && typeof clientSocket === "object") {
+      clientSocket.on("connect", () =>
+        console.log("connected to client socket: " + clientSocket.id)
+      );
+      clientSocket.on("disconnect", () =>
+        console.warn("client socket connection disconnected")
+      );
+    }
+
+    if (clientSocket) {
+      console.log("test");
+
+      clientSocket.emit("eventos", (eventos) => {
+        if (eventos) {
+          console.log(eventos);
+        } else {
+          console.log("error getting eventos");
         }
-        if (clientSocket) {
-            clientSocket.disconnect();
-        }
-        await axios.post("/logout");
-        setIsAuthenticated(false);
-    }, [adminSocket, clientSocket]);
+      });
+    }
 
-    const getSocketSession = () => {
-        return new Promise((resolve) => {
-            const socketAdmin = io("/admin");
+    if (!clientSocket) {
+      setClientSocket(io("http://localhost:3001/"));
+    }
 
-            socketAdmin.on("connect", () => {
-                // console.log("test")
-                resolve(socketAdmin);
-            });
-
-            // If the socket is not connected after 1s, try again to reconnect
-            setTimeout(() => {
-                resolve(null);
-            }, 1000);
-        });
+    return () => {
+      if (clientSocket) {
+        clientSocket.disconnect();
+      }
+      if (adminSocket) {
+        adminSocket.disconnect();
+      }
     };
+  }, [clientSocket, adminSocket]);
 
-    /**
-     * Checks if the user is logged by reaching the server, sets the isAuthenticated state
-     * accordingly {true | false}.
-     */
-    const checkLoggedUser = useCallback(() => {
-        return axios
-            .get("/check-user")
-            .then((response) => {
-                console.log("user authenticated: " + response.data);
-                getSocketSession().then((socketAdmin) => {
-                    setAdminSocket(socketAdmin);
-                    setIsAuthenticated(response.data);
-                });
-            })
-            .catch((error) => {
-                console.warn(error);
-                setIsAuthenticated(false);
-            });
-    }, []);
+  const value = useMemo(
+    () => ({
+      login,
+      logout,
+      isAuthenticated,
+      clientSocket,
+      adminSocket,
+    }),
+    [login, logout, isAuthenticated, clientSocket, adminSocket]
+  );
 
-    /**
-     * Tries to perform the login. Updated isAuthenticated state accordingly.
-     * @param {string} username
-     * @param {string} password
-     */
-    const login = useCallback(async (username, password) => {
-        const params = new URLSearchParams();
-        params.append("username", username);
-        params.append("password", password);
-
-        try {
-            await axios.post("/login", params);
-            let count = 0;
-
-            while (count < 6) {
-                const socketAdmin = await getSocketSession(count);
-                if (socketAdmin) {
-                    setAdminSocket(socketAdmin);
-                    setIsAuthenticated(true);
-                    break;
-                }
-                if (count === 5) {
-                    throw new Error(
-                        "Unable to connect with admin privileges. Please, try again."
-                    );
-                }
-                count++;
-            }
-        } catch (error) {
-            console.warn(error);
-        }
-    }, []);
-
-    useEffect(() => {
-        checkLoggedUser();
-    }, [checkLoggedUser]);
-
-    // Check for socket listeners
-    useEffect(() => {
-        // Admin socket listeners
-        if (adminSocket && typeof adminSocket === "object") {
-            adminSocket.on("connect", () =>
-                console.log("connected to admin socket: " + adminSocket.id)
-            );
-            adminSocket.on("disconnect", () =>
-                console.warn("admin socket connection disconnected")
-            );
-        }
-        // Client socket listenners
-        if (clientSocket && typeof clientSocket === "object") {
-            clientSocket.on("connect", () =>
-                console.log("connected to client socket: " + clientSocket.id)
-            );
-            clientSocket.on("disconnect", () =>
-                console.warn("client socket connection disconnected")
-            );
-        }
-
-        if (!clientSocket) {
-            setClientSocket(io("/"));
-        }
-
-        return () => {
-            if (clientSocket) {
-                clientSocket.disconnect();
-            }
-            if (adminSocket) {
-                adminSocket.disconnect();
-            }
-        };
-    }, [clientSocket, adminSocket]);
-
-    const value = useMemo(
-        () => ({
-            login,
-            logout,
-            checkLoggedUser,
-            isAuthenticated,
-            clientSocket,
-            adminSocket,
-        }),
-        [
-            login,
-            logout,
-            checkLoggedUser,
-            isAuthenticated,
-            clientSocket,
-            adminSocket,
-        ]
-    );
-
-    return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 AuthContextProvider.propTypes = {
-    children: PropTypes.object,
+  children: PropTypes.object,
 };
 
 export function useAuthContext() {
-    return useContext(AuthContext);
+  return useContext(AuthContext);
 }
