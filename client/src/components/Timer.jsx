@@ -12,6 +12,7 @@ import "./timer.css";
 
 export default function Timer(props) {
     const [timer, setTimer] = useState("00:00");
+    let prueba = 50;
     const [clockTime, setClockTime] = useState("");
     const [play, setPlay] = useState(false);
 
@@ -54,7 +55,10 @@ export default function Timer(props) {
 
     const compruebaInicio = () => {
         if (eventoSelected.inicioEvento !== undefined) {
-            var ahora = Math.trunc(new Date().getTime() / 1000);
+
+            /* var ahora = Math.trunc(new Date().getTime() / 1000); */
+            var ahora = Math.trunc(new Date(2023,0,18,8,59).getTime() / 1000);
+
             var inicio = Math.trunc(
                 new Date(eventoSelected.inicioEvento).getTime() / 1000
             );
@@ -137,6 +141,7 @@ export default function Timer(props) {
         const actualClockTime = setInterval(() => {
             showClockTime();
             compruebaInicio();
+            prueba++;
             comprobarTimer();
         }, 1000);
         return () => {
