@@ -18,7 +18,7 @@ module.exports = function () {
                 if (data.response) {
                     res(data.response); // JSON data parsed by `data.json()` call
                 } else {
-                    rej("unauthorized");
+                    rej("login unauthorized");
                 }
             });
         });
